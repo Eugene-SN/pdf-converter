@@ -1,0 +1,37 @@
+[2025-10-07T12:13:46.894+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.validate_orchestrator_input manual__2025-10-07T12:13:45.634151+00:00 [queued]>
+[2025-10-07T12:13:46.899+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.validate_orchestrator_input manual__2025-10-07T12:13:45.634151+00:00 [queued]>
+[2025-10-07T12:13:46.899+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-07T12:13:46.907+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): validate_orchestrator_input> on 2025-10-07 12:13:45.634151+00:00
+[2025-10-07T12:13:46.912+0000] {standard_task_runner.py:60} INFO - Started process 177011 to run task
+[2025-10-07T12:13:46.914+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'validate_orchestrator_input', 'manual__2025-10-07T12:13:45.634151+00:00', '--job-id', '969', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmpqwageepk']
+[2025-10-07T12:13:46.915+0000] {standard_task_runner.py:88} INFO - Job 969: Subtask validate_orchestrator_input
+[2025-10-07T12:13:46.957+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.validate_orchestrator_input manual__2025-10-07T12:13:45.634151+00:00 [running]> on host 64801ed803bd
+[2025-10-07T12:13:47.020+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='validate_orchestrator_input' AIRFLOW_CTX_EXECUTION_DATE='2025-10-07T12:13:45.634151+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-07T12:13:45.634151+00:00'
+[2025-10-07T12:13:47.021+0000] {orchestrator_dag.py:55} INFO - 🔍 Валидация входных данных оркестратора: {
+  "input_file": "/mnt/storage/apps/pdf-converter/input/test_short.pdf",
+  "filename": "test_short.pdf",
+  "timestamp": 1759839225,
+  "target_language": "original",
+  "quality_level": "high",
+  "enable_ocr": true,
+  "preserve_structure": true,
+  "extract_tables": true,
+  "extract_images": true,
+  "stage_mode": "full_conversion_with_validation",
+  "processing_stages": 4,
+  "validation_enabled": true,
+  "quality_target": 100.0,
+  "language": "zh-CN",
+  "chinese_optimization": true,
+  "pipeline_version": "4.0",
+  "processing_mode": "digital_pdf",
+  "use_orchestrator": true
+}
+[2025-10-07T12:13:47.021+0000] {shared_utils.py:78} INFO - Файл прошел валидацию: /app/input/test_short.pdf (0.46 MB)
+[2025-10-07T12:13:47.021+0000] {shared_utils.py:170} INFO - 📊 Метрики: {'dag_id': 'orchestrator_dag', 'task_id': 'validate_orchestrator_input', 'processing_time_seconds': 0.0004019737243652344, 'pages_processed': 0, 'file_size_mb': 0.0, 'success': True, 'timestamp': '2025-10-07T12:13:47.021930'}
+[2025-10-07T12:13:47.022+0000] {orchestrator_dag.py:104} INFO - ✅ Конфигурация оркестратора валидирована для файла: test_short.pdf
+[2025-10-07T12:13:47.022+0000] {orchestrator_dag.py:105} INFO - 🎯 Режим работы: full_conversion_with_validation, Целевой язык: original
+[2025-10-07T12:13:47.022+0000] {python.py:201} INFO - Done. Returned value was: {'input_file': '/app/input/test_short.pdf', 'filename': 'test_short.pdf', 'target_language': 'original', 'quality_level': 'high', 'enable_ocr': True, 'preserve_structure': True, 'extract_tables': True, 'extract_images': True, 'preserve_technical_terms': True, 'chinese_document': True, 'timestamp': 1759839225, 'master_run_id': 'manual__2025-10-07T12:13:45.634151+00:00', 'pipeline_version': '4.0_fixed', 'processing_start_time': '2025-10-07T12:13:47.021915', 'stage_mode': 'full_conversion_with_validation', 'processing_stages': 4, 'validation_enabled': True, 'quality_target': 100.0, 'translation_required': False, 'input_dir': '/app/input', 'output_zh_dir': '/app/output/zh', 'output_target_dir': '/app/output/zh', 'container_temp_dir': '/opt/***/temp'}
+[2025-10-07T12:13:47.043+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=validate_orchestrator_input, execution_date=20251007T121345, start_date=20251007T121346, end_date=20251007T121347
+[2025-10-07T12:13:47.086+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-07T12:13:47.110+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

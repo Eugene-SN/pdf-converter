@@ -1,0 +1,16 @@
+[2025-10-07T12:17:00.914+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-07T12:16:59.097437+00:00 [queued]>
+[2025-10-07T12:17:00.920+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-07T12:16:59.097437+00:00 [queued]>
+[2025-10-07T12:17:00.920+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-07T12:17:00.928+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): perform_visual_comparison> on 2025-10-07 12:16:59.097437+00:00
+[2025-10-07T12:17:00.934+0000] {standard_task_runner.py:60} INFO - Started process 177105 to run task
+[2025-10-07T12:17:00.937+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'quality_assurance', 'perform_visual_comparison', 'manual__2025-10-07T12:16:59.097437+00:00', '--job-id', '991', '--raw', '--subdir', 'DAGS_FOLDER/quality_assurance.py', '--cfg-path', '/tmp/tmp9zsx0qkc']
+[2025-10-07T12:17:00.939+0000] {standard_task_runner.py:88} INFO - Job 991: Subtask perform_visual_comparison
+[2025-10-07T12:17:00.983+0000] {task_command.py:423} INFO - Running <TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-07T12:16:59.097437+00:00 [running]> on host 64801ed803bd
+[2025-10-07T12:17:01.194+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='quality_assurance' AIRFLOW_CTX_TASK_ID='perform_visual_comparison' AIRFLOW_CTX_EXECUTION_DATE='2025-10-07T12:16:59.097437+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-07T12:16:59.097437+00:00'
+[2025-10-07T12:17:01.208+0000] {quality_assurance.py:481} INFO - 🔍 Уровень 2: Visual Comparison с Docker Pandoc интеграцией
+[2025-10-07T12:17:01.219+0000] {quality_assurance.py:578} WARNING - ❌ Docker Pandoc service is not responding
+[2025-10-07T12:17:01.219+0000] {quality_assurance.py:502} WARNING - Docker Pandoc unavailable — skipping visual comparison
+[2025-10-07T12:17:01.219+0000] {python.py:201} INFO - Done. Returned value was: {'level': 2, 'name': 'visual_comparison', 'overall_similarity': 0.0, 'ssim_score': 0.0, 'differences_count': 0, 'issues_found': ['Docker Pandoc service unavailable'], 'processing_time': 0.024318695068359375, 'pandoc_integration': True, 'validation_score': 0.7, 'skipped': True}
+[2025-10-07T12:17:01.239+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=quality_assurance, task_id=perform_visual_comparison, execution_date=20251007T121659, start_date=20251007T121700, end_date=20251007T121701
+[2025-10-07T12:17:01.269+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-07T12:17:01.293+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check
