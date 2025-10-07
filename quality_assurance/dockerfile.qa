@@ -1,0 +1,99 @@
+# Quality Assurance Dockerfile для PDF Converter Pipeline v4.0
+# 5-уровневая система валидации для достижения 100% соответствия документов
+
+FROM python:3.11-slim
+
+LABEL maintainer="PDF Converter Pipeline Team"
+LABEL version="4.0"
+LABEL description="Quality Assurance service with 5-level validation system"
+
+# Устанавливаем переменные окружения
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Устанавливаем системные зависимости
+USER root
+RUN apt-get update && apt-get install -y \
+    # Основные утилиты
+    curl \
+    wget \
+    git \
+    unzip \
+    # Библиотеки для обработки изображений и компьютерного зрения
+    libopencv-dev \
+    python3-opencv \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    # Tesseract для OCR валидации
+    tesseract-ocr \
+    tesseract-ocr-chi-sim \
+    tesseract-ocr-eng \
+    tesseract-ocr-rus \
+    libtesseract-dev \
+    # PDF утилиты
+    poppler-utils \
+    # Зависимости для BLAS/LAPACK (ATLAS устарел)
+    libopenblas-dev \
+    liblapack-dev \
+    gfortran \
+    # Дополнительные зависимости
+    build-essential \
+    python3-dev \
+    libffi-dev \
+    pkg-config \
+    python3-tk \
+    libfreetype6-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создаем пользователя для безопасности
+RUN useradd --create-home --shell /bin/bash qa
+
+# Создаем рабочую директорию
+WORKDIR /app
+
+# Копируем requirements и устанавливаем Python зависимости
+COPY requirements-qa.txt /app/
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements-qa.txt
+
+# Создаем необходимые директории
+RUN mkdir -p /app/temp \
+    /app/cache \
+    /app/models \
+    /app/logs \
+    /app/validation_reports \
+    /mnt/storage/models/shared/qa \
+    && chown -R qa:qa /app \
+    && chown -R qa:qa /mnt/storage/models
+
+# Копируем исходный код приложения
+COPY ocr_validator.py /app/
+COPY visual_diff_system.py /app/
+COPY ast_comparator.py /app/
+COPY ssim_calculator.py /app/
+COPY auto_corrector.py /app/
+COPY content_validator.py /app/
+COPY main.py /app/
+
+# Устанавливаем права доступа
+RUN chmod +x /app/*.py
+
+# Переключаемся на пользователя qa
+USER qa
+
+# Порт по умолчанию
+EXPOSE 8002
+
+# Health check для мониторинга
+HEALTHCHECK --interval=30s --timeout=15s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8002/health || exit 1
+
+# Запуск приложения
+CMD ["python", "main.py"]

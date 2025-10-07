@@ -1,0 +1,72 @@
+FROM apache/airflow:2.8.1-python3.11
+
+# Установка системных зависимостей
+USER root
+
+# Обновление системы и установка необходимых пакетов
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc \
+        g++ \
+        libffi-dev \
+        libssl-dev \
+        libpq-dev \
+        curl \
+        wget \
+        git \
+        poppler-utils \
+        tesseract-ocr \
+        tesseract-ocr-rus \
+        tesseract-ocr-eng \
+        tesseract-ocr-chi-sim \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
+        libxrender-dev \
+        libglib2.0-0 \
+        libgtk-3-0 \
+        # Для работы с китайскими шрифтами
+        fonts-noto-cjk \
+        fonts-wqy-zenhei \
+        fonts-wqy-microhei \
+        dnsutils \
+        iputils-ping \
+        ghostscript \  
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Переключение на пользователя airflow
+USER airflow
+
+# Копирование файла requirements
+COPY airflow/requirements-airflow.txt /requirements-airflow.txt
+
+# Установка Python зависимостей
+RUN pip install --no-cache-dir --upgrade "pip<25" \
+    && pip install --no-cache-dir -r /requirements-airflow.txt
+
+# Копирование DAG'ов и плагинов в стандартные каталоги Airflow
+COPY --chown=airflow:airflow airflow/dags/ /opt/airflow/dags/
+
+
+# Создание рабочих директорий
+USER root
+RUN mkdir -p /opt/airflow/config \
+             /opt/airflow/plugins \
+             /app/input \
+             /app/output/zh \
+             /app/output/en \
+             /app/output/ru \
+    && chown -R airflow:root /opt/airflow /app \
+    && chmod -R 775 /opt/airflow /app
+
+USER airflow
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"
+
+# Команда по умолчанию
+CMD ["airflow", "webserver"]

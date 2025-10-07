@@ -1,0 +1,45 @@
+\documentclass[$for(classoption)$$classoption$$sep$,$endfor$]{article}
+
+% Поддержка китайских символов
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Sans CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
+\setCJKmonofont{Noto Sans Mono CJK SC}
+
+% Основные пакеты
+\usepackage[unicode=true]{hyperref}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Геометрия страницы
+\geometry{margin=2cm}
+
+% Колонтитулы
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\leftmark}
+\fancyfoot[C]{\thepage}
+
+% Настройка отображения кода
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!10}
+}
+
+% Заголовок документа
+$if(title)$\title{$title$}$endif$
+$if(author)$\author{$for(author)$$author$$sep$ \and $endfor$}$endif$
+$if(date)$\date{$date$}$endif$
+
+\begin{document}
+$if(title)$\maketitle$endif$
+$if(toc)$\tableofcontents\newpage$endif$
+$body$
+\end{document}

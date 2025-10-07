@@ -1,0 +1,22 @@
+groups:
+  - name: "a3b_performance_rules"
+    interval: 30s
+    rules:
+      - record: "a3b:token_rate:rate5m"
+        expr: "rate(vllm_request_success_total[5m]) * on() group_left() vllm_avg_generation_tokens"
+        labels:
+          model: "qwen3-a3b"
+      
+      - record: "a3b:request_latency:p95"
+        expr: "histogram_quantile(0.95, rate(vllm_request_duration_seconds_bucket[5m]))"
+        labels:
+          model: "qwen3-a3b"
+
+  - name: "pipeline_performance_rules"
+    interval: 60s
+    rules:
+      - record: "pipeline:documents:processed_per_hour"
+        expr: "rate(pdf_converter_documents_processed_total[1h]) * 3600"
+      
+      - record: "pipeline:translation:success_rate"
+        expr: "rate(pdf_converter_translations_success_total[5m]) / rate(pdf_converter_translations_total[5m])"

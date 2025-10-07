@@ -1,0 +1,93 @@
+# CPU-образ PaddlePaddle 3.1.0 (Python 3.10 в базовом образе)
+FROM paddlepaddle/paddle:3.1.0
+
+# Обновление системных пакетов и необходимые утилиты
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    git \
+    unzip \
+    libopencv-dev \
+    python3-opencv \
+    tesseract-ocr \
+    tesseract-ocr-chi-sim \
+    tesseract-ocr-eng \
+    tesseract-ocr-rus \
+    libtesseract-dev \
+    poppler-utils \
+    default-jre \
+    default-jdk \
+    libgl1 \
+    libglx-mesa0 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libgomp1 \
+    build-essential \
+    python3-dev \
+    libffi-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+# Создаем пользователя и директории
+RUN useradd -m -u 1000 docprocessor && \
+    mkdir -p /app/temp /app/cache \
+             /home/docprocessor/.paddlex \
+             /home/docprocessor/.cache \
+             /mnt/storage/models/paddlex \
+             /mnt/storage/models/docling && \
+    chown -R docprocessor:docprocessor /app \
+                                       /home/docprocessor \
+                                       /mnt/storage/models && \
+    chmod -R 775 /app /home/docprocessor /mnt/storage/models
+
+# Рабочая директория
+WORKDIR /app
+
+# Копируем requirements
+COPY requirements-docprocessor.txt /app/
+
+# Обновляем pip/setuptools/wheel
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Устанавливаем PyTorch CPU-колёса (опционально; если не требуется — удалите эту строку)
+# RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Ставим остальные Python-зависимости (включая PaddleOCR 3.1.x)
+RUN pip install --no-cache-dir -r requirements-docprocessor.txt
+
+# Клонируем Git-репозиторий PaddleOCR v3.1.0 и ставим его
+RUN git clone --branch v3.2.0 --depth 1 https://github.com/PaddlePaddle/PaddleOCR.git \
+ && cd PaddleOCR \
+ && pip install --no-cache-dir -e . 
+
+# Копируем исходники
+COPY docling_processor.py /app/
+COPY ocr_processor.py /app/
+COPY table_extractor.py /app/
+COPY structure_analyzer.py /app/
+COPY main.py /app/
+
+# Права
+RUN chmod +x /app/*.py && chown -R docprocessor:docprocessor /app
+
+# Переменные окружения кэшей
+ENV PADDLEX_HOME=/mnt/storage/models/paddlex
+ENV HF_HOME=/mnt/storage/models/docling
+ENV TRANSFORMERS_CACHE=/mnt/storage/models/docling/transformers
+ENV HUGGINGFACE_HUB_CACHE=/mnt/storage/models/docling/huggingface
+ENV XDG_CACHE_HOME=/mnt/storage/models/docling
+ENV TMPDIR=/app/temp
+ENV TEMP=/app/temp
+ENV TMP=/app/temp
+ENV HOME=/home/docprocessor
+ENV FLAGS_log_level=3
+
+USER docprocessor
+
+EXPOSE 8001 9001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+CMD ["python", "main.py"]

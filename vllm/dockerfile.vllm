@@ -1,0 +1,34 @@
+FROM vllm/vllm-openai:v0.10.1
+
+# Установка дополнительных зависимостей
+RUN pip install --no-cache-dir \
+    pynvml \
+    psutil \
+    structlog \
+    prometheus-client
+
+# Создание пользователя vllm
+RUN groupadd -r vllm && useradd -r -g vllm -m vllm
+
+# Создание рабочих директорий и установка прав
+RUN mkdir -p /workspace /app/logs && \
+    chown -R vllm:vllm /workspace /app/logs /home/vllm
+
+# Копирование наших файлов
+COPY model_manager.py /workspace/
+COPY dynamic_server.py /workspace/
+
+# Переменные окружения (только для путей Python)
+ENV PYTHONPATH="/workspace:$PYTHONPATH"
+
+# Рабочая директория
+WORKDIR /workspace
+
+# Пользователь vllm
+USER vllm
+
+# Порты
+EXPOSE 8000 8001
+
+# Команда запуска
+CMD ["python", "dynamic_server.py"]

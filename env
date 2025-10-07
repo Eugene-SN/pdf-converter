@@ -1,0 +1,337 @@
+# ================================================================================
+# PDF CONVERTER PIPELINE v2.0 - ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ КОНФИГУРАЦИЯ
+# ✅ ВСЕ НЕДОСТАЮЩИЕ ПЕРЕМЕННЫЕ ДОБАВЛЕНЫ
+# ✅ ИСПРАВЛЕНЫ НАЗВАНИЯ МОДЕЛЕЙ vLLM  
+# ✅ ОПТИМИЗИРОВАНЫ НАСТРОЙКИ ДЛЯ PRODUCTION
+# ================================================================================
+
+# ================================================================================
+# 🔧 ОСНОВНАЯ КОНФИГУРАЦИЯ
+# ================================================================================
+PROJECT_VERSION=2.0
+ENVIRONMENT=production
+
+# Пути хранения данных
+BASE_PATH=/mnt/storage/docker/pdf-converter
+HF_HOME=/mnt/storage/models/huggingface
+PADDLEX_HOME=/mnt/storage/models/paddlex
+DOCLING_HOME=/mnt/storage/models/docling
+HF_CACHE_HOME=/mnt/storage/models/docling/huggingface
+VLLM_CACHE=/mnt/storage/models/vllm_cache
+TRANSFORMERS_CACHE=${HF_HOME}/transformers_cache
+HF_HUB_CACHE=${HF_HOME}/hub_cache
+HF_MODULES_CACHE=${HF_HOME}/modules_cache
+TRITON_CACHE_DIR=${HF_HOME}/triton_cache
+PADDLEOCR_HOME=/mnt/storage/models/paddleocr
+DOCLING_MODEL_PATH=/mnt/storage/models/docling
+
+# ================================================================================
+# 🤖 vLLM КОНФИГУРАЦИЯ
+# ================================================================================
+VLLM_SERVER_URL=http://vllm-server:8000
+
+VLLM_CONTENT_MODEL=Qwen/Qwen2.5-VL-32B-Instruct
+VLLM_TRANSLATION_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507
+
+# Для совместимости с docker-compose
+VLLM_MODEL_NAME=${VLLM_CONTENT_MODEL}
+
+# Тайм-ауты (секунды)
+VLLM_STANDARD_TIMEOUT=1800
+VLLM_MODEL_SWITCH_TIMEOUT=300
+
+# ✅ ИСПРАВЛЕНО: Правильные параметры для 2x A6000 (48GB total)
+VLLM_TENSOR_PARALLEL_SIZE=2
+VLLM_PIPELINE_PARALLEL_SIZE=1
+VLLM_GPU_MEMORY_UTILIZATION=0.85
+VLLM_MAX_MODEL_LEN=4096
+VLLM_MAX_NUM_SEQS=16
+VLLM_BLOCK_SIZE=16
+
+# Dynamic model loading
+DYNAMIC_MODEL_LOADING=true
+MODEL_SWAP_TIMEOUT=300
+AUTO_MODEL_SELECTION=true
+
+# API ключ
+VLLM_API_KEY=pdf-converter-secure-key-2024
+VLLM_MAX_TOKENS=4096
+VLLM_TEMPERATURE=0.1
+
+DISABLE_THINKING=true
+
+# ================================================================================
+# 📡 МЕЖСЕРВИСНЫЕ URL (✅ ИСПРАВЛЕНО!)
+# ================================================================================
+AIRFLOW_BASE_URL=http://airflow-webserver:8090
+DOCUMENT_PROCESSOR_URL=http://document-processor:8001
+QUALITY_ASSURANCE_URL=http://quality-assurance:8002
+TRANSLATOR_URL=http://translator:8003
+
+# URL для доступа с хоста
+VLLM_SERVER_URL_HOST=http://localhost:8000
+DOCUMENT_PROCESSOR_URL_HOST=http://localhost:8001
+QUALITY_ASSURANCE_URL_HOST=http://localhost:8002
+TRANSLATOR_URL_HOST=http://localhost:8003
+AIRFLOW_BASE_URL_HOST=http://localhost:8090
+
+# ================================================================================
+# 🌊 AIRFLOW КОНФИГУРАЦИЯ (✅ ВСЕ НЕДОСТАЮЩИЕ ПЕРЕМЕННЫЕ ДОБАВЛЕНЫ)
+# ================================================================================
+AIRFLOW_UID=1000
+AIRFLOW_GID=0
+PROJ_DIR=.
+
+_AIRFLOW_WWW_USER_USERNAME=admin
+_AIRFLOW_WWW_USER_PASSWORD=admin
+
+AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
+AIRFLOW__WEBSERVER__BASE_URL=http://10.255.100.200:8090
+AIRFLOW__WEBSERVER__EXPOSE_CONFIG=true
+
+# ✅ ДОБАВЛЕНО: Сильные ключи шифрования
+AIRFLOW__CORE__FERNET_KEY=UKMzEm3yIuFYEq1y3-2FxPNWSVwRASpahmQ9kQfEr8Q=
+AIRFLOW_SECRET_KEY=2FxPNWSVwRASpahmQ9kQfEr8Q=
+AIRFLOW__WEBSERVER__SECRET_KEY=${AIRFLOW_SECRET_KEY}
+
+AIRFLOW__CORE__SECURITY=True
+AIRFLOW__API__ENABLE_EXPERIMENTAL_API=False
+
+# Executor
+AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+AIRFLOW__CELERY__BROKER_CONNECTION_RETRY_ON_STARTUP=true
+AIRFLOW__WEBSERVER__ENABLE_SWAGGER_UI=false
+
+AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+AIRFLOW__CORE__LOAD_EXAMPLES=false
+
+# ✅ ДОБАВЛЕНО: Все недостающие Airflow переменные из логов
+AIRFLOW__METRICS__STATSD_ON=false
+AIRFLOW__METRICS__STATSD_HOST=statsd-exporter
+AIRFLOW__METRICS__STATSD_PORT=9125
+AIRFLOW__METRICS__STATSD_PREFIX=airflow
+AIRFLOW__METRICS__METRICS_ALLOW_LIST=
+AIRFLOW__METRICS__METRICS_BLOCK_LIST=
+
+AIRFLOW__CORE__METRICS_USE_PATTERN_MATCH=false
+AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG=8
+AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG=64
+AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT=1200
+AIRFLOW__CORE__PARALLELISM=128
+
+AIRFLOW__LOGGING__LOGGING_LEVEL=INFO
+AIRFLOW__WEBSERVER__LOGGING_LEVEL=INFO
+AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT=1200
+
+AIRFLOW__CELERY__WORKER_CONCURRENCY=16
+AIRFLOW__CELERY__OPERATION_TIMEOUT=21600
+
+AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE=100
+AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_RECYCLE=3600
+AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_PRE_PING=true
+
+_PIP_ADDITIONAL_REQUIREMENTS=
+
+# ================================================================================
+# 📝 PDF PROCESSING (✅ ВСЕ НЕДОСТАЮЩИЕ ПЕРЕМЕННЫЕ ДОБАВЛЕНЫ)
+# ================================================================================
+DEFAULT_EXTRACT_TABLES=true
+DEFAULT_EXTRACT_IMAGES=true
+DEFAULT_USE_OCR=false
+CREATE_SEPARATE_FOLDERS=true
+EMBED_IMAGES_IN_MD=false
+DEFAULT_LANGUAGE=original
+DEFAULT_MODEL_SIZE=large
+
+# ================================================================================
+# 🛠️ FLASK API КОНФИГУРАЦИЯ
+# ================================================================================
+FLASK_SECRET_KEY=your_super_secret_key_here_change_in_production
+FLASK_ENV=production
+FLASK_DEBUG=false
+MAX_CONTENT_LENGTH=1073741824
+
+# ================================================================================
+# 📁 ДИРЕКТОРИИ ДЛЯ ОБРАБОТКИ (✅ ДОБАВЛЕН TEMP_FOLDER)
+# ================================================================================
+INPUT_DIR=/app/input
+OUTPUT_DIR=/app/output
+TEMP_DIR=/app/temp
+
+UPLOAD_FOLDER=/app/input_pdf
+OUTPUT_FOLDER_ZH=/app/output/zh
+OUTPUT_FOLDER_RU=/app/output/ru
+OUTPUT_FOLDER_EN=/app/output/en
+TEMP_FOLDER=/app/temp
+
+# ================================================================================
+# 🗃️ POSTGRESQL КОНФИГУРАЦИЯ (оптимизировано для высокой нагрузки)
+# ================================================================================
+POSTGRES_DB=airflow
+POSTGRES_USER=airflow
+POSTGRES_PASSWORD=airflow123
+
+# ✅ ОПТИМИЗИРОВАНО: Производительность PostgreSQL
+POSTGRES_SHARED_BUFFERS=8GB
+POSTGRES_EFFECTIVE_CACHE_SIZE=24GB
+POSTGRES_MAINTENANCE_WORK_MEM=2GB
+POSTGRES_WAL_BUFFERS=64MB
+POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
+POSTGRES_DEFAULT_STATISTICS_TARGET=500
+POSTGRES_RANDOM_PAGE_COST=1.1
+POSTGRES_EFFECTIVE_IO_CONCURRENCY=200
+POSTGRES_WORK_MEM=256MB
+POSTGRES_MAX_CONNECTIONS=200
+
+# ================================================================================
+# 📊 REDIS КОНФИГУРАЦИЯ
+# ================================================================================
+REDIS_MAXMEMORY=8GB
+REDIS_MAXMEMORY_POLICY=allkeys-lru
+
+# ================================================================================
+# 📈 GRAFANA МОНИТОРИНГ
+# ================================================================================
+GF_SECURITY_ADMIN_PASSWORD=admin
+
+# ================================================================================
+# ⚙️ СЕРВИСНЫЕ ПАРАМЕТРЫ (✅ ВСЕ НЕДОСТАЮЩИЕ ДОБАВЛЕНЫ)
+# ================================================================================
+
+# Document Processor
+PADDLEOCR_USE_GPU=true
+PADDLEOCR_LANG=en,ch,ru
+PADDLEOCR_USE_TEXTLINE_ORIENTATION=true
+DOCLING_USE_GPU=true
+DOCLING_MAX_WORKERS=4
+OCR_CONFIDENCE_THRESHOLD=0.8
+MAX_FILE_SIZE_MB=500
+PROCESSING_TIMEOUT_MINUTES=60
+TESSERACT_CONFIG="--oem 3 --psm 6"
+
+# Quality Assurance
+QA_ENABLED=true
+QA_THRESHOLD=0.95
+AUTO_CORRECTION_ENABLED=true
+MAX_CORRECTIONS_PER_DOCUMENT=5
+AST_COMPARISON_ENABLED=true
+SSIM_THRESHOLD=0.95
+VISUAL_DIFF_TOLERANCE=0.05
+OCR_CROSS_VALIDATION=true
+
+# Translator
+SERVICE_PORT=8003
+ENABLE_CACHING=true
+CACHE_SIZE_LIMIT=1000
+PRESERVE_TECHNICAL_TERMS=true
+REQUEST_TIMEOUT=300
+INTER_REQUEST_DELAY=0.1
+
+# ================================================================================
+# 🔍 ПРОИЗВОДИТЕЛЬНОСТЬ И БАТЧИНГ
+# ================================================================================
+BATCH_SIZE_HEADERS=4
+BATCH_SIZE_TABLES=3
+BATCH_SIZE_COMMANDS=2
+BATCH_SIZE_TEXT=6
+BATCH_SIZE_MIXED=4
+
+# ================================================================================
+# 📝 ЛОГИРОВАНИЕ И БЕЗОПАСНОСТЬ
+# ================================================================================
+LOG_LEVEL=INFO
+VERBOSE_PROGRESS=true
+SHOW_STATISTICS=true
+SHOW_DETAILED_PROGRESS=true
+LOG_ERRORS=true
+
+MAX_REMAINING_FIXES=20
+REMAINING_TIMEOUT=300
+MAX_FIX_ATTEMPTS=2
+MIN_FRAGMENT_LENGTH=2
+CREATE_BACKUP=true
+
+# ================================================================================
+# 🚀 ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ПРОИЗВОДИТЕЛЬНОСТИ
+# ================================================================================
+
+# Timeout'ы для различных операций
+DOCLING_PROCESSING_TIMEOUT=3600
+OCR_PROCESSING_TIMEOUT=1800
+TRANSLATION_TIMEOUT=1200
+QA_VALIDATION_TIMEOUT=600
+
+# Ограничения ресурсов
+MAX_CONCURRENT_DOCUMENTS=4
+MAX_PAGES_PER_DOCUMENT=500
+MAX_PROCESSING_MEMORY_GB=32
+
+# Настройки кеширования
+ENABLE_MODEL_CACHING=true
+MODEL_CACHE_SIZE_GB=16
+CLEAR_CACHE_ON_RESTART=false
+
+# Мониторинг и алерты
+ENABLE_PERFORMANCE_MONITORING=true
+ALERT_ON_HIGH_MEMORY_USAGE=true
+MEMORY_ALERT_THRESHOLD_PERCENT=85
+DISK_ALERT_THRESHOLD_PERCENT=90
+
+# ================================================================================
+# 🛡️ БЕЗОПАСНОСТЬ И ДОСТУП
+# ================================================================================
+
+# API Keys
+API_SECRET_KEY=your_api_secret_key_change_in_production
+WEBHOOK_SECRET=your_webhook_secret_change_in_production
+
+# Rate limiting
+ENABLE_RATE_LIMITING=true
+MAX_REQUESTS_PER_MINUTE=60
+MAX_CONCURRENT_UPLOADS=10
+
+# File validation
+ALLOWED_FILE_EXTENSIONS=pdf
+SCAN_UPLOADED_FILES=true
+QUARANTINE_SUSPICIOUS_FILES=true
+
+# ================================================================================
+# 📡 ИНТЕГРАЦИИ И УВЕДОМЛЕНИЯ
+# ================================================================================
+
+# Webhook URLs (опционально)
+SUCCESS_WEBHOOK_URL=
+ERROR_WEBHOOK_URL=
+MONITORING_WEBHOOK_URL=
+
+# Slack интеграция (опционально)
+SLACK_WEBHOOK_URL=
+SLACK_CHANNEL=#pdf-converter-alerts
+
+# Email уведомления (опционально)
+SMTP_SERVER=
+SMTP_PORT=587
+SMTP_USERNAME=
+SMTP_PASSWORD=
+NOTIFICATION_EMAIL=
+
+# ================================================================================
+# 🔧 ОТЛАДКА И РАЗРАБОТКА
+# ================================================================================
+
+# Режим отладки
+DEBUG_MODE=false
+VERBOSE_LOGGING=false
+ENABLE_PROFILING=false
+
+# Тестирование
+ENABLE_MOCK_SERVICES=false
+SIMULATE_PROCESSING_DELAY=false
+TEST_MODE=false
+
+# Разработческие настройки
+AUTO_RELOAD_ON_CHANGE=false
+ENABLE_DEVELOPMENT_ENDPOINTS=false
+BYPASS_AUTHENTICATION=false

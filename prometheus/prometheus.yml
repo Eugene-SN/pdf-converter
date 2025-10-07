@@ -1,0 +1,122 @@
+# Prometheus Configuration for PDF Converter Pipeline v4.0
+# Исправленная конфигурация для стандартного Prometheus
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'pdf-converter-a3b'
+    environment: 'production'
+
+# Правила и алерты
+rule_files:
+  - "alert_rules_a3b.yml"
+  - "recording_rules.yml"
+
+# Конфигурация скрапинга
+scrape_configs:
+  # PDF Converter Core Services
+  - job_name: 'pdf-converter-services'
+    static_configs:
+      - targets:
+          - 'document-processor:9001'
+          - 'quality-assurance:9002'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    honor_labels: true
+    params:
+      format: ['prometheus']
+
+  # vLLM A3B Server Metrics
+  - job_name: 'vllm-a3b-server'
+    static_configs:
+      - targets: ['vllm-server:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    honor_labels: true
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'vllm_.*'
+        target_label: 'model_architecture'
+        replacement: 'a3b'
+      - source_labels: [__name__]
+        regex: 'vllm_.*'
+        target_label: 'model_name'
+        replacement: 'qwen3-30b-a3b-instruct'
+
+  # Airflow Metrics
+  - job_name: 'airflow'
+    static_configs:
+      - targets: ['airflow-webserver:8080']
+    metrics_path: '/admin/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # System Metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+
+  # PostgreSQL Metrics
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    honor_labels: true
+
+  # Redis Metrics
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+
+  # Docker Container Metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s
+
+  # NVIDIA GPU Metrics
+  - job_name: 'nvidia-gpu'
+    static_configs:
+      - targets: ['localhost:9445']
+    scrape_interval: 10s
+    honor_labels: true
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'nvidia_.*'
+        target_label: 'gpu_type'
+        replacement: 'a6000'
+
+  # Custom Application Metrics
+  - job_name: 'pdf-converter-custom'
+    static_configs:
+      - targets:
+          - 'document-processor:9001'
+          - 'quality-assurance:9002'
+    metrics_path: '/metrics'
+    scrape_interval: 20s
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'pdf_converter_(.+)'
+        target_label: '__name__'
+        replacement: 'pdfconv_${1}'
+
+# Настройка алертинга
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+      timeout: 10s
+      api_version: v2
+
+# Remote write configuration (опционально)
+remote_write:
+  - url: "http://prometheus-remote-storage:9201/write"
+    queue_config:
+      max_samples_per_send: 1000
+      max_shards: 200
+      capacity: 2500

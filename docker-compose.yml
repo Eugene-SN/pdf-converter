@@ -1,0 +1,659 @@
+# ==== Общие настройки для всех сервисов Airflow ====
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: ./airflow/dockerfile.airflow
+  environment: &airflow-common-env
+
+    # UID/GID из .env
+    AIRFLOW_UID: ${AIRFLOW_UID}
+    AIRFLOW_GID: ${AIRFLOW_GID}
+    
+    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL}
+
+    # CeleryExecutor
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    
+    # База данных PostgreSQL
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    
+    # Celery с Redis
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+    
+    # Ключи
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+    
+    # Основные параметры
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API__AUTH_BACKENDS: ${AIRFLOW__API__AUTH_BACKENDS}
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+
+    # Параметры параллелизма
+    AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: ${AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG}
+    AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: ${AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG}
+    AIRFLOW__CORE__PARALLELISM: ${AIRFLOW__CORE__PARALLELISM}
+    AIRFLOW__CELERY__WORKER_CONCURRENCY: ${AIRFLOW__CELERY__WORKER_CONCURRENCY}
+
+    # Переменные для интеграции Dynamic vLLM
+    VLLM_SERVER_URL: ${VLLM_SERVER_URL}
+    VLLM_MODEL_NAME: ${VLLM_MODEL_NAME}
+    VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
+    DYNAMIC_MODEL_LOADING: "true"
+
+    # Доп. Python-зависимости
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}
+
+    # PDF дефолт
+    DEFAULT_EXTRACT_TABLES: ${DEFAULT_EXTRACT_TABLES}
+    DEFAULT_EXTRACT_IMAGES: ${DEFAULT_EXTRACT_IMAGES}
+    DEFAULT_USE_OCR: ${DEFAULT_USE_OCR}
+    DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+    DEFAULT_MODEL_SIZE: ${DEFAULT_MODEL_SIZE}
+
+    # Выходные файлы
+    CREATE_SEPARATE_FOLDERS: ${CREATE_SEPARATE_FOLDERS}
+    EMBED_IMAGES_IN_MD: ${EMBED_IMAGES_IN_MD}
+
+    # Папки
+    UPLOAD_FOLDER: ${UPLOAD_FOLDER}
+    OUTPUT_FOLDER_ZH: ${OUTPUT_FOLDER_ZH}
+    OUTPUT_FOLDER_RU: ${OUTPUT_FOLDER_RU}
+    OUTPUT_FOLDER_EN: ${OUTPUT_FOLDER_EN}
+    TEMP_FOLDER: ${TEMP_FOLDER}
+    AIRFLOW_TEMP_DIR: "/opt/airflow/temp"
+
+    # Логирование
+    AIRFLOW__LOGGING__LOGGING_LEVEL: ${AIRFLOW__LOGGING__LOGGING_LEVEL}
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: ${AIRFLOW__WEBSERVER__EXPOSE_CONFIG}
+
+    # Статистика и метрики
+    AIRFLOW__METRICS__STATSD_ON: ${AIRFLOW__METRICS__STATSD_ON}
+    AIRFLOW__METRICS__STATSD_HOST: ${AIRFLOW__METRICS__STATSD_HOST}
+    AIRFLOW__METRICS__STATSD_PORT: ${AIRFLOW__METRICS__STATSD_PORT}
+    AIRFLOW__METRICS__STATSD_PREFIX: ${AIRFLOW__METRICS__STATSD_PREFIX}
+    AIRFLOW__METRICS__STATSD_DATADOG_ENABLED: 'false'
+    AIRFLOW__METRICS__STATSD_DATADOG_TAGS: 'false'
+    AIRFLOW__METRICS__STATSD_CUSTOM_CLIENT_PATH: ''
+    AIRFLOW__METRICS__STATSD_INFLUXDB_ENABLED: 'false'
+    AIRFLOW__METRICS__METRICS_ALLOW_LIST: ${AIRFLOW__METRICS__METRICS_ALLOW_LIST}
+    AIRFLOW__METRICS__METRICS_BLOCK_LIST: ${AIRFLOW__METRICS__METRICS_BLOCK_LIST}
+    AIRFLOW__CORE__METRICS_USE_PATTERN_MATCH: ${AIRFLOW__CORE__METRICS_USE_PATTERN_MATCH}
+    AIRFLOW__METRICS__STATSD_CACHE_SIZE: '100'
+
+    # Пулы соединений и производительность
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE: ${AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE}
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_RECYCLE: ${AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_RECYCLE}
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_PRE_PING: ${AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_PRE_PING}
+    AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT: ${AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT}
+    AIRFLOW__CELERY__OPERATION_TIMEOUT: ${AIRFLOW__CELERY__OPERATION_TIMEOUT}
+    AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: ${AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT}
+    AIRFLOW__CELERY__BROKER_CONNECTION_RETRY_ON_STARTUP: ${AIRFLOW__CELERY__BROKER_CONNECTION_RETRY_ON_STARTUP}
+
+    # Пути к моделям
+    HF_HOME: ${HF_HOME}
+
+  user: '${AIRFLOW_UID}:${AIRFLOW_GID}'
+  volumes:
+    # Стандартные Airflow директории
+    - ${PROJ_DIR}/airflow/dags:/opt/airflow/dags:ro
+    - ${PROJ_DIR}/logs:/opt/airflow/logs
+    - ${PROJ_DIR}/airflow/config:/opt/airflow/config
+    - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+    
+
+
+  depends_on:
+    redis:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
+  restart: unless-stopped
+  networks:
+    - ai-net
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+      POSTGRES_SHARED_BUFFERS: ${POSTGRES_SHARED_BUFFERS}
+      POSTGRES_EFFECTIVE_CACHE_SIZE: ${POSTGRES_EFFECTIVE_CACHE_SIZE}
+      POSTGRES_MAINTENANCE_WORK_MEM: ${POSTGRES_MAINTENANCE_WORK_MEM}
+      POSTGRES_CHECKPOINT_COMPLETION_TARGET: ${POSTGRES_CHECKPOINT_COMPLETION_TARGET}
+      POSTGRES_WAL_BUFFERS: ${POSTGRES_WAL_BUFFERS}
+      POSTGRES_DEFAULT_STATISTICS_TARGET: ${POSTGRES_DEFAULT_STATISTICS_TARGET}
+      POSTGRES_RANDOM_PAGE_COST: ${POSTGRES_RANDOM_PAGE_COST}
+      POSTGRES_EFFECTIVE_IO_CONCURRENCY: ${POSTGRES_EFFECTIVE_IO_CONCURRENCY}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Не открываем порт наружу для безопасности
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ai-net
+
+  # Redis брокер Celery
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: >
+      redis-server
+      --maxmemory ${REDIS_MAXMEMORY}
+      --maxmemory-policy ${REDIS_MAXMEMORY_POLICY}
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ai-net
+
+  # Dynamic vLLM Server - ИСПРАВЛЕНО
+  vllm-server:
+    build:
+      context: ./vllm
+      dockerfile: dockerfile.vllm
+    entrypoint: ["python3", "/workspace/dynamic_server.py"]
+    command: []
+    container_name: vllm
+    environment:
+      # ИСПРАВЛЕННЫЕ модели
+      VLLM_CONTENT_MODEL: ${VLLM_CONTENT_MODEL}
+      VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
+    
+      # ИСПРАВЛЕННЫЕ настройки GPU
+      VLLM_TENSOR_PARALLEL_SIZE: ${VLLM_TENSOR_PARALLEL_SIZE}
+      VLLM_PIPELINE_PARALLEL_SIZE: ${VLLM_PIPELINE_PARALLEL_SIZE}
+      VLLM_GPU_MEMORY_UTILIZATION: ${VLLM_GPU_MEMORY_UTILIZATION}
+      VLLM_MAX_MODEL_LEN: ${VLLM_MAX_MODEL_LEN}
+    
+      # Dynamic config
+      DYNAMIC_MODEL_LOADING: "true"
+      MODEL_SWAP_TIMEOUT: "300"
+      AUTO_MODEL_SELECTION: "true"
+    
+      # Paths
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      VLLM_API_KEY: ${VLLM_API_KEY}
+      HF_HOME: ${HF_HOME}
+      TRANSFORMERS_CACHE: ${TRANSFORMERS_CACHE}
+      HF_HUB_CACHE: ${HF_HUB_CACHE}
+      HF_MODULES_CACHE: ${HF_MODULES_CACHE}
+    
+      # CUDA оптимизация
+      CUDA_VISIBLE_DEVICES: "0,1"
+      NCCL_DEBUG: "WARN"
+      NCCL_P2P_DISABLE: "1"
+    
+    ports:
+      - "8000:8000"
+      - "8004:8001"  # Метрики
+    volumes:
+      - ${HF_HOME}:${HF_HOME}
+      # Монтируем наши файлы
+      - ${VLLM_CACHE}:/home/vllm/.cache
+      - ./vllm/model_manager.py:/workspace/model_manager.py:ro
+      - ./vllm/dynamic_server.py:/workspace/dynamic_server.py:ro
+    shm_size: 64g
+    networks:
+      - ai-net
+    deploy:
+      resources:
+        limits:
+          memory: 64G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 2
+              capabilities: [gpu]
+          memory: 32G
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 600s  # Увеличено для загрузки больших моделей
+
+  # Document Processor (Docling)
+  document-processor:
+    build:
+      context: ./document_processor
+      dockerfile: dockerfile.docprocessor
+    container_name: document-processor
+    environment:
+      # Service configuration
+      SERVICE_HOST: "0.0.0.0"
+      SERVICE_PORT: "8001"
+
+      # Models path
+      PADDLEX_HOME: ${PADDLEX_HOME}
+      DOCLING_MODEL_PATH: ${DOCLING_MODEL_PATH}
+      HF_HOME: ${HF_HOME}
+      TRANSFORMERS_CACHE: ${TRANSFORMERS_CACHE}
+      HUGGINGFACE_HUB_CACHE: ${HF_CACHE_HOME}
+      XDG_CACHE_HOME: ${DOCLING_HOME}      
+      
+      # Processing settings
+      MAX_FILE_SIZE_MB: ${MAX_FILE_SIZE_MB}
+      PROCESSING_TIMEOUT: ${PROCESSING_TIMEOUT_MINUTES}
+      
+      # OCR and extraction
+      OCR_ENABLED: "true"
+      EXTRACT_TABLES: "true"
+      EXTRACT_IMAGES: "true"
+      PRESERVE_LAYOUT: "true"
+      PADDLEOCR_USE_GPU: ${PADDLEOCR_USE_GPU}
+      PADDLEOCR_LANG: ${PADDLEOCR_LANG}
+      PADDLEOCR_HOME: ${PADDLEOCR_HOME}
+      PADDLEOCR_USE_TEXTLINE_ORIENTATION: ${PADDLEOCR_USE_TEXTLINE_ORIENTATION}
+      TESSERACT_CONFIG: ${TESSERACT_CONFIG}
+      
+      # System settings
+      MPLCONFIGDIR: ${TEMP_DIR}
+      TMPDIR: ${TEMP_DIR}
+      TEMP: ${TEMP_DIR}
+      TMP: ${TEMP_DIR}
+      PADDLE_PDX_MODEL_SOURCE: "BOS"
+      FLAGS_log_level: "3"
+
+      # Paths
+      INPUT_DIR: ${INPUT_DIR}
+      OUTPUT_DIR: ${OUTPUT_DIR}
+      TEMP_DIR: ${TEMP_DIR}
+      
+      # Monitoring
+      PROMETHEUS_ENABLED: "true"
+      METRICS_PORT: "9001"
+
+    ports:
+      - "8001:8001"
+      - "9001:9001"
+
+    volumes:
+      - ${PROJ_DIR}/input:${INPUT_DIR}:ro
+      - ${PROJ_DIR}/temp:${OUTPUT_DIR}
+      - ${PROJ_DIR}/temp:${TEMP_DIR}
+      - ${PADDLEX_HOME}:/home/docprocessor/.paddlex
+      - ${DOCLING_HOME}:${DOCLING_HOME}
+      - ${HF_HOME}:${HF_HOME}:ro
+      - ${PADDLEOCR_HOME}:${PADDLEOCR_HOME}
+
+    networks:
+      - ai-net
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 300s
+
+  # Quality Assurance Service
+  quality-assurance:
+    build:
+      context: ./quality_assurance
+      dockerfile: dockerfile.qa
+    container_name: quality-assurance
+    environment:
+      # Service configuration
+      SERVICE_HOST: "0.0.0.0"
+      SERVICE_PORT: "8002"
+      
+      # QA settings
+      QA_ENABLED: ${QA_ENABLED}
+      QA_THRESHOLD: ${QA_THRESHOLD}
+      AUTO_CORRECTION_ENABLED: ${AUTO_CORRECTION_ENABLED}
+      MAX_CORRECTIONS: ${MAX_CORRECTIONS_PER_DOCUMENT}
+      SSIM_THRESHOLD: ${SSIM_THRESHOLD}
+      VISUAL_DIFF_TOLERANCE: ${VISUAL_DIFF_TOLERANCE}
+      AST_COMPARISON_ENABLED: ${AST_COMPARISON_ENABLED}
+      OCR_CROSS_VALIDATION: ${OCR_CROSS_VALIDATION}
+      
+      # Service integration
+      VLLM_SERVER_URL: ${VLLM_SERVER_URL}
+      DOCUMENT_PROCESSOR_URL: ${DOCUMENT_PROCESSOR_URL}
+      DYNAMIC_MODEL_AWARE: "true"
+      
+      # Paths
+      INPUT_DIR: ${INPUT_DIR}
+      OUTPUT_DIR: ${OUTPUT_DIR}
+      TEMP_DIR: ${TEMP_DIR}
+      HF_HOME: ${HF_HOME}
+      
+      # Monitoring
+      PROMETHEUS_ENABLED: "true"
+      METRICS_PORT: "9002"
+    ports:
+      - "8002:8002"
+      - "9002:9002"
+    volumes:
+      - ${PROJ_DIR}/input:${INPUT_DIR}:ro
+      - ${PROJ_DIR}/output:${OUTPUT_DIR}
+      - ${PROJ_DIR}/temp:${TEMP_DIR}
+      - ${HF_HOME}:/models/huggingface:ro
+    networks:
+      - ai-net
+    depends_on:
+      vllm-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 3G
+
+  # Translator Service
+  translator:
+    build:
+      context: ./translator
+      dockerfile: dockerfile.translator
+    container_name: translator
+    environment:
+      SERVICE_HOST: "0.0.0.0"
+      SERVICE_PORT: "8003"
+      
+      # vLLM интеграция
+      VLLM_SERVER_URL: ${VLLM_SERVER_URL}
+      VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
+      DYNAMIC_MODEL_AWARE: "true"
+      
+      # Translation settings
+      PRESERVE_TECHNICAL_TERMS: "true"
+      TRANSLATION_TIMEOUT: ${VLLM_STANDARD_TIMEOUT}
+      DISABLE_THINKING: "true"
+      
+      # Paths
+      INPUT_DIR: ${INPUT_DIR}
+      OUTPUT_DIR: ${OUTPUT_DIR}
+      TEMP_DIR: ${TEMP_DIR}
+    ports:
+      - "8003:8003"
+    volumes:
+      - ${PROJ_DIR}/input:/app/input:ro
+      - ${PROJ_DIR}/output/zh:/app/output/zh
+      - ${PROJ_DIR}/output/ru:/app/output/ru
+      - ${PROJ_DIR}/output/en:/app/output/en
+      - ${PROJ_DIR}/logs:/app/logs
+    networks:
+      - ai-net
+    depends_on:
+      vllm-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8003/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Инициализация Airflow (миграции, создание пользователя)
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -p /opt/airflow/{logs,config,plugins}
+        exec /entrypoint airflow version
+        airflow db init
+        airflow users create \
+          --username "${_AIRFLOW_WWW_USER_USERNAME}" \
+          --password "${_AIRFLOW_WWW_USER_PASSWORD}" \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+    volumes:
+      - ${PROJ_DIR}/airflow/dags:/opt/airflow/dags:ro
+      - ${PROJ_DIR}/logs:/opt/airflow/logs
+      - ${PROJ_DIR}/airflow/config:/opt/airflow/config
+      - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME}
+      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD}
+      _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}
+    restart: "no"
+    networks:
+      - ai-net
+
+  # Веб-сервер Airflow
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    command: webserver
+    volumes:
+      - ${PROJ_DIR}/airflow/dags:/opt/airflow/dags:ro
+      - ${PROJ_DIR}/logs:/opt/airflow/logs
+      - ${PROJ_DIR}/airflow/config:/opt/airflow/config
+      - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+      - ${PROJ_DIR}/input:/app/input:ro
+      - ${PROJ_DIR}/temp:/opt/airflow/temp
+      - ${PROJ_DIR}/output/zh:/app/output/zh   
+    ports:
+      - '8090:8080'  # Внешний порт 8090 для избежания конфликта с OpenWebUI
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - ai-net
+
+  # Планировщик Airflow
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    volumes:
+      - ${PROJ_DIR}/airflow/dags:/opt/airflow/dags:ro
+      - ${PROJ_DIR}/logs:/opt/airflow/logs
+      - ${PROJ_DIR}/airflow/config:/opt/airflow/config
+      - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+      - ${PROJ_DIR}/temp:/opt/airflow/temp
+      - ${PROJ_DIR}/output/zh:/app/output/zh   
+      - ${PROJ_DIR}/input:/app/input:ro
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "airflow scheduler"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ai-net
+
+  # Воркеры Airflow (CeleryExecutor)
+  airflow-worker:
+    <<: *airflow-common
+    container_name: airflow-worker
+    command: celery worker
+    volumes:
+      - ${PROJ_DIR}/airflow/dags:/opt/airflow/dags:ro
+      - ${PROJ_DIR}/logs:/opt/airflow/logs
+      - ${PROJ_DIR}/airflow/config:/opt/airflow/config
+      - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+      - ${PROJ_DIR}/temp:/opt/airflow/temp
+      - ${PROJ_DIR}/output/zh:/app/output/zh
+      - ${PROJ_DIR}/input:/app/input:ro
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A airflow.providers.celery.executors.celery_executor.app inspect ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ai-net
+
+  # Flask API для приёма PDF и отправки в Airflow
+  flask-api:
+    build:
+      context: ./flask
+      dockerfile: dockerfile.flask
+    container_name: flask-api
+    ports:
+      - '5000:5000'
+    environment:
+      AIRFLOW_BASE_URL: ${AIRFLOW_BASE_URL}
+      AIRFLOW_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME}
+      AIRFLOW_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD}
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_DEBUG: ${FLASK_DEBUG}
+      MAX_CONTENT_LENGTH: ${MAX_CONTENT_LENGTH}
+      UPLOAD_FOLDER: ${UPLOAD_FOLDER}
+      OUTPUT_FOLDER_ZH: ${OUTPUT_FOLDER_ZH}
+      OUTPUT_FOLDER_RU: ${OUTPUT_FOLDER_RU}
+      OUTPUT_FOLDER_EN: ${OUTPUT_FOLDER_EN}
+      TEMP_FOLDER: ${TEMP_FOLDER}
+      DEFAULT_EXTRACT_TABLES: ${DEFAULT_EXTRACT_TABLES}
+      DEFAULT_EXTRACT_IMAGES: ${DEFAULT_EXTRACT_IMAGES}
+      DEFAULT_USE_OCR: ${DEFAULT_USE_OCR}
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      DEFAULT_MODEL_SIZE: ${DEFAULT_MODEL_SIZE}
+      CREATE_SEPARATE_FOLDERS: ${CREATE_SEPARATE_FOLDERS}
+      EMBED_IMAGES_IN_MD: ${EMBED_IMAGES_IN_MD}
+
+      VLLM_SERVER_URL: ${VLLM_SERVER_URL}
+
+      DYNAMIC_MODEL_LOADING: "true"
+    volumes:
+      - ${PROJ_DIR}/input:/app/input
+      - ${PROJ_DIR}/output/zh:/app/output/zh
+      - ${PROJ_DIR}/output/ru:/app/output/ru
+      - ${PROJ_DIR}/output/en:/app/output/en
+      - ${PROJ_DIR}/temp:/app/temp
+      - ${PROJ_DIR}/logs:/app/logs
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+    networks:
+      - ai-net
+
+  # Pandoc для рендеринга Markdown→PDF
+  pandoc-render:
+    build:
+      context: ./pandoc
+      dockerfile: dockerfile.pandoc
+    container_name: pandoc-render
+    volumes:
+      - ${PROJ_DIR}/temp:/workspace
+      - ${PROJ_DIR}/output/zh:/workspace/input_zh
+      - ${PROJ_DIR}/output/ru:/workspace/input_ru
+      - ${PROJ_DIR}/output/en:/workspace/input_en
+    restart: unless-stopped
+    networks:
+      - ai-net
+
+  # StatsD Exporter
+  statsd-exporter:
+    image: prom/statsd-exporter:latest
+    container_name: statsd-exporter
+    ports:
+      - '9102:9102'
+      - '9125:9125/udp'
+    volumes:
+      - ./prometheus/statsd-mapping.yml:/tmp/statsd-mapping.yml:ro
+    command:
+      - '--statsd.mapping-config=/tmp/statsd-mapping.yml'
+      - '--statsd.listen-udp=:9125'
+    restart: unless-stopped
+    networks:
+      - ai-net
+
+  # Prometheus для сбора метрик
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.listen-address=0.0.0.0:9090'
+    depends_on:
+      statsd-exporter:
+        condition: service_started
+      vllm-server:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ai-net
+
+  # Grafana для визуализации метрик
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_SERVER_DOMAIN: localhost:3000
+      GF_SERVER_ROOT_URL: http://localhost:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/provisioning/plugins:/etc/grafana/provisioning/plugins:ro
+      - ./grafana/provisioning/alerting:/etc/grafana/provisioning/alerting:ro    
+    depends_on:
+      prometheus:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ai-net
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  ai-net:
+    external: true

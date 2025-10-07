@@ -1,0 +1,31 @@
+# Flask и веб-зависимости
+Flask>=3.0.3
+Werkzeug>=3.0.3
+Jinja2>=3.1.4
+
+# HTTP клиенты для взаимодействия с сервисами
+requests>=2.31.0
+httpx>=0.25.2
+
+# Валидация и обработка данных  
+marshmallow==3.20.1
+python-multipart>=0.0.6
+
+# Мониторинг и логирование
+prometheus-flask-exporter>=0.23.0
+
+# Конфигурация
+python-dotenv>=1.0.0
+
+# WSGI сервер для продакшена
+gunicorn==22.0.0
+gevent>=24.10.3
+greenlet>=3.0.3
+
+# Сборка
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# Другие
+itsdangerous>=2.1.2
+click>=8.1.7

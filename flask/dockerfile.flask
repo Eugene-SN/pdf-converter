@@ -1,0 +1,54 @@
+FROM python:3.11-slim-bookworm
+
+# Установка системных зависимостей
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        gcc \
+        g++ \
+        libffi-dev \
+        libssl-dev \
+        build-essential \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создание рабочего пользователя
+RUN groupadd -r flask && useradd -r -g flask flask
+
+# Создание рабочей директории
+WORKDIR /app
+
+# Копирование файла зависимостей
+COPY requirements-flask.txt /app/requirements-flask.txt
+
+# Установка Python зависимостей
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements-flask.txt
+
+# Создание необходимых директорий
+RUN mkdir -p /app/input_pdf /app/output_md_zh /app/output_md_ru /app/output_md_en /app/temp /app/logs \
+    && chown -R flask:flask /app \
+    && chmod -R 755 /app
+
+# Копирование исходного кода приложения
+COPY --chown=flask:flask app.py /app/app.py
+
+# Переключение на пользователя flask
+USER flask
+
+# Установка переменных окружения
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+ENV PYTHONPATH="/app"
+ENV PYTHONUNBUFFERED=1
+
+# Открытие порта
+EXPOSE 5000
+
+# Проверка здоровья
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl --fail http://localhost:5000/health || exit 1
+
+# Команда запуска
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--threads", "2", "--timeout", "120", "--keep-alive", "2", "--max-requests", "1000", "--max-requests-jitter", "100", "app:app"]

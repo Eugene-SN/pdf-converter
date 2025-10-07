@@ -1,0 +1,53 @@
+# Dockerfile для vLLM Translator Service v2.0
+FROM python:3.11-slim
+
+# Системная информация
+LABEL maintainer="PDF Converter Pipeline v2.0"
+LABEL version="2.0.0"
+LABEL description="vLLM Translator Service - Высококачественный перевод технической документации"
+
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создание пользователя и директорий
+RUN groupadd -r translator && useradd -r -g translator translator
+
+# Рабочая директория
+WORKDIR /app
+
+# Копирование requirements
+COPY requirements-translator.txt .
+
+# Установка Python зависимостей
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-translator.txt
+
+# Копирование исходного кода
+COPY translator.py .
+COPY config.py .
+
+# Создание необходимых директорий
+RUN mkdir -p /app/temp /app/logs /app/cache && \
+    chown -R translator:translator /app
+
+# Переключение на непривилегированного пользователя
+USER translator
+
+# Переменные окружения
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Экспонирование порта
+EXPOSE 8003
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8003/health || exit 1
+
+# Запуск сервиса
+CMD ["python", "translator.py"]
