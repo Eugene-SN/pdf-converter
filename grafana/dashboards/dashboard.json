@@ -1,0 +1,240 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "PDF Converter Pipeline Dashboard",
+    "tags": ["pdf-converter", "modular-architecture"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Pipeline Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(pdf_pipeline_completed_total{status=\"success\"}[5m]) / rate(pdf_pipeline_completed_total[5m]) * 100",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 85},
+                {"color": "green", "value": 95}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background"
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Processing Time by DAG",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(pdf_dag_duration_seconds_bucket[5m])) by (le, dag_name))",
+            "refId": "A",
+            "legendFormat": "{{dag_name}} - 95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(pdf_dag_duration_seconds_bucket[5m])) by (le, dag_name))",
+            "refId": "B",
+            "legendFormat": "{{dag_name}} - 50th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Active Tasks by DAG",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "pdf_active_tasks_total",
+            "refId": "A",
+            "legendFormat": "{{dag_name}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Quality Assurance Scores",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "pdf_quality_score",
+            "refId": "A",
+            "legendFormat": "{{validation_level}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Files Processed per Hour",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(pdf_files_processed_total[1h])) * 3600",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8}
+      },
+      {
+        "id": 6,
+        "title": "Error Rate by Stage",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(pdf_pipeline_errors_total[5m])",
+            "refId": "A",
+            "legendFormat": "{{stage}} - {{error_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8}
+      },
+      {
+        "id": 7,
+        "title": "vLLM Model Performance",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(vllm_requests_total[5m])",
+            "refId": "A",
+            "legendFormat": "Requests/sec"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(vllm_request_duration_seconds_bucket[5m]))",
+            "refId": "B", 
+            "legendFormat": "95th percentile latency"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 8,
+        "title": "Document Processor Metrics",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(docprocessor_ocr_requests_total[5m])",
+            "refId": "A",
+            "legendFormat": "OCR Requests/sec"
+          },
+          {
+            "expr": "rate(docprocessor_docling_requests_total[5m])",
+            "refId": "B",
+            "legendFormat": "Docling Requests/sec"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 9,
+        "title": "System Resources",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{name=~\"pdf-converter.*\"}[5m]) * 100",
+            "refId": "A",
+            "legendFormat": "{{name}} CPU %"
+          },
+          {
+            "expr": "container_memory_usage_bytes{name=~\"pdf-converter.*\"} / container_spec_memory_limit_bytes * 100",
+            "refId": "B",
+            "legendFormat": "{{name}} Memory %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      },
+      {
+        "id": 10,
+        "title": "Language Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum by (target_language) (pdf_files_processed_total)",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "pieType": "donut"
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 32}
+      },
+      {
+        "id": 11,
+        "title": "Quality Score Distribution",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "pdf_quality_score_histogram",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 32}
+      },
+      {
+        "id": 12,
+        "title": "Recent Processing Logs",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{job=\"pdf-converter\"} |= \"processing\" | json",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "sortOrder": "Descending"
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 32}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s",
+    "schemaVersion": 30,
+    "version": 1
+  }
+}
