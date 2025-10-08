@@ -528,8 +528,13 @@ async def process_document_endpoint(
                 enhanced_tables = await table_extractor.extract_tables_from_pdf(
                     pdf_path, str(work_dir)
                 )
-                # Объединяем с результатами Docling
-                document_structure.tables.extend(enhanced_tables)
+                if enhanced_tables:
+                    normalized_tables = [
+                        normalize_table_like(table, fallback_id=len(document_structure.tables) + idx)
+                        for idx, table in enumerate(enhanced_tables)
+                    ]
+                    document_structure.tables.extend(normalized_tables)
+                    document_structure.metadata["tables_count"] = len(document_structure.tables)
                 logger.info(f"✅ Enhanced table extraction: +{len(enhanced_tables)} tables")
             except Exception as table_error:
                 logger.warning(f"Enhanced table extraction failed: {table_error}")

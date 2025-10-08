@@ -46,7 +46,10 @@ except ImportError:
 from pydantic import BaseModel, Field
 import structlog
 
-from table_extractor import ExtractedTable
+try:
+    from .table_extractor import ExtractedTable
+except ImportError:  # Fallback when running as a top-level script
+    from table_extractor import ExtractedTable
 
 # Настройка логирования
 logger = structlog.get_logger("docling_processor")
