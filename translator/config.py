@@ -19,6 +19,30 @@ import os
 import re
 from typing import Dict, List, Tuple
 
+
+TABLE_ROW_PATTERN = re.compile(r'^\s*\|.*\|\s*$')
+TABLE_SEPARATOR_PATTERN = re.compile(r'^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$')
+
+
+def count_markdown_table_rows(text: str) -> int:
+    if not text:
+        return 0
+    rows = 0
+    for line in text.splitlines():
+        if not TABLE_ROW_PATTERN.match(line or ''):
+            continue
+        if TABLE_SEPARATOR_PATTERN.match(line or ''):
+            continue
+        if (line or '').count('|') < 2:
+            continue
+        cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
+        if len(cells) < 1:
+            continue
+        if all(not cell for cell in cells):
+            continue
+        rows += 1
+    return rows
+
 # ==============================================
 # 🔧 ОСНОВНЫЕ НАСТРОЙКИ API v2.0 (ИСПРАВЛЕНО)
 # ==============================================
@@ -237,8 +261,8 @@ def validate_technical_translation(original: str, translated: str, target_lang: 
             issues.append("Неправильный перевод бренда 问天")
 
     # 4. Таблицы
-    orig_table_rows = len(re.findall(r'^\|.*\|$', original, re.MULTILINE))
-    trans_table_rows = len(re.findall(r'^\|.*\|$', translated, re.MULTILINE))
+    orig_table_rows = count_markdown_table_rows(original)
+    trans_table_rows = count_markdown_table_rows(translated)
     if orig_table_rows > 0:
         table_preservation = trans_table_rows / orig_table_rows
         if table_preservation < 0.9:
