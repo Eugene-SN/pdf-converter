@@ -1,0 +1,17 @@
+[2025-10-08T13:36:35.009+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.trigger_stage2_transformation manual__2025-10-08T13:35:28.626902+00:00 [queued]>
+[2025-10-08T13:36:35.014+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.trigger_stage2_transformation manual__2025-10-08T13:35:28.626902+00:00 [queued]>
+[2025-10-08T13:36:35.014+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-08T13:36:35.022+0000] {taskinstance.py:2191} INFO - Executing <Task(TriggerDagRunOperator): trigger_stage2_transformation> on 2025-10-08 13:35:28.626902+00:00
+[2025-10-08T13:36:35.026+0000] {standard_task_runner.py:60} INFO - Started process 418 to run task
+[2025-10-08T13:36:35.029+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'trigger_stage2_transformation', 'manual__2025-10-08T13:35:28.626902+00:00', '--job-id', '1011', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmp0kqsrdsd']
+[2025-10-08T13:36:35.030+0000] {standard_task_runner.py:88} INFO - Job 1011: Subtask trigger_stage2_transformation
+[2025-10-08T13:36:35.074+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.trigger_stage2_transformation manual__2025-10-08T13:35:28.626902+00:00 [running]> on host 45f6d07b53bc
+[2025-10-08T13:36:35.158+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='trigger_stage2_transformation' AIRFLOW_CTX_EXECUTION_DATE='2025-10-08T13:35:28.626902+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-08T13:35:28.626902+00:00'
+[2025-10-08T13:36:35.225+0000] {trigger_dagrun.py:210} INFO - Waiting for content_transformation on 2025-10-08 13:36:35.159075+00:00 to become allowed state ['success'] ...
+[2025-10-08T13:37:05.234+0000] {trigger_dagrun.py:210} INFO - Waiting for content_transformation on 2025-10-08 13:36:35.159075+00:00 to become allowed state ['success'] ...
+[2025-10-08T13:37:35.241+0000] {trigger_dagrun.py:210} INFO - Waiting for content_transformation on 2025-10-08 13:36:35.159075+00:00 to become allowed state ['success'] ...
+[2025-10-08T13:38:05.250+0000] {trigger_dagrun.py:210} INFO - Waiting for content_transformation on 2025-10-08 13:36:35.159075+00:00 to become allowed state ['success'] ...
+[2025-10-08T13:38:35.259+0000] {trigger_dagrun.py:223} INFO - content_transformation finished with allowed state success
+[2025-10-08T13:38:35.268+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=trigger_stage2_transformation, execution_date=20251008T133528, start_date=20251008T133635, end_date=20251008T133835
+[2025-10-08T13:38:35.317+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-08T13:38:35.341+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check
