@@ -131,6 +131,44 @@ class TableExtractor:
         # Настраиваем Java для Tabula
         os.environ["JAVA_OPTS"] = self.config.java_options
 
+    def _sanitize_scalar(self, value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, (float, np.floating)):
+            if not np.isfinite(value):
+                return ""
+            return str(value)
+        if isinstance(value, (int, np.integer)):
+            return str(value)
+        text = str(value)
+        lowered = text.lower()
+        if lowered in {"nan", "inf", "-inf"}:
+            return ""
+        return text
+
+    def _prepare_table_payload(
+        self,
+        df: pd.DataFrame,
+        header_from: str = "columns"
+    ) -> Tuple[List[str], List[List[str]]]:
+        sanitized_df = (
+            df.replace([np.inf, -np.inf], np.nan)
+              .fillna("")
+              .astype(str)
+        )
+        rows: List[List[str]] = [
+            [self._sanitize_scalar(cell) for cell in row]
+            for row in sanitized_df.values.tolist()
+        ]
+
+        if header_from == "first_row":
+            headers = rows[0] if rows else []
+        else:
+            headers = [self._sanitize_scalar(col) for col in df.columns.tolist()]
+
+        return headers, rows
+
+
     async def extract_tables_from_pdf(
         self,
         pdf_path: str,
@@ -260,6 +298,7 @@ class TableExtractor:
 
                 for i, df in enumerate(lattice_dfs):
                     if not df.empty and self._validate_dataframe(df):
+                        headers, rows_data = self._prepare_table_payload(df)
                         table = ExtractedTable(
                             id=0,  # Будет установлен позже
                             page=page_num,
@@ -268,8 +307,8 @@ class TableExtractor:
                             rows=len(df),
                             columns=len(df.columns),
                             bbox=None,
-                            data=df.values.tolist(),
-                            headers=df.columns.tolist() if df.columns.notna().any() else [],
+                            data=rows_data,
+                            headers=headers,
                             quality_score=self._calculate_table_quality(df)
                         )
                         tables.append(table)
@@ -326,6 +365,7 @@ class TableExtractor:
                 for camelot_table in lattice_tables:
                     df = camelot_table.df
                     if not df.empty and self._validate_dataframe(df):
+                        headers, rows_data = self._prepare_table_payload(df, header_from="first_row")
                         # Получаем bbox если доступен
                         bbox = None
                         if hasattr(camelot_table, '_bbox'):
@@ -339,8 +379,8 @@ class TableExtractor:
                             rows=len(df),
                             columns=len(df.columns),
                             bbox=bbox,
-                            data=df.values.tolist(),
-                            headers=df.iloc[0].tolist() if len(df) > 0 else [],
+                            data=rows_data,
+                            headers=headers,
                             quality_score=self._calculate_table_quality(df),
                             metadata={
                                 "accuracy": getattr(camelot_table, 'accuracy', 0),
@@ -366,6 +406,7 @@ class TableExtractor:
                     for camelot_table in stream_tables:
                         df = camelot_table.df
                         if not df.empty and self._validate_dataframe(df):
+                            headers, rows_data = self._prepare_table_payload(df, header_from="first_row")
                             table = ExtractedTable(
                                 id=0,
                                 page=page_num,
@@ -374,8 +415,8 @@ class TableExtractor:
                                 rows=len(df),
                                 columns=len(df.columns),
                                 bbox=None,
-                                data=df.values.tolist(),
-                                headers=df.iloc[0].tolist() if len(df) > 0 else [],
+                                data=rows_data,
+                                headers=headers,
                                 quality_score=self._calculate_table_quality(df)
                             )
                             tables.append(table)

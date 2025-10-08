@@ -42,7 +42,7 @@ import base64
 import tempfile
 import subprocess
 import shutil
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Set
 from pathlib import Path
 from types import SimpleNamespace
 import importlib
@@ -151,17 +151,29 @@ else:
     VisualDiffConfig = None
     VISUAL_DIFF_AVAILABLE = False
 
+_dependency_warnings_emitted: Set[str] = set()
+
+
+def _warn_once(message: str) -> None:
+    """Emit optional dependency warnings only once per interpreter session."""
+
+    if message in _dependency_warnings_emitted:
+        return
+    logger.warning(message)
+    _dependency_warnings_emitted.add(message)
+
+
 if not VISUAL_DIFF_AVAILABLE:
-    logger.warning(
+    _warn_once(
         "visual_diff_system helpers are not available; visual QA will run in fallback mode"
     )
 
 # Проверка доступности модулей ПОСЛЕ импорта (с logger)
 if not SSIM_AVAILABLE:
-    logger.warning("scikit-image не установлен, используется fallback SSIM")
+    _warn_once("scikit-image не установлен, используется fallback SSIM")
 
 if not SENTENCE_TRANSFORMERS_AVAILABLE:
-    logger.warning("sentence-transformers не установлен, семантический анализ упрощен")
+    _warn_once("sentence-transformers не установлен, семантический анализ упрощен")
 
 # Конфигурация DAG
 DEFAULT_ARGS = {
