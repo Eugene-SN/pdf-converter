@@ -17,8 +17,9 @@
 import os
 import sys
 import asyncio
-import logging
 import json
+import logging
+from logging.handlers import RotatingFileHandler
 import time
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Union
@@ -40,23 +41,100 @@ from pydantic_settings import BaseSettings
 # HTTP клиенты
 import httpx
 import aiofiles
+import structlog
 
 # Утилиты
-import structlog
 from prometheus_client import Counter, Histogram, Gauge, start_http_server, generate_latest, REGISTRY
 from prometheus_client.exposition import CONTENT_TYPE_LATEST
 import psutil
 
 # ✅ ИСПРАВЛЕНО: Импорты наших исправленных процессоров
 from docling_processor import (
-    DoclingProcessor, 
-    DoclingConfig, 
+    DoclingProcessor,
+    DoclingConfig,
     DocumentStructure,
-    create_docling_processor_from_env
+    create_docling_processor_from_env,
+    normalize_table_like,
+    safe_serialize_tabledata,
 )
 from ocr_processor import OCRProcessor, OCRConfig
 from table_extractor import TableExtractor, TableConfig
 from structure_analyzer import StructureAnalyzer, AnalysisConfig
+
+
+DEFAULT_MAX_BYTES = 10 * 1024 * 1024
+DEFAULT_BACKUP_COUNT = 5
+
+
+def configure_logging(
+    component_group: str,
+    component_name: str,
+    *,
+    debug: bool = False,
+    log_directory: Optional[Path] = None,
+):
+    level = logging.DEBUG if debug else logging.INFO
+
+    log_dir = Path(log_directory) if log_directory is not None else Path("logs")
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"{component_group}.log"
+
+    timestamper = structlog.processors.TimeStamper(fmt="iso")
+
+    structlog.configure(
+        processors=[
+            structlog.stdlib.add_logger_name,
+            structlog.stdlib.add_log_level,
+            timestamper,
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
+        context_class=dict,
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+
+    formatter = structlog.stdlib.ProcessorFormatter(
+        foreign_pre_chain=[
+            structlog.stdlib.add_logger_name,
+            structlog.stdlib.add_log_level,
+            timestamper,
+        ],
+        processor=(
+            structlog.dev.ConsoleRenderer()
+            if debug
+            else structlog.processors.JSONRenderer(sort_keys=True)
+        ),
+    )
+
+    file_handler = RotatingFileHandler(
+        log_file,
+        maxBytes=DEFAULT_MAX_BYTES,
+        backupCount=DEFAULT_BACKUP_COUNT,
+        encoding="utf-8",
+    )
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(level)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    stream_handler.setLevel(level)
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)
+    for handler in list(root_logger.handlers):
+        root_logger.removeHandler(handler)
+    root_logger.addHandler(file_handler)
+    root_logger.addHandler(stream_handler)
+
+    logger = structlog.get_logger(component_name)
+    logger.info(
+        "logging configured",
+        log_group=component_group,
+        log_file=str(log_file),
+        debug=debug,
+    )
+    return logger
 
 # ================================================================================
 # КОНФИГУРАЦИЯ И НАСТРОЙКИ
@@ -104,38 +182,12 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO if not settings.debug else logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Настройка логирования объединена для документного конвейера
+logger = configure_logging(
+    component_group="document_pipeline",
+    component_name="document_processor_api",
+    debug=settings.debug,
 )
-logger = structlog.get_logger("document_processor_api")
-
-def safe_serialize_tabledata(obj):
-    """Безопасная сериализация объектов TableData и других Docling объектов"""
-    if hasattr(obj, '__dict__'):
-        result = {'_type': obj.__class__.__name__}
-        for key, value in obj.__dict__.items():
-            if not key.startswith('_'):
-                try:
-                    json.dumps(value)
-                    result[key] = value
-                except (TypeError, ValueError):
-                    if hasattr(value, '__dict__'):
-                        result[key] = safe_serialize_tabledata(value)
-                    elif hasattr(value, '__iter__') and not isinstance(value, (str, bytes)):
-                        result[key] = [safe_serialize_tabledata(item) for item in value]
-                    else:
-                        result[key] = str(value)
-        return result
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-        return [safe_serialize_tabledata(item) for item in obj]
-    else:
-        try:
-            json.dumps(obj)
-            return obj
-        except (TypeError, ValueError):
-            return str(obj)
 
 # ================================================================================
 # PROMETHEUS МЕТРИКИ
@@ -503,7 +555,10 @@ async def process_document_endpoint(
             "markdown_content": document_structure.markdown_content,
             "raw_text": document_structure.raw_text,
             "sections": document_structure.sections,
-            "tables": [{"id": i, "page": getattr(t, 'page', 1), "content": t} for i, t in enumerate(document_structure.tables)],
+            "tables": [
+                normalize_table_like(table, fallback_id=i)
+                for i, table in enumerate(document_structure.tables)
+            ],
             "images": document_structure.images,
             "metadata": {
                 **document_structure.metadata,
@@ -526,6 +581,7 @@ async def process_document_endpoint(
                 ensure_ascii=False,
                 indent=2,
                 default=safe_serialize_tabledata,
+                allow_nan=False,
             )
         
         # Также сохраняем основной результат
