@@ -20,7 +20,6 @@ import re
 import time
 import json
 import hashlib
-import logging
 import asyncio
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
@@ -40,13 +39,15 @@ import requests
 from tqdm.asyncio import tqdm as async_tqdm
 import prometheus_client
 from prometheus_client import Counter, Histogram, Gauge
+from logging_utils import configure_logging
 
 # Логирование
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+TRANSLATOR_DEBUG = os.getenv('TRANSLATOR_DEBUG', 'false').lower() == 'true'
+logger = configure_logging(
+    component_group="translation_pipeline",
+    component_name="translator_service",
+    debug=TRANSLATOR_DEBUG,
 )
-logger = logging.getLogger(__name__)
 
 # ==============================================
 # 🔧 КОНФИГУРАЦИЯ И НАСТРОЙКИ v2.0
@@ -824,13 +825,6 @@ async def metrics():
 # ==============================================
 
 if __name__ == "__main__":
-    # Настройка логирования
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    
-    # Запуск сервера
     uvicorn.run(
         app,
         host="0.0.0.0",

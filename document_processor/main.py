@@ -17,7 +17,6 @@
 import os
 import sys
 import asyncio
-import logging
 import json
 import time
 from datetime import datetime
@@ -42,7 +41,6 @@ import httpx
 import aiofiles
 
 # Утилиты
-import structlog
 from prometheus_client import Counter, Histogram, Gauge, start_http_server, generate_latest, REGISTRY
 from prometheus_client.exposition import CONTENT_TYPE_LATEST
 import psutil
@@ -57,6 +55,8 @@ from docling_processor import (
 from ocr_processor import OCRProcessor, OCRConfig
 from table_extractor import TableExtractor, TableConfig
 from structure_analyzer import StructureAnalyzer, AnalysisConfig
+from logging_utils import configure_logging
+from serialization import normalize_table_like, safe_serialize_tabledata
 
 # ================================================================================
 # КОНФИГУРАЦИЯ И НАСТРОЙКИ
@@ -104,38 +104,12 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO if not settings.debug else logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Настройка логирования объединена для документного конвейера
+logger = configure_logging(
+    component_group="document_pipeline",
+    component_name="document_processor_api",
+    debug=settings.debug,
 )
-logger = structlog.get_logger("document_processor_api")
-
-def safe_serialize_tabledata(obj):
-    """Безопасная сериализация объектов TableData и других Docling объектов"""
-    if hasattr(obj, '__dict__'):
-        result = {'_type': obj.__class__.__name__}
-        for key, value in obj.__dict__.items():
-            if not key.startswith('_'):
-                try:
-                    json.dumps(value)
-                    result[key] = value
-                except (TypeError, ValueError):
-                    if hasattr(value, '__dict__'):
-                        result[key] = safe_serialize_tabledata(value)
-                    elif hasattr(value, '__iter__') and not isinstance(value, (str, bytes)):
-                        result[key] = [safe_serialize_tabledata(item) for item in value]
-                    else:
-                        result[key] = str(value)
-        return result
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-        return [safe_serialize_tabledata(item) for item in obj]
-    else:
-        try:
-            json.dumps(obj)
-            return obj
-        except (TypeError, ValueError):
-            return str(obj)
 
 # ================================================================================
 # PROMETHEUS МЕТРИКИ
@@ -503,7 +477,10 @@ async def process_document_endpoint(
             "markdown_content": document_structure.markdown_content,
             "raw_text": document_structure.raw_text,
             "sections": document_structure.sections,
-            "tables": [{"id": i, "page": getattr(t, 'page', 1), "content": t} for i, t in enumerate(document_structure.tables)],
+            "tables": [
+                normalize_table_like(table, fallback_id=i)
+                for i, table in enumerate(document_structure.tables)
+            ],
             "images": document_structure.images,
             "metadata": {
                 **document_structure.metadata,
@@ -526,6 +503,7 @@ async def process_document_endpoint(
                 ensure_ascii=False,
                 indent=2,
                 default=safe_serialize_tabledata,
+                allow_nan=False,
             )
         
         # Также сохраняем основной результат

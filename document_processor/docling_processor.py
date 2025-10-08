@@ -42,37 +42,10 @@ except ImportError:
 
 from pydantic import BaseModel, Field
 import structlog
+from serialization import safe_serialize_tabledata
 
 # Настройка логирования
 logger = structlog.get_logger("docling_processor")
-
-def safe_serialize_tabledata(obj):
-    """Безопасная сериализация объектов TableData и других Docling объектов"""
-    if hasattr(obj, '__dict__'):
-        result = {'_type': obj.__class__.__name__}
-        for key, value in obj.__dict__.items():
-            if not key.startswith('_'):
-                try:
-                    import json
-                    json.dumps(value)
-                    result[key] = value
-                except (TypeError, ValueError):
-                    if hasattr(value, '__dict__'):
-                        result[key] = safe_serialize_tabledata(value)
-                    elif hasattr(value, '__iter__') and not isinstance(value, (str, bytes)):
-                        result[key] = [safe_serialize_tabledata(item) for item in value]
-                    else:
-                        result[key] = str(value)
-        return result
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-        return [safe_serialize_tabledata(item) for item in obj]
-    else:
-        try:
-            import json
-            json.dumps(obj)
-            return obj
-        except (TypeError, ValueError):
-            return str(obj)
 
 # ================================================================================
 # КОНФИГУРАЦИОННЫЕ МОДЕЛИ
@@ -415,7 +388,14 @@ class DoclingProcessor:
                     # Сохранение таблицы в отдельный файл
                     table_file = Path(output_dir) / f"table_{i}.json"
                     with open(table_file, 'w', encoding='utf-8') as f:
-                        json.dump(table_data, f, ensure_ascii=False, indent=2, default=safe_serialize_tabledata)
+                        json.dump(
+                            table_data,
+                            f,
+                            ensure_ascii=False,
+                            indent=2,
+                            default=safe_serialize_tabledata,
+                            allow_nan=False,
+                        )
                     
                     table_data["file_path"] = str(table_file)
                     tables.append(table_data)

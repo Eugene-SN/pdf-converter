@@ -52,10 +52,10 @@ except AttributeError:  # Pillow < 9.1
     RESAMPLING_LANCZOS = Image.LANCZOS
 
 # Утилиты
-import structlog
 from prometheus_client import Counter, Histogram, Gauge, start_http_server, generate_latest, REGISTRY
 from prometheus_client.exposition import CONTENT_TYPE_LATEST
 import psutil
+from logging_utils import configure_logging
 
 # Наши валидаторы
 from ocr_validator import OCRValidator, OCRValidationConfig
@@ -106,13 +106,12 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO if not settings.debug else logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Настройка логирования объединена для документного конвейера
+logger = configure_logging(
+    component_group="document_pipeline",
+    component_name="qa_main",
+    debug=settings.debug,
 )
-
-logger = structlog.get_logger("qa_main")
 
 if not PDF2IMAGE_AVAILABLE:
     logger.warning("pdf2image not available; falling back to PyMuPDF rendering for previews")
