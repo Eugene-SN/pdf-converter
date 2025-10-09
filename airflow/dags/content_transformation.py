@@ -222,24 +222,252 @@ def build_markdown_from_sections(document_data: Dict[str, Any]) -> str:
     return markdown.strip()
 
 
+TABLE_ROW_PATTERN = re.compile(r'^\s*\|.*\|\s*$')
+TABLE_SEPARATOR_PATTERN = re.compile(r'^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$')
+
+
+def sanitize_table_cell(value: Any) -> str:
+    if value is None:
+        return ''
+    text = str(value).strip()
+    if not text:
+        return ''
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    if '\n' in text:
+        text = '<br>'.join(part.strip() for part in text.split('\n') if part.strip())
+    return text
+
+
+def split_table_cells(line: str) -> List[str]:
+    stripped = (line or '').strip()
+    if '|' not in stripped:
+        return []
+    return [cell.strip() for cell in stripped.strip('|').split('|')]
+
+
+def is_table_separator(line: str) -> bool:
+    return bool(TABLE_SEPARATOR_PATTERN.match(line or ''))
+
+
+def is_markdown_table_row(line: str) -> bool:
+    if not TABLE_ROW_PATTERN.match(line or ''):
+        return False
+    if is_table_separator(line):
+        return False
+    if (line or '').count('|') < 2:
+        return False
+    cells = split_table_cells(line)
+    if len(cells) < 1:
+        return False
+    return any(cell for cell in cells)
+
+
+def trim_trailing_empty_columns(matrix: List[List[str]]) -> List[List[str]]:
+    if not matrix:
+        return []
+    col_count = len(matrix[0])
+    last_nonempty = -1
+    for col in range(col_count):
+        if any((row[col] if col < len(row) else '').strip() for row in matrix):
+            last_nonempty = col
+    if last_nonempty == -1:
+        return []
+    trimmed: List[List[str]] = []
+    for row in matrix:
+        padded_row = list(row[:last_nonempty + 1])
+        if len(padded_row) < last_nonempty + 1:
+            padded_row.extend([''] * (last_nonempty + 1 - len(padded_row)))
+        trimmed.append(padded_row)
+    return trimmed
+
+
+def normalize_table_matrix(matrix: List[List[Any]]) -> List[List[str]]:
+    if not matrix:
+        return []
+    sanitized: List[List[str]] = []
+    max_cols = 0
+    for row in matrix:
+        sanitized_row = [sanitize_table_cell(cell) for cell in row]
+        sanitized.append(sanitized_row)
+        max_cols = max(max_cols, len(sanitized_row))
+    if max_cols == 0:
+        return []
+    for row in sanitized:
+        if len(row) < max_cols:
+            row.extend([''] * (max_cols - len(row)))
+    sanitized = trim_trailing_empty_columns(sanitized)
+    while sanitized and all(not cell.strip() for cell in sanitized[-1]):
+        sanitized.pop()
+    if not sanitized:
+        return []
+    if all(not cell.strip() for cell in sanitized[0]) and any(
+        any(cell.strip() for cell in row) for row in sanitized[1:]
+    ):
+        for idx in range(1, len(sanitized)):
+            if any(cell.strip() for cell in sanitized[idx]):
+                sanitized[0], sanitized[idx] = sanitized[idx], sanitized[0]
+                break
+    return sanitized
+
+
+def format_table_lines(matrix: List[List[str]]) -> List[str]:
+    if not matrix:
+        return []
+    col_count = len(matrix[0])
+    normalized_rows: List[List[str]] = []
+    for row in matrix:
+        normalized_rows.append([row[col] if col < len(row) else '' for col in range(col_count)])
+    if not normalized_rows:
+        return []
+    header = normalized_rows[0]
+    separator = '| ' + ' | '.join(['---'] * col_count) + ' |'
+    body = normalized_rows[1:]
+    lines: List[str] = ['| ' + ' | '.join(header) + ' |', separator]
+    for row in body:
+        lines.append('| ' + ' | '.join(row) + ' |')
+    return lines
+
+
+def count_markdown_table_rows(text: str) -> int:
+    if not text:
+        return 0
+    rows = 0
+    for line in text.splitlines():
+        if is_markdown_table_row(line):
+            rows += 1
+    return rows
+
+
+def _coerce_index(value: Any, default: int) -> int:
+    try:
+        if value is None:
+            return default
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def build_matrix_from_docling_table(table_payload: Dict[str, Any]) -> List[List[str]]:
+    if not isinstance(table_payload, dict):
+        return []
+    cells = table_payload.get('table_cells') or table_payload.get('cells')
+    if not isinstance(cells, list):
+        return []
+    num_rows = _coerce_index(table_payload.get('num_rows'), 0)
+    num_cols = _coerce_index(table_payload.get('num_cols'), 0)
+    max_row = num_rows - 1
+    max_col = num_cols - 1
+    processed_cells: List[Tuple[int, int, int, int, str]] = []
+    for cell in cells:
+        if not isinstance(cell, dict):
+            continue
+        start_row = cell.get('start_row_offset_idx')
+        if start_row is None:
+            start_row = cell.get('row_index') or cell.get('row_idx')
+        start_row = _coerce_index(start_row, 0)
+        start_col = cell.get('start_col_offset_idx')
+        if start_col is None:
+            start_col = cell.get('col_index') or cell.get('col_idx')
+        start_col = _coerce_index(start_col, 0)
+        end_row = cell.get('end_row_offset_idx')
+        if end_row is None:
+            row_span = cell.get('row_span')
+            if row_span is None:
+                end_row = start_row
+            else:
+                end_row = start_row + max(_coerce_index(row_span, 1) - 1, 0)
+        end_row = _coerce_index(end_row, start_row)
+        end_row = max(end_row, start_row)
+        end_col = cell.get('end_col_offset_idx')
+        if end_col is None:
+            col_span = cell.get('col_span')
+            if col_span is None:
+                end_col = start_col
+            else:
+                end_col = start_col + max(_coerce_index(col_span, 1) - 1, 0)
+        end_col = _coerce_index(end_col, start_col)
+        end_col = max(end_col, start_col)
+        max_row = max(max_row, end_row)
+        max_col = max(max_col, end_col)
+        text = sanitize_table_cell(cell.get('text'))
+        processed_cells.append((start_row, end_row, start_col, end_col, text))
+
+    total_rows = max_row + 1
+    total_cols = max_col + 1
+    if total_rows <= 0 or total_cols <= 0:
+        return []
+    matrix: List[List[str]] = [['' for _ in range(total_cols)] for _ in range(total_rows)]
+    for start_row, end_row, start_col, end_col, text in processed_cells:
+        if not text:
+            continue
+        for row_idx in range(start_row, min(end_row + 1, total_rows)):
+            for col_idx in range(start_col, min(end_col + 1, total_cols)):
+                if matrix[row_idx][col_idx]:
+                    if text not in matrix[row_idx][col_idx]:
+                        matrix[row_idx][col_idx] = f"{matrix[row_idx][col_idx]} {text}".strip()
+                else:
+                    matrix[row_idx][col_idx] = text
+    normalized = normalize_table_matrix(matrix)
+    return normalized
+
+
+def _normalize_table_block(table_lines: List[str]) -> List[str]:
+    matrix: List[List[str]] = []
+    for line in table_lines:
+        if is_table_separator(line):
+            continue
+        cells = split_table_cells(line)
+        if cells:
+            matrix.append(cells)
+    normalized = normalize_table_matrix(matrix)
+    if not normalized:
+        return [line.rstrip() for line in table_lines]
+    return format_table_lines(normalized)
+
+
 def render_table_markdown(table_entry: Dict[str, Any]) -> str:
     """Преобразует таблицу из payload в Markdown; при ошибке возвращает строку"""
     content = table_entry.get('content')
     if isinstance(content, str):
-        return content.strip()
+        stripped = content.strip()
+        if is_markdown_table_row(stripped) or '\n' in stripped:
+            normalized = _normalize_table_block(content.splitlines())
+            return "\n".join(normalized)
+        return stripped
+
+    potential_payloads: List[Dict[str, Any]] = []
+    if isinstance(content, dict):
+        potential_payloads.append(content)
+        data_field = content.get('data')
+        if isinstance(data_field, dict):
+            potential_payloads.append(data_field)
+    metadata = table_entry.get('metadata')
+    if isinstance(metadata, dict):
+        data_field = metadata.get('data') or metadata.get('table_data')
+        if isinstance(data_field, dict):
+            potential_payloads.append(data_field)
+
+    for payload in potential_payloads:
+        if not isinstance(payload, dict):
+            continue
+        if payload.get('table_cells') or payload.get('cells'):
+            matrix = build_matrix_from_docling_table(payload)
+            if matrix:
+                return "\n".join(format_table_lines(matrix))
 
     if isinstance(content, dict):
         data = content.get('data') or content.get('rows')
         if isinstance(data, list) and data:
-            row_lines: List[str] = []
-            header = data[0]
-            if isinstance(header, list):
-                row_lines.append('| ' + ' | '.join(str(cell).strip() for cell in header) + ' |')
-                row_lines.append('|' + ' --- |' * len(header))
-                for row in data[1:]:
-                    if isinstance(row, list):
-                        row_lines.append('| ' + ' | '.join(str(cell).strip() for cell in row) + ' |')
-                return "\n".join(row_lines)
+            matrix: List[List[Any]] = []
+            for row in data:
+                if isinstance(row, list):
+                    matrix.append(row)
+                elif isinstance(row, dict):
+                    ordered = [row[key] for key in sorted(row.keys())]
+                    matrix.append(ordered)
+            normalized = normalize_table_matrix(matrix)
+            if normalized:
+                return "\n".join(format_table_lines(normalized))
 
     return ''
 
@@ -634,22 +862,19 @@ def enhance_chinese_tables(content: str) -> str:
     try:
         lines = content.split('\n')
         enhanced_lines: List[str] = []
-        in_table = False
-        for i, line in enumerate(lines):
-            if '|' in line and len([cell for cell in line.split('|') if cell.strip()]) >= 2:
-                if not in_table:
-                    in_table = True
-                    enhanced_lines.append(line)
-                    if (i + 1 < len(lines) and not re.match(r'^\|[\s\-:|]+\|', lines[i + 1])):
-                        cols = len([cell for cell in line.split('|') if cell.strip()])
-                        separator = '|' + ' --- |' * cols
-                        enhanced_lines.append(separator)
-                else:
-                    enhanced_lines.append(line)
-            else:
-                if in_table and line.strip() == '':
-                    in_table = False
-                enhanced_lines.append(line)
+        table_buffer: List[str] = []
+        for line in lines:
+            if is_markdown_table_row(line) or is_table_separator(line):
+                if is_table_separator(line):
+                    continue
+                table_buffer.append(line)
+                continue
+            if table_buffer:
+                enhanced_lines.extend(_normalize_table_block(table_buffer))
+                table_buffer = []
+            enhanced_lines.append(line)
+        if table_buffer:
+            enhanced_lines.extend(_normalize_table_block(table_buffer))
         return '\n'.join(enhanced_lines)
     except Exception as e:
         logger.warning(f"Ошибка улучшения таблиц: {e}")
@@ -983,8 +1208,8 @@ def evaluate_enhancement_quality(original: str, enhanced: str) -> float:
         if enhanced_headers >= original_headers:
             quality_score += 0.15
 
-        original_tables = len(re.findall(r'\|.*\|', original))
-        enhanced_tables = len(re.findall(r'\|.*\|', enhanced))
+        original_tables = count_markdown_table_rows(original)
+        enhanced_tables = count_markdown_table_rows(enhanced)
         if enhanced_tables >= original_tables:
             quality_score += 0.15
 
@@ -1009,8 +1234,8 @@ def calculate_basic_transformation_quality(original: str, transformed: str) -> f
         if transformed_headers < original_headers:
             quality_score -= 15
 
-        original_tables = len(re.findall(r'\|.*\|', original))
-        transformed_tables = len(re.findall(r'\|.*\|', transformed))
+        original_tables = count_markdown_table_rows(original)
+        transformed_tables = count_markdown_table_rows(transformed)
         if original_tables > 0:
             table_preservation = transformed_tables / original_tables
             if table_preservation < 0.9:
