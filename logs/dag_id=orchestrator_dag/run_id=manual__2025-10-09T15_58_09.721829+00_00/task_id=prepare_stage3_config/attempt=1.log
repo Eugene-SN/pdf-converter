@@ -1,0 +1,14 @@
+[2025-10-09T16:00:48.176+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.prepare_stage3_config manual__2025-10-09T15:58:09.721829+00:00 [queued]>
+[2025-10-09T16:00:48.182+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.prepare_stage3_config manual__2025-10-09T15:58:09.721829+00:00 [queued]>
+[2025-10-09T16:00:48.182+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-09T16:00:48.191+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): prepare_stage3_config> on 2025-10-09 15:58:09.721829+00:00
+[2025-10-09T16:00:48.197+0000] {standard_task_runner.py:60} INFO - Started process 226 to run task
+[2025-10-09T16:00:48.199+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'prepare_stage3_config', 'manual__2025-10-09T15:58:09.721829+00:00', '--job-id', '1247', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmpn7qiobmp']
+[2025-10-09T16:00:48.200+0000] {standard_task_runner.py:88} INFO - Job 1247: Subtask prepare_stage3_config
+[2025-10-09T16:00:48.245+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.prepare_stage3_config manual__2025-10-09T15:58:09.721829+00:00 [running]> on host 55aa37341c5f
+[2025-10-09T16:00:48.314+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='prepare_stage3_config' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T15:58:09.721829+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T15:58:09.721829+00:00'
+[2025-10-09T16:00:48.338+0000] {orchestrator_dag.py:265} INFO - 🔄 Перевод не требуется, пропускаем Stage 3
+[2025-10-09T16:00:48.338+0000] {python.py:201} INFO - Done. Returned value was: {'skip_stage3': True}
+[2025-10-09T16:00:48.360+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=prepare_stage3_config, execution_date=20251009T155809, start_date=20251009T160048, end_date=20251009T160048
+[2025-10-09T16:00:48.411+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T16:00:48.434+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check
