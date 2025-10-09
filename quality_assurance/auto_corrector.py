@@ -19,6 +19,7 @@ from datetime import datetime
 # HTTP клиенты для взаимодействия с vLLM
 import httpx
 import aiohttp
+from aiohttp import ClientTimeout
 
 # Утилиты
 import structlog
@@ -41,6 +42,10 @@ class AutoCorrectorConfig:
     # vLLM сервер настройки
     vllm_base_url: str = "http://vllm-server:8000"
     vllm_api_key: str = "vllm-api-key"
+    vllm_connect_timeout: float = 10.0
+    vllm_request_timeout: float = 300.0
+    vllm_max_retries: int = 1
+    vllm_retry_backoff_seconds: float = 2.0
     
     # Пороги для применения коррекций
     ocr_confidence_threshold: float = 0.8
@@ -97,19 +102,34 @@ class AutoCorrector:
     def __init__(self, config: Optional[AutoCorrectorConfig] = None):
         self.config = config or AutoCorrectorConfig()
         self.logger = structlog.get_logger("auto_corrector")
-        
+
         # HTTP клиент для vLLM
         self.http_client = None
-    
+
+    def _build_client_timeout(self) -> ClientTimeout:
+        """Создаем таймауты для долгих запросов к vLLM."""
+        return ClientTimeout(
+            total=self.config.vllm_request_timeout + self.config.vllm_connect_timeout,
+            connect=self.config.vllm_connect_timeout,
+            sock_connect=self.config.vllm_connect_timeout,
+            sock_read=self.config.vllm_request_timeout,
+        )
+
     async def __aenter__(self):
         """Async context manager entry"""
-        self.http_client = aiohttp.ClientSession()
+        self.http_client = aiohttp.ClientSession(timeout=self._build_client_timeout())
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit"""
         if self.http_client:
             await self.http_client.close()
+
+    async def _ensure_http_client(self) -> aiohttp.ClientSession:
+        """Гарантирует наличие активного HTTP клиента."""
+        if self.http_client is None or self.http_client.closed:
+            self.http_client = aiohttp.ClientSession(timeout=self._build_client_timeout())
+        return self.http_client
     
     async def apply_corrections(
         self,
@@ -394,41 +414,124 @@ class AutoCorrector:
     ) -> str:
         """Применение одной коррекции через vLLM"""
         try:
-            if not self.http_client:
-                self.http_client = aiohttp.ClientSession()
-            
+            client = await self._ensure_http_client()
+
             # Формируем промпт для коррекции
             system_prompt = self._get_correction_prompt(correction.type, correction.description)
-            
-            # Запрос к vLLM
-            async with self.http_client.post(
-                f"{self.config.vllm_base_url}/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {self.config.vllm_api_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": "Qwen/Qwen2.5-32B-Instruct",
-                    "messages": [
-                        {"role": "system", "content": "You are a helpful technical editor."}, 
-                        {"role": "user", "content": prompt},
-                    ],
-                    "temperature": 0.1,
-                    "max_tokens": 4096
-                }
-            ) as response:
-                if response.status == 200:
-                    result = await response.json()
-                    corrected_content = result["choices"][0]["message"]["content"]
-                    correction.corrected_content = corrected_content
-                    return corrected_content
-                else:
-                    raise Exception(f"vLLM request failed: {response.status}")
-                    
+            prompt, excerpt_truncated = self._build_user_prompt(document_content, correction)
+
+            self.logger.info(
+                "sending_vllm_correction_request",
+                correction_type=correction.type,
+                prompt_length=len(prompt),
+                excerpt_truncated=excerpt_truncated,
+            )
+
+            attempts = max(1, int(self.config.vllm_max_retries) + 1)
+            last_exception: Optional[Exception] = None
+            failure_status = "failed"
+            request_timeout = self._build_client_timeout()
+            loop = asyncio.get_running_loop()
+
+            for attempt in range(1, attempts + 1):
+                attempt_started = loop.time()
+                try:
+                    async with client.post(
+                        f"{self.config.vllm_base_url}/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {self.config.vllm_api_key}",
+                            "Content-Type": "application/json"
+                        },
+                    json={
+                        "model": "Qwen/Qwen2.5-32B-Instruct",
+                        "prompt": prompt,
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": prompt},
+                        ],
+                        "temperature": 0.1,
+                        "max_tokens": 4096
+                    },
+                    timeout=request_timeout,
+                    ) as response:
+                        duration = loop.time() - attempt_started
+                        if response.status == 200:
+                            result = await response.json(content_type=None)
+                            choices = result.get("choices", []) if isinstance(result, dict) else []
+                            message = choices[0].get("message", {}) if choices else {}
+                            corrected_content = message.get("content", "")
+
+                            if not corrected_content.strip():
+                                self.logger.warning(
+                                    "empty_vllm_response",
+                                    correction_type=correction.type,
+                                    duration=duration,
+                                    attempt=attempt,
+                                )
+                                correction.error_message = "Empty response from vLLM"
+                                correction.corrected_content = document_content
+                                correction_requests.labels(correction_type=correction.type, status="failed").inc()
+                                return document_content
+
+                            self.logger.info(
+                                "vllm_correction_completed",
+                                correction_type=correction.type,
+                                duration=duration,
+                                attempt=attempt,
+                                response_length=len(corrected_content),
+                            )
+                            correction.corrected_content = corrected_content
+                            correction_requests.labels(correction_type=correction.type, status="completed").inc()
+                            return corrected_content
+
+                        error_body = await response.text()
+                        self.logger.error(
+                            "vllm_request_failed",
+                            status=response.status,
+                            body_preview=error_body[:500],
+                            correction_type=correction.type,
+                            duration=duration,
+                            attempt=attempt,
+                        )
+                        last_exception = Exception(f"vLLM request failed with status {response.status}")
+                        failure_status = "failed"
+                except asyncio.TimeoutError as timeout_error:
+                    duration = loop.time() - attempt_started
+                    self.logger.error(
+                        "vllm_request_timeout",
+                        correction_type=correction.type,
+                        timeout=self.config.vllm_request_timeout,
+                        duration=duration,
+                        attempt=attempt,
+                    )
+                    last_exception = timeout_error
+                    failure_status = "timeout"
+                except aiohttp.ClientError as client_error:
+                    duration = loop.time() - attempt_started
+                    self.logger.error(
+                        "vllm_client_error",
+                        correction_type=correction.type,
+                        error=str(client_error),
+                        duration=duration,
+                        attempt=attempt,
+                    )
+                    last_exception = client_error
+                    failure_status = "failed"
+
+                if attempt < attempts and self.config.vllm_retry_backoff_seconds > 0:
+                    await asyncio.sleep(self.config.vllm_retry_backoff_seconds)
+
+            if last_exception:
+                correction.error_message = str(last_exception)
+            correction_requests.labels(correction_type=correction.type, status=failure_status).inc()
+            return document_content
+
         except Exception as e:
-            self.logger.error(f"Error applying correction: {e}")
-            raise
-    
+            self.logger.error("unexpected_vllm_error", correction_type=correction.type, error=str(e))
+            correction.error_message = str(e)
+            correction_requests.labels(correction_type=correction.type, status="failed").inc()
+            return document_content
+
     def _get_correction_prompt(self, correction_type: str, description: str) -> str:
         """Получение промпта для коррекции определенного типа"""
         
@@ -472,8 +575,40 @@ TASK: Fix markdown formatting issues.
 - Preserve all content while improving presentation
 """
         }
-        
+
         return base_prompt + type_specific.get(correction_type, type_specific["formatting"])
+
+    def _build_user_prompt(
+        self,
+        document_content: str,
+        correction: CorrectionAction,
+        max_excerpt_length: int = 2000
+    ) -> Tuple[str, bool]:
+        """Сборка пользовательского промпта с учетом ограничения длины выдержки"""
+
+        excerpt_source = correction.original_content or document_content
+        excerpt = (excerpt_source or "").strip()
+        excerpt_truncated = False
+
+        if len(excerpt) > max_excerpt_length:
+            excerpt = excerpt[:max_excerpt_length].rstrip()
+            excerpt_truncated = True
+
+        prompt_lines = [
+            "Apply the requested correction to the provided document excerpt.",
+            f"Correction request: {correction.description.strip()}",
+            "Document excerpt:",
+            "```",
+            excerpt,
+            "```",
+            "Return only the corrected excerpt without additional commentary.",
+        ]
+
+        if excerpt_truncated:
+            prompt_lines.append("(Note: The excerpt was truncated for processing.)")
+
+        prompt = "\n".join(prompt_lines)
+        return prompt, excerpt_truncated
     
     async def _final_review_correction(
         self,

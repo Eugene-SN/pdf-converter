@@ -61,6 +61,63 @@ except ImportError:
 # ✅ ИСПРАВЛЕНО: logger перенесен ПЕРЕД try/except блоками
 logger = logging.getLogger(__name__)
 
+
+def _get_positive_int_env(
+    var_names: List[str],
+    default: int,
+    *,
+    minimum: Optional[int] = None,
+    setting_name: Optional[str] = None,
+) -> int:
+    """Return a positive integer from env vars honouring a safety minimum.
+
+    Args:
+        var_names: Environment variables to inspect (in priority order).
+        default: Fallback value when no valid override is supplied.
+        minimum: Optional safety floor; values lower than this are ignored.
+        setting_name: Human readable name for logging purposes.
+    """
+
+    min_value = default if minimum is None else max(1, minimum)
+    pretty_name = setting_name or "/".join(var_names)
+
+    for var_name in var_names:
+        raw_value = os.getenv(var_name)
+        if raw_value is None:
+            continue
+
+        try:
+            parsed_value = int(raw_value)
+        except (TypeError, ValueError):
+            logger.warning(
+                "Ignoring invalid integer override %s=%r", var_name, raw_value
+            )
+            continue
+
+        if parsed_value <= 0:
+            logger.warning(
+                "Ignoring non-positive override %s=%r", var_name, raw_value
+            )
+            continue
+
+        if parsed_value < min_value:
+            logger.warning(
+                "%s override %s=%s is below safe minimum %s – using %s instead",
+                pretty_name,
+                var_name,
+                parsed_value,
+                min_value,
+                min_value,
+            )
+            return min_value
+
+        logger.info("Using %s override from %s=%s", pretty_name, var_name, parsed_value)
+        return parsed_value
+
+    value = max(default, min_value)
+    logger.info("Using default %s=%s", pretty_name, value)
+    return value
+
 # ✅ ИСПРАВЛЕНО: ImportError БЕЗ logger в блоке импорта
 try:
     from skimage.metrics import structural_similarity as ssim
@@ -239,6 +296,18 @@ QA_RULES = {
 
 # ✅ СОХРАНЕНА: Конфигурация уровней валидации
 _VLLM_BASE_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000').rstrip('/')
+_MIN_VLLM_REQUEST_TIMEOUT = 240  # seconds – observed generations take ~230s
+_VLLM_CONNECT_TIMEOUT = _get_positive_int_env(
+    ['QA_VLLM_CONNECT_TIMEOUT'],
+    10,
+    setting_name='vLLM connect timeout',
+)
+_VLLM_REQUEST_TIMEOUT = _get_positive_int_env(
+    ['QA_VLLM_TIMEOUT', 'QA_VLLM_REQUEST_TIMEOUT'],
+    360,
+    minimum=_MIN_VLLM_REQUEST_TIMEOUT,
+    setting_name='vLLM read timeout',
+)
 
 LEVEL_CONFIG = {
     'level1_ocr': {
@@ -289,13 +358,21 @@ TECHNICAL_TERMS = [
 VLLM_CONFIG = {
     'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
     'model': 'Qwen/Qwen2.5-VL-32B-Instruct',
-    'timeout': 60,
+    'connect_timeout': _VLLM_CONNECT_TIMEOUT,
+    'request_timeout': _VLLM_REQUEST_TIMEOUT,
     'max_tokens': 8192,
     'temperature': 0.1,
     'top_p': 0.9,
     'max_retries': 2,
     'retry_delay': 2
 }
+
+logger.info(
+    "Configured vLLM timeouts (connect=%ss, read=%ss, minimum_read=%ss)",
+    VLLM_CONFIG['connect_timeout'],
+    VLLM_CONFIG['request_timeout'],
+    _MIN_VLLM_REQUEST_TIMEOUT,
+)
 
 SENTENCE_MODEL_CACHE_DIR = os.getenv('QA_SENTENCE_MODEL_CACHE') or os.getenv('SENTENCE_TRANSFORMERS_CACHE')
 _SENTENCE_MODEL = None
@@ -1326,7 +1403,10 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                 response = requests.post(
                     VLLM_CONFIG['endpoint'],
                     json=payload,
-                    timeout=VLLM_CONFIG['timeout']
+                    timeout=(
+                        VLLM_CONFIG['connect_timeout'],
+                        VLLM_CONFIG['request_timeout'],
+                    ),
                 )
 
                 if response.status_code == 200:
@@ -1349,7 +1429,7 @@ def call_vllm_api(prompt: str) -> Optional[str]:
             except requests.exceptions.Timeout as exc:
                 logger.error(
                     "vLLM API timeout after %ss on attempt %d/%d: %s",
-                    VLLM_CONFIG['timeout'],
+                    VLLM_CONFIG['request_timeout'],
                     attempt + 1,
                     VLLM_CONFIG['max_retries'],
                     exc
