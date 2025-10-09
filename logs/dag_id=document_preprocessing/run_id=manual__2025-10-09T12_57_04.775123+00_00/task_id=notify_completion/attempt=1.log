@@ -1,0 +1,30 @@
+[2025-10-09T12:57:40.613+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: document_preprocessing.notify_completion manual__2025-10-09T12:57:04.775123+00:00 [queued]>
+[2025-10-09T12:57:40.619+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: document_preprocessing.notify_completion manual__2025-10-09T12:57:04.775123+00:00 [queued]>
+[2025-10-09T12:57:40.619+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 3
+[2025-10-09T12:57:40.627+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): notify_completion> on 2025-10-09 12:57:04.775123+00:00
+[2025-10-09T12:57:40.631+0000] {standard_task_runner.py:60} INFO - Started process 167 to run task
+[2025-10-09T12:57:40.633+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'document_preprocessing', 'notify_completion', 'manual__2025-10-09T12:57:04.775123+00:00', '--job-id', '1106', '--raw', '--subdir', 'DAGS_FOLDER/document_preprocessing.py', '--cfg-path', '/tmp/tmp7wlzttm9']
+[2025-10-09T12:57:40.634+0000] {standard_task_runner.py:88} INFO - Job 1106: Subtask notify_completion
+[2025-10-09T12:57:40.676+0000] {task_command.py:423} INFO - Running <TaskInstance: document_preprocessing.notify_completion manual__2025-10-09T12:57:04.775123+00:00 [running]> on host ae5728202880
+[2025-10-09T12:57:40.739+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='document_preprocessing' AIRFLOW_CTX_TASK_ID='notify_completion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T12:57:04.775123+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T12:57:04.775123+00:00'
+[2025-10-09T12:57:40.760+0000] {shared_utils.py:224} INFO - 
+✅ УСПЕШНОЕ ЗАВЕРШЕНИЕ
+DAG: document_preprocessing
+Task: notify_completion
+Время: 2025-10-09T12:57:40.760174
+Результат: Обработка завершена
+
+[2025-10-09T12:57:40.760+0000] {document_preprocessing.py:549} INFO - 
+✅ DOCUMENT PREPROCESSING ЗАВЕРШЕН УСПЕШНО
+📄 Файл: test_short.pdf
+📊 Страниц: 5
+⏱️ Время: 32.78с
+🔍 OCR: Да
+📋 Таблицы: Да
+📁 Файл: /opt/***/temp/doc_1760014626/doc_1760014626_intermediate.json
+✅ Готов для следующей стадии
+
+[2025-10-09T12:57:40.760+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-09T12:57:40.769+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=document_preprocessing, task_id=notify_completion, execution_date=20251009T125704, start_date=20251009T125740, end_date=20251009T125740
+[2025-10-09T12:57:40.805+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T12:57:40.819+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

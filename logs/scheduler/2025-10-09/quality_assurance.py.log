@@ -1,405 +1,289 @@
-[2025-10-09T09:37:37.099+0000] {processor.py:161} INFO - Started process (PID=29236) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:37:37.099+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:37:37.100+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.100+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:37:37.313+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.312+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:37:37.313+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.313+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:37:37.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.322+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:37:37.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.322+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:37:37.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.322+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:37:37.325+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.325+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:37:37.325+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.325+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:37:37.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.326+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:37:37.329+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:37:37.350+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.349+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:37:37.359+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.359+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:37:37.370+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.274 seconds
-[2025-10-09T09:38:07.512+0000] {processor.py:161} INFO - Started process (PID=29249) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:07.512+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:38:07.513+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.513+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:07.727+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.727+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:38:07.728+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.728+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:38:07.737+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.737+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:38:07.737+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.737+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:38:07.737+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.737+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:38:07.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.740+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:38:07.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.740+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:38:07.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.740+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:38:07.744+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:07.765+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.765+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:38:07.774+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.774+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:38:07.786+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.276 seconds
-[2025-10-09T09:38:37.928+0000] {processor.py:161} INFO - Started process (PID=29262) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:37.928+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:38:37.929+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:37.929+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:38.260+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.260+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:38:38.260+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.260+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:38:38.270+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.270+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:38:38.270+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.270+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:38:38.270+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.270+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:38:38.272+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.272+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:38:38.272+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.272+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:38:38.272+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.272+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:38:38.275+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:38:38.295+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.294+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:38:38.303+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.303+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:38:38.314+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.388 seconds
-[2025-10-09T09:39:08.394+0000] {processor.py:161} INFO - Started process (PID=29275) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:08.395+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:39:08.396+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.396+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:08.728+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.727+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:39:08.728+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.728+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:39:08.737+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.737+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:39:08.738+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.737+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:39:08.738+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.738+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:39:08.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.740+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:39:08.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.740+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:39:08.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.740+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:39:08.743+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:08.764+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.763+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:39:08.772+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.772+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:39:08.783+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.392 seconds
-[2025-10-09T09:39:38.981+0000] {processor.py:161} INFO - Started process (PID=29288) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:38.982+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:39:38.983+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:38.983+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:39.196+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.196+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:39:39.196+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.196+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:39:39.206+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.206+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:39:39.206+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.206+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:39:39.206+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.206+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:39:39.209+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.209+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:39:39.209+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.209+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:39:39.209+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.209+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:39:39.212+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:39:39.234+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.234+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:39:39.243+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.243+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:39:39.255+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.276 seconds
-[2025-10-09T09:40:09.398+0000] {processor.py:161} INFO - Started process (PID=29301) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:09.398+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:40:09.400+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.399+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:09.731+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.731+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:40:09.731+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.731+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:40:09.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.740+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:40:09.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.741+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:40:09.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.741+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:40:09.743+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.743+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:40:09.743+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.743+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:40:09.743+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.743+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:40:09.746+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:09.765+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.765+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:40:09.774+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.774+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:40:09.785+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.390 seconds
-[2025-10-09T09:40:39.967+0000] {processor.py:161} INFO - Started process (PID=29314) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:39.967+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:40:39.969+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:39.968+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:40.184+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.183+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:40:40.184+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.184+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:40:40.193+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.193+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:40:40.193+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.193+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:40:40.194+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.193+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:40:40.196+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.196+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:40:40.197+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.197+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:40:40.197+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.197+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:40:40.200+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:40:40.221+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.221+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:40:40.231+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.231+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:40:40.243+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.279 seconds
-[2025-10-09T09:41:10.380+0000] {processor.py:161} INFO - Started process (PID=29334) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:10.381+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:41:10.382+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.382+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:10.597+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.597+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:41:10.598+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.597+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:41:10.607+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.607+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:41:10.607+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.607+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:41:10.607+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.607+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:41:10.610+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.610+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:41:10.610+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.610+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:41:10.611+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.610+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:41:10.614+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:10.636+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.636+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:41:10.645+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.645+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:41:10.658+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.280 seconds
-[2025-10-09T09:41:40.801+0000] {processor.py:161} INFO - Started process (PID=29347) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:40.801+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:41:40.802+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:40.802+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:41.133+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.133+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:41:41.133+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.133+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:41:41.143+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.143+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:41:41.143+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.143+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:41:41.143+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.143+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:41:41.145+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.145+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:41:41.145+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.145+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:41:41.146+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.145+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:41:41.148+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:41:41.168+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.167+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:41:41.176+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:41.176+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:41:41.187+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.388 seconds
-[2025-10-09T09:42:11.272+0000] {processor.py:161} INFO - Started process (PID=29360) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:11.273+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:42:11.274+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.274+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:11.603+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.603+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:42:11.603+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.603+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:42:11.613+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.613+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:42:11.613+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.613+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:42:11.613+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.613+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:42:11.615+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.615+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:42:11.616+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.615+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:42:11.616+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.616+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:42:11.619+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:11.638+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.638+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:42:11.647+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.647+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:42:11.658+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.388 seconds
-[2025-10-09T09:42:41.889+0000] {processor.py:161} INFO - Started process (PID=29373) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:41.890+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:42:41.891+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:41.891+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:42.107+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.107+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:42:42.107+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.107+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:42:42.117+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.116+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:42:42.117+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.117+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:42:42.117+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.117+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:42:42.120+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.120+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:42:42.120+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.120+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:42:42.120+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.120+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:42:42.123+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:42:42.144+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.144+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:42:42.153+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.153+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:42:42.165+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
-[2025-10-09T09:43:12.305+0000] {processor.py:161} INFO - Started process (PID=29386) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:12.305+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:43:12.306+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.306+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:12.522+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.522+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:43:12.522+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.522+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:43:12.531+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.531+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:43:12.532+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.531+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:43:12.532+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.532+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:43:12.535+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.534+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:43:12.535+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.535+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:43:12.535+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.535+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:43:12.538+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:12.559+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.559+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:43:12.568+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.568+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:43:12.580+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
-[2025-10-09T09:43:42.717+0000] {processor.py:161} INFO - Started process (PID=29399) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:42.718+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:43:42.719+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:42.719+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:43.053+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.052+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:43:43.053+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.053+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:43:43.063+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.063+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:43:43.063+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.063+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:43:43.063+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.063+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:43:43.065+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.065+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:43:43.066+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.065+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:43:43.066+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.066+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:43:43.069+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:43:43.088+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.088+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:43:43.096+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:43.096+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:43:43.107+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.392 seconds
-[2025-10-09T09:44:13.197+0000] {processor.py:161} INFO - Started process (PID=29412) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:13.197+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:44:13.199+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.198+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:13.531+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.531+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:44:13.532+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.532+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:44:13.541+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.541+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:44:13.541+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.541+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:44:13.541+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.541+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:44:13.544+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.544+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:44:13.544+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.544+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:44:13.544+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.544+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:44:13.547+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:13.567+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.567+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:44:13.576+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.575+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:44:13.587+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.392 seconds
-[2025-10-09T09:44:43.822+0000] {processor.py:161} INFO - Started process (PID=29425) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:43.822+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:44:43.824+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:43.823+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:44.039+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.039+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:44:44.039+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.039+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:44:44.049+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.049+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:44:44.049+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.049+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:44:44.049+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.049+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:44:44.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.052+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:44:44.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.052+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:44:44.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.052+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:44:44.055+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:44:44.077+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.077+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:44:44.086+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:44.086+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:44:44.098+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
-[2025-10-09T09:45:14.241+0000] {processor.py:161} INFO - Started process (PID=29438) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:14.241+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:45:14.243+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.242+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:14.456+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.456+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:45:14.456+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.456+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:45:14.465+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.465+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:45:14.466+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.466+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:45:14.466+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.466+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:45:14.469+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.469+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:45:14.469+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.469+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:45:14.469+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.469+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:45:14.472+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:14.495+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.495+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:45:14.505+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.505+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:45:14.517+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
-[2025-10-09T09:45:44.651+0000] {processor.py:161} INFO - Started process (PID=29451) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:44.652+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:45:44.653+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.653+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:44.979+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.979+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:45:44.980+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.980+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:45:44.989+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.989+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:45:44.989+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.989+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:45:44.989+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.989+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:45:44.992+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.992+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:45:44.992+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.992+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:45:44.992+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.992+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:45:44.995+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:45:45.015+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:45.015+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:45:45.025+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:45.024+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:45:45.036+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.387 seconds
-[2025-10-09T09:46:15.222+0000] {processor.py:161} INFO - Started process (PID=29464) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:15.222+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:46:15.223+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.223+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:15.433+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.433+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:46:15.433+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.433+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:46:15.443+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.443+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:46:15.443+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.443+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:46:15.443+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.443+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:46:15.446+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.446+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:46:15.446+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.446+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:46:15.446+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.446+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:46:15.449+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:15.472+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.471+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:46:15.483+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.482+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:46:15.495+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.275 seconds
-[2025-10-09T09:46:45.634+0000] {processor.py:161} INFO - Started process (PID=29477) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:45.634+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:46:45.636+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.636+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:45.851+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.851+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:46:45.852+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.851+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:46:45.861+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.861+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:46:45.861+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.861+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:46:45.861+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.861+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:46:45.864+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.864+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:46:45.864+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.864+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:46:45.865+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.865+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:46:45.868+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:46:45.890+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.890+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:46:45.900+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.899+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:46:45.912+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.281 seconds
-[2025-10-09T09:47:16.048+0000] {processor.py:161} INFO - Started process (PID=29490) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:16.049+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:47:16.050+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.050+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:16.379+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.378+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:47:16.379+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.379+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:47:16.388+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.388+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:47:16.388+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.388+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:47:16.389+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.388+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:47:16.391+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.391+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:47:16.391+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.391+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:47:16.391+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.391+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:47:16.394+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:16.413+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.413+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:47:16.422+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.422+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:47:16.433+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.387 seconds
-[2025-10-09T09:47:46.527+0000] {processor.py:161} INFO - Started process (PID=29503) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:46.528+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:47:46.529+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.529+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:46.865+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.865+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:47:46.866+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.866+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:47:46.875+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.875+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:47:46.875+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.875+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:47:46.875+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.875+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:47:46.878+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.878+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:47:46.878+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.878+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:47:46.878+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.878+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:47:46.881+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:47:46.901+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.901+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:47:46.910+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.910+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:47:46.921+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.396 seconds
-[2025-10-09T09:48:17.164+0000] {processor.py:161} INFO - Started process (PID=29516) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:17.164+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:48:17.166+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.165+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:17.380+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.380+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:48:17.380+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.380+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:48:17.389+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.389+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:48:17.390+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.389+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:48:17.390+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.390+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:48:17.393+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.392+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:48:17.393+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.393+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:48:17.393+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.393+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:48:17.396+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:17.418+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.417+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:48:17.427+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.427+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:48:17.439+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.277 seconds
-[2025-10-09T09:48:47.583+0000] {processor.py:161} INFO - Started process (PID=29534) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:47.583+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:48:47.584+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.584+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:47.798+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.798+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:48:47.799+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.798+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:48:47.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.808+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:48:47.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.808+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:48:47.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.808+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:48:47.811+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.811+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:48:47.811+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.811+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:48:47.811+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.811+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:48:47.815+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:48:47.836+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.835+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:48:47.845+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.845+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:48:47.857+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.276 seconds
-[2025-10-09T09:49:17.998+0000] {processor.py:161} INFO - Started process (PID=29547) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:17.999+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:49:18.000+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.000+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:18.333+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.333+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:49:18.333+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.333+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:49:18.344+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.343+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:49:18.344+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.344+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:49:18.344+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.344+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:49:18.346+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.346+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:49:18.346+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.346+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:49:18.346+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.346+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:49:18.349+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:18.368+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.368+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:49:18.377+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.376+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:49:18.388+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.391 seconds
-[2025-10-09T09:49:48.474+0000] {processor.py:161} INFO - Started process (PID=29560) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:48.475+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:49:48.476+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.476+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:48.807+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.807+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:49:48.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.808+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:49:48.817+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.817+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:49:48.817+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.817+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:49:48.817+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.817+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:49:48.819+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.819+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:49:48.820+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.820+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:49:48.820+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.820+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:49:48.823+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:49:48.843+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.842+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:49:48.851+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.851+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:49:48.862+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.391 seconds
-[2025-10-09T09:50:19.109+0000] {processor.py:161} INFO - Started process (PID=29573) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:19.109+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:50:19.110+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.110+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:19.325+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.325+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:50:19.325+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.325+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:50:19.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.335+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:50:19.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.335+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:50:19.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.335+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:50:19.338+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.338+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:50:19.338+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.338+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:50:19.338+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.338+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:50:19.342+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:19.363+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.363+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:50:19.373+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.373+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:50:19.384+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
-[2025-10-09T09:50:49.531+0000] {processor.py:161} INFO - Started process (PID=29586) to work on /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:49.531+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
-[2025-10-09T09:50:49.533+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.532+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:49.747+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.746+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
-[2025-10-09T09:50:49.747+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.747+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
-[2025-10-09T09:50:49.756+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.756+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:50:49.756+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.756+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:50:49.757+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.756+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:50:49.760+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.759+0000] {quality_assurance.py:162} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
-[2025-10-09T09:50:49.760+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.760+0000] {quality_assurance.py:162} WARNING - scikit-image не установлен, используется fallback SSIM
-[2025-10-09T09:50:49.760+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.760+0000] {quality_assurance.py:162} WARNING - sentence-transformers не установлен, семантический анализ упрощен
-[2025-10-09T09:50:49.763+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
-[2025-10-09T09:50:49.785+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.785+0000] {dag.py:3036} INFO - Sync 1 DAGs
-[2025-10-09T09:50:49.794+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.794+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
-[2025-10-09T09:50:49.806+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.278 seconds
+[2025-10-09T12:54:34.326+0000] {processor.py:161} INFO - Started process (PID=99) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:54:34.326+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:54:34.328+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:34.327+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:54:35.246+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.246+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:54:35.246+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.246+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:54:35.255+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.255+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:54:35.255+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.255+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:54:35.256+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.255+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:54:35.256+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.256+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:54:35.259+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.258+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:54:35.259+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.259+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:54:35.259+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.259+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:54:35.259+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.259+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:54:35.262+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:54:35.283+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.283+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:54:35.293+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:54:35.293+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:54:35.305+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.982 seconds
+[2025-10-09T12:55:06.102+0000] {processor.py:161} INFO - Started process (PID=117) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:06.102+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:55:06.104+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.104+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:06.428+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.428+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:55:06.428+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.428+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:55:06.438+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.438+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:55:06.438+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.438+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:55:06.438+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.438+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:55:06.438+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.438+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:55:06.440+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.440+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:55:06.441+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.441+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:55:06.441+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.441+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:55:06.441+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.441+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:55:06.444+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:06.512+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.512+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:55:06.520+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:06.520+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:55:06.532+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.433 seconds
+[2025-10-09T12:55:36.714+0000] {processor.py:161} INFO - Started process (PID=130) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:36.714+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:55:36.716+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.716+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:36.935+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.934+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:55:36.935+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.935+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:55:36.945+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.944+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:55:36.945+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.945+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:55:36.945+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.945+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:55:36.945+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.945+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:55:36.948+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.948+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:55:36.948+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.948+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:55:36.948+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.948+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:55:36.948+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.948+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:55:36.951+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:55:36.973+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.973+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:55:36.983+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:55:36.982+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:55:36.994+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.283 seconds
+[2025-10-09T12:56:07.029+0000] {processor.py:161} INFO - Started process (PID=143) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:07.030+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:56:07.031+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.031+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:07.251+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.251+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:56:07.251+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.251+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:56:07.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.261+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:56:07.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.261+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:56:07.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.261+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:56:07.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.261+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:56:07.264+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.264+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:56:07.264+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.264+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:56:07.264+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.264+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:56:07.264+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.264+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:56:07.268+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:07.290+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.289+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:56:07.299+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:07.299+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:56:07.311+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.284 seconds
+[2025-10-09T12:56:37.342+0000] {processor.py:161} INFO - Started process (PID=156) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:37.343+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:56:37.344+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.344+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:37.677+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.676+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:56:37.677+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.677+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:56:37.687+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.687+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:56:37.687+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.687+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:56:37.687+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.687+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:56:37.687+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.687+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:56:37.689+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.689+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:56:37.689+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.689+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:56:37.689+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.689+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:56:37.690+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.690+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:56:37.692+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:56:37.713+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.712+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:56:37.721+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:56:37.721+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:56:37.737+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.397 seconds
+[2025-10-09T12:57:08.584+0000] {processor.py:161} INFO - Started process (PID=169) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:08.584+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:57:08.586+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.586+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:08.905+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.904+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:57:08.905+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.905+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:57:08.915+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.915+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:57:08.915+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.915+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:57:08.915+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.915+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:57:08.915+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.915+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:57:08.917+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.917+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:57:08.917+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.917+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:57:08.918+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.918+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:57:08.918+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.918+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:57:08.921+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:08.941+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.940+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:57:08.949+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:08.949+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:57:08.961+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.380 seconds
+[2025-10-09T12:57:38.996+0000] {processor.py:161} INFO - Started process (PID=182) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:38.996+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:57:38.998+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:38.998+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:39.219+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.219+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:57:39.219+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.219+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:57:39.229+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.229+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:57:39.229+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.229+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:57:39.229+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.229+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:57:39.229+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.229+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:57:39.232+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.232+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:57:39.232+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.232+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:57:39.233+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.232+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:57:39.233+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.233+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:57:39.236+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:57:39.258+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.258+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:57:39.268+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:57:39.268+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:57:39.281+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.288 seconds
+[2025-10-09T12:58:09.351+0000] {processor.py:161} INFO - Started process (PID=195) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:09.352+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:58:09.353+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.353+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:09.685+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.685+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:58:09.685+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.685+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:58:09.695+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.695+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:58:09.695+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.695+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:58:09.696+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.696+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:58:09.696+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.696+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:58:09.698+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.698+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:58:09.698+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.698+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:58:09.698+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.698+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:58:09.698+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.698+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:58:09.701+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:09.722+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.722+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:58:09.731+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:09.731+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:58:09.742+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.394 seconds
+[2025-10-09T12:58:40.654+0000] {processor.py:161} INFO - Started process (PID=208) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:40.655+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:58:40.657+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.656+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:40.983+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.983+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:58:40.983+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.983+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:58:40.993+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.993+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:58:40.993+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.993+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:58:40.993+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.993+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:58:40.993+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.993+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:58:40.995+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.995+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:58:40.996+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.995+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:58:40.996+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.996+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:58:40.996+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:40.996+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:58:40.999+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:58:41.019+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:41.019+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:58:41.027+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:58:41.027+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:58:41.039+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.386 seconds
+[2025-10-09T12:59:12.068+0000] {processor.py:161} INFO - Started process (PID=221) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:12.069+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:59:12.070+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.070+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:12.292+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.292+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:59:12.292+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.292+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:59:12.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.302+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:59:12.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.302+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:59:12.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.302+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:59:12.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.302+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:59:12.305+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.305+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:59:12.305+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.305+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:59:12.306+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.305+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:59:12.306+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.306+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:59:12.309+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:12.332+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.331+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:59:12.342+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:12.341+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:59:12.354+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.288 seconds
+[2025-10-09T12:59:43.313+0000] {processor.py:161} INFO - Started process (PID=234) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:43.313+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T12:59:43.315+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.315+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:43.536+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.536+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T12:59:43.536+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.536+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T12:59:43.546+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.546+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:59:43.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.546+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:59:43.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.547+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:59:43.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.547+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:59:43.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.550+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T12:59:43.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.550+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T12:59:43.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.550+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T12:59:43.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.550+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T12:59:43.553+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T12:59:43.576+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.576+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T12:59:43.586+0000] {logging_mixin.py:188} INFO - [2025-10-09T12:59:43.585+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T12:59:43.598+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.287 seconds
+[2025-10-09T13:00:13.676+0000] {processor.py:161} INFO - Started process (PID=247) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:13.677+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:00:13.678+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:13.678+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:14.010+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.010+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:00:14.010+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.010+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:00:14.020+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.020+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:00:14.021+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.021+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:00:14.021+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.021+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:00:14.021+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.021+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:00:14.023+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.023+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:00:14.023+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.023+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:00:14.023+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.023+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:00:14.023+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.023+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:00:14.026+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:14.046+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.046+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:00:14.055+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:14.055+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:00:14.067+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.393 seconds
+[2025-10-09T13:00:44.990+0000] {processor.py:161} INFO - Started process (PID=265) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:44.991+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:00:44.993+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:44.992+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:45.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.322+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:00:45.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.322+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:00:45.332+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.332+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:00:45.332+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.332+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:00:45.333+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.332+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:00:45.333+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.333+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:00:45.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.335+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:00:45.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.335+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:00:45.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.335+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:00:45.335+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.335+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:00:45.338+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:00:45.359+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.359+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:00:45.368+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:00:45.368+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:00:45.379+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.391 seconds
+[2025-10-09T13:01:16.340+0000] {processor.py:161} INFO - Started process (PID=278) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:16.341+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:01:16.343+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.342+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:16.565+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.565+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:01:16.565+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.565+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:01:16.575+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.575+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:01:16.575+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.575+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:01:16.575+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.575+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:01:16.576+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.576+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:01:16.579+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.578+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:01:16.579+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.579+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:01:16.579+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.579+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:01:16.579+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.579+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:01:16.582+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:16.605+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.604+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:01:16.614+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:16.614+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:01:16.627+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.289 seconds
+[2025-10-09T13:01:46.703+0000] {processor.py:161} INFO - Started process (PID=291) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:46.703+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:01:46.705+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.705+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:46.927+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.926+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:01:46.927+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.927+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:01:46.937+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.936+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:01:46.937+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.937+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:01:46.937+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.937+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:01:46.937+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.937+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:01:46.940+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.940+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:01:46.940+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.940+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:01:46.940+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.940+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:01:46.940+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.940+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:01:46.944+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:01:46.967+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.967+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:01:46.977+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:01:46.977+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:01:46.989+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.289 seconds
+[2025-10-09T13:02:18.022+0000] {processor.py:161} INFO - Started process (PID=304) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:18.022+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:02:18.024+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.024+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:18.351+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.350+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:02:18.351+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.351+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:02:18.361+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.361+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:02:18.361+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.361+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:02:18.361+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.361+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:02:18.361+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.361+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:02:18.363+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.363+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:02:18.363+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.363+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:02:18.364+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.364+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:02:18.364+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.364+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:02:18.367+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:18.388+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.387+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:02:18.397+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:18.396+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:02:18.408+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.389 seconds
+[2025-10-09T13:02:49.437+0000] {processor.py:161} INFO - Started process (PID=317) to work on /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:49.437+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/quality_assurance.py for tasks to queue
+[2025-10-09T13:02:49.439+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.439+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:49.660+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.660+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T13:02:49.660+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.660+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T13:02:49.670+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.670+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:02:49.670+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.670+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:02:49.670+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.670+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:02:49.670+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.670+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:02:49.673+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.673+0000] {quality_assurance.py:170} WARNING - visual_diff_system helpers are not available; visual QA will run in fallback mode
+[2025-10-09T13:02:49.673+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.673+0000] {quality_assurance.py:170} WARNING - scikit-image не установлен, используется fallback SSIM
+[2025-10-09T13:02:49.674+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.674+0000] {quality_assurance.py:170} WARNING - sentence-transformers не установлен, семантический анализ упрощен
+[2025-10-09T13:02:49.674+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.674+0000] {quality_assurance.py:170} WARNING - PyMuPDF не установлен, fallback генерация PDF недоступна
+[2025-10-09T13:02:49.677+0000] {processor.py:840} INFO - DAG(s) 'quality_assurance' retrieved from /opt/airflow/dags/quality_assurance.py
+[2025-10-09T13:02:49.699+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.699+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T13:02:49.710+0000] {logging_mixin.py:188} INFO - [2025-10-09T13:02:49.710+0000] {dag.py:3823} INFO - Setting next_dagrun for quality_assurance to None, run_after=None
+[2025-10-09T13:02:49.722+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/quality_assurance.py took 0.287 seconds
