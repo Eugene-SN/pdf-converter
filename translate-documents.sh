@@ -189,28 +189,52 @@ process_pdf_with_translation() {
     local timestamp
     timestamp=$(date +%s)
 
-    # Конфигурация для полной обработки с переводом через orchestrator
-    local config="{
-        "input_file": "$pdf_file",
-        "filename": "$filename",
-        "timestamp": $timestamp,
-        "target_language": "$target_language",
-        "quality_level": "high",
-        "enable_ocr": true,
-        "preserve_structure": true,
-        "extract_tables": true,
-        "extract_images": true,
-        "stage_mode": "full_with_translation",
-        "processing_stages": 4,
-        "validation_enabled": true,
-        "quality_target": 95.0,
-        "language": "zh-CN",
-        "chinese_optimization": true,
-        "pipeline_version": "4.0",
-        "processing_mode": "digital_pdf",
-        "use_orchestrator": true,
-        "preserve_technical_terms": true
-    }"
+    # Конфигурация для полной обработки с переводом через orchestrator (через jq)
+    local config_json
+    config_json=$(jq -n \
+        --arg input_file "$pdf_file" \
+        --arg filename "$filename" \
+        --argjson timestamp $timestamp \
+        --arg target_language "$target_language" \
+        --arg quality_level "high" \
+        --argjson enable_ocr true \
+        --argjson preserve_structure true \
+        --argjson extract_tables true \
+        --argjson extract_images true \
+        --arg stage_mode "full_with_translation" \
+        --argjson processing_stages 4 \
+        --argjson validation_enabled true \
+        --argjson quality_target 95.0 \
+        --arg language "zh-CN" \
+        --argjson chinese_optimization true \
+        --arg pipeline_version "4.0" \
+        --arg processing_mode "digital_pdf" \
+        --argjson use_orchestrator true \
+        --argjson preserve_technical_terms true \
+        '{
+            input_file: $input_file,
+            filename: $filename,
+            timestamp: $timestamp,
+            target_language: $target_language,
+            quality_level: $quality_level,
+            enable_ocr: $enable_ocr,
+            preserve_structure: $preserve_structure,
+            extract_tables: $extract_tables,
+            extract_images: $extract_images,
+            stage_mode: $stage_mode,
+            processing_stages: $processing_stages,
+            validation_enabled: $validation_enabled,
+            quality_target: $quality_target,
+            language: $language,
+            chinese_optimization: $chinese_optimization,
+            pipeline_version: $pipeline_version,
+            processing_mode: $processing_mode,
+            use_orchestrator: $use_orchestrator,
+            preserve_technical_terms: $preserve_technical_terms
+        }')
+
+    local request_body
+    request_body=$(jq -n --argjson conf "$config_json" '{conf: $conf}')
 
     # Запуск через orchestrator
     local response
@@ -218,7 +242,7 @@ process_pdf_with_translation() {
         -X POST \
         --user "$AIRFLOW_USERNAME:$AIRFLOW_PASSWORD" \
         -H "Content-Type: application/json" \
-        -d "{"conf": $config}" \
+        -d "$request_body" \
         "$AIRFLOW_URL/api/v1/dags/orchestrator_dag/dagRuns")
 
     local http_code
@@ -235,7 +259,11 @@ process_pdf_with_translation() {
         wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"
         return $?
     else
-        log "ERROR" "❌ Ошибка запуска обработки: HTTP $http_code"
+        if [ -n "$body" ]; then
+            log "ERROR" "❌ Ошибка запуска обработки: HTTP $http_code — $(echo "$body" | tr '\n' ' ')"
+        else
+            log "ERROR" "❌ Ошибка запуска обработки: HTTP $http_code"
+        fi
         return 1
     fi
 }
@@ -305,18 +333,33 @@ translate_single_md() {
     timestamp=$(date +%s)
 
     # Конфигурация для перевода готового MD
-    local config="{
-        "markdown_file": "$md_file",
-        "filename": "$filename",
-        "timestamp": $timestamp,
-        "target_language": "$target_language",
-        "stage_mode": "translation_only",
-        "preserve_technical_terms": true,
-        "chinese_source": true,
-        "translation_method": "builtin_dictionary_v3",
-        "use_orchestrator": false,
-        "stage3_only": true
-    }"
+    local config_json
+    config_json=$(jq -n \
+        --arg markdown_file "$md_file" \
+        --arg filename "$filename" \
+        --argjson timestamp $timestamp \
+        --arg target_language "$target_language" \
+        --arg stage_mode "translation_only" \
+        --argjson preserve_technical_terms true \
+        --argjson chinese_source true \
+        --arg translation_method "builtin_dictionary_v3" \
+        --argjson use_orchestrator false \
+        --argjson stage3_only true \
+        '{
+            markdown_file: $markdown_file,
+            filename: $filename,
+            timestamp: $timestamp,
+            target_language: $target_language,
+            stage_mode: $stage_mode,
+            preserve_technical_terms: $preserve_technical_terms,
+            chinese_source: $chinese_source,
+            translation_method: $translation_method,
+            use_orchestrator: $use_orchestrator,
+            stage3_only: $stage3_only
+        }')
+
+    local request_body
+    request_body=$(jq -n --argjson conf "$config_json" '{conf: $conf}')
 
     # Запуск translation_pipeline напрямую
     local response
@@ -324,7 +367,7 @@ translate_single_md() {
         -X POST \
         --user "$AIRFLOW_USERNAME:$AIRFLOW_PASSWORD" \
         -H "Content-Type: application/json" \
-        -d "{"conf": $config}" \
+        -d "$request_body" \
         "$AIRFLOW_URL/api/v1/dags/translation_pipeline/dagRuns")
 
     local http_code
@@ -341,7 +384,11 @@ translate_single_md() {
         wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"
         return $?
     else
-        log "ERROR" "❌ Ошибка запуска перевода: HTTP $http_code"
+        if [ -n "$body" ]; then
+            log "ERROR" "❌ Ошибка запуска перевода: HTTP $http_code — $(echo "$body" | tr '\n' ' ')"
+        else
+            log "ERROR" "❌ Ошибка запуска перевода: HTTP $http_code"
+        fi
         return 1
     fi
 }
