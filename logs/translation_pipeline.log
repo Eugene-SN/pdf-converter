@@ -1,1 +1,0 @@
-{"debug": false, "event": "logging configured", "level": "info", "log_file": "logs/translation_pipeline.log", "log_group": "translation_pipeline", "logger": "translator_service", "timestamp": "2025-10-09T12:55:40.658089Z"}
