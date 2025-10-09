@@ -42,6 +42,8 @@ import base64
 import tempfile
 import subprocess
 import shutil
+import textwrap
+import html
 from typing import Dict, Any, Optional, List, Set
 from pathlib import Path
 from types import SimpleNamespace
@@ -637,12 +639,143 @@ def check_docker_pandoc_availability() -> bool:
         return False
 
 
+def _generate_pdf_basic(markdown_content: str, pdf_file: Path) -> Optional[str]:
+    """Generate a minimal PDF using only the Python standard library."""
+
+    try:
+        pdf_file.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            rendered_html = markdown.markdown(
+                markdown_content,
+                extensions=['extra', 'tables', 'sane_lists']
+            )
+        except Exception:
+            rendered_html = markdown.markdown(markdown_content)
+
+        plain_text = re.sub(r'<[^>]+>', '', rendered_html)
+        plain_text = html.unescape(plain_text)
+
+        wrapper = textwrap.TextWrapper(width=90, replace_whitespace=False, drop_whitespace=False)
+        lines: List[str] = []
+
+        for raw_line in plain_text.splitlines():
+            stripped = raw_line.strip()
+            if not stripped:
+                lines.append("")
+                continue
+
+            wrapped_segments = wrapper.wrap(stripped)
+            if wrapped_segments:
+                lines.extend(wrapped_segments)
+            else:
+                lines.append(stripped)
+
+        if not lines:
+            lines = [""]
+
+        max_lines_per_page = 45
+        pages = [
+            lines[i:i + max_lines_per_page]
+            for i in range(0, len(lines), max_lines_per_page)
+        ] or [[""]]
+
+        objects: List[str] = []
+
+        def add_object(body: str) -> int:
+            objects.append(body)
+            return len(objects)
+
+        catalog_idx = add_object("")
+        pages_idx = add_object("")
+        font_idx = add_object("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+
+        page_indices: List[int] = []
+
+        for page_lines in pages:
+            if not page_lines:
+                page_lines = [""]
+
+            y_position = 800
+            line_height = 14
+            content_parts: List[str] = []
+
+            for line in page_lines:
+                safe_line = line.replace('\\', r'\\').replace('(', r'\(').replace(')', r'\)')
+                if not safe_line:
+                    safe_line = " "
+                content_parts.append(
+                    f"BT /F1 12 Tf 50 {y_position} Td ({safe_line}) Tj ET"
+                )
+                y_position -= line_height
+
+            content_stream = "\n".join(content_parts) + "\n"
+            content_length = len(content_stream.encode('utf-8'))
+            content_idx = add_object(
+                "<< /Length {length} >>\nstream\n{stream}endstream".format(
+                    length=content_length,
+                    stream=content_stream
+                )
+            )
+
+            page_idx = add_object(
+                "<< /Type /Page /Parent {parent} 0 R /MediaBox [0 0 595 842] "
+                "/Contents {contents} 0 R /Resources << /Font << /F1 {font} 0 R >> >> >>".format(
+                    parent=pages_idx,
+                    contents=content_idx,
+                    font=font_idx
+                )
+            )
+
+            page_indices.append(page_idx)
+
+        objects[catalog_idx - 1] = f"<< /Type /Catalog /Pages {pages_idx} 0 R >>"
+        kids_refs = " ".join(f"{idx} 0 R" for idx in page_indices)
+        objects[pages_idx - 1] = (
+            f"<< /Type /Pages /Kids [{kids_refs}] /Count {len(page_indices)} >>"
+        )
+
+        with open(pdf_file, 'wb') as fh:
+            fh.write(b"%PDF-1.4\n")
+            offsets: List[int] = []
+
+            for index, body in enumerate(objects, start=1):
+                offsets.append(fh.tell())
+                fh.write(f"{index} 0 obj\n".encode('ascii'))
+                fh.write(body.encode('utf-8'))
+                if not body.endswith('\n'):
+                    fh.write(b"\n")
+                fh.write(b"endobj\n")
+
+            xref_offset = fh.tell()
+            fh.write(f"xref\n0 {len(objects) + 1}\n".encode('ascii'))
+            fh.write(b"0000000000 65535 f \n")
+
+            for offset in offsets:
+                fh.write(f"{offset:010d} 00000 n \n".encode('ascii'))
+
+            fh.write(
+                (
+                    f"trailer\n<< /Size {len(objects) + 1} /Root {catalog_idx} 0 R >>\n"
+                    f"startxref\n{xref_offset}\n%%EOF\n"
+                ).encode('ascii')
+            )
+
+        logger.info("📄 Result PDF создан через базовый Python fallback: %s", pdf_file)
+        return str(pdf_file)
+    except Exception as exc:
+        logger.error("Basic Python PDF fallback failed: %s", exc)
+        return None
+
+
 def _generate_pdf_with_pymupdf(markdown_content: str, pdf_file: Path) -> Optional[str]:
-    """Generate a PDF directly via PyMuPDF as a Docker-free fallback."""
+    """Generate a PDF directly via PyMuPDF, falling back to the basic writer when unavailable."""
 
     if not PYMUPDF_AVAILABLE or not fitz:
-        logger.error("PyMuPDF fallback requested but the library is not available")
-        return None
+        _warn_once(
+            "PyMuPDF недоступен, используется базовый Python fallback для генерации PDF"
+        )
+        return _generate_pdf_basic(markdown_content, pdf_file)
 
     try:
         try:
@@ -671,8 +804,8 @@ def _generate_pdf_with_pymupdf(markdown_content: str, pdf_file: Path) -> Optiona
         logger.info("📄 Result PDF создан через PyMuPDF fallback: %s", pdf_file)
         return str(pdf_file)
     except Exception as exc:
-        logger.error(f"PyMuPDF fallback PDF generation failed: {exc}")
-        return None
+        logger.error("PyMuPDF fallback PDF generation failed: %s", exc)
+        return _generate_pdf_basic(markdown_content, pdf_file)
 
 
 def generate_result_pdf_via_docker_pandoc(markdown_content: str, document_id: str) -> Optional[str]:
@@ -722,7 +855,7 @@ def generate_result_pdf_via_docker_pandoc(markdown_content: str, document_id: st
 
         fallback_path = _generate_pdf_with_pymupdf(markdown_content, pdf_file)
         if fallback_path:
-            logger.info("Using PyMuPDF-generated PDF for visual comparison: %s", fallback_path)
+            logger.info("Using fallback-generated PDF for visual comparison: %s", fallback_path)
         return fallback_path
 
     except Exception as e:
