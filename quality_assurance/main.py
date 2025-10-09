@@ -13,7 +13,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import subprocess
 import re
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, Tuple
 from pathlib import Path
 import tempfile
 import json
@@ -36,7 +36,17 @@ from pydantic_settings import BaseSettings
 # HTTP клиенты
 import httpx
 import aiofiles
-import fitz  # PyMuPDF
+
+try:
+    import fitz  # PyMuPDF
+    PYMUPDF_AVAILABLE = True
+except ImportError:  # pragma: no cover - handled via graceful fallback
+    fitz = None  # type: ignore
+    PYMUPDF_AVAILABLE = False
+
+import markdown
+import html
+import textwrap
 
 try:
     from pdf2image import convert_from_path
@@ -224,6 +234,76 @@ qa_overall_score = Histogram('qa_overall_score', 'QA overall validation score')
 memory_usage = Gauge('qa_memory_usage_bytes', 'Memory usage')
 disk_usage = Gauge('qa_disk_usage_percent', 'Disk usage percentage')
 
+# PDF рендеринг метрики
+pdf_renderer_status = Gauge(
+    'qa_pdf_renderer_status',
+    'Availability of PDF renderer backends (1=available, 0=unavailable)',
+    ['backend']
+)
+pdf_renderer_last_used = Gauge(
+    'qa_pdf_renderer_last_used',
+    'Indicator for the backend used in the most recent PDF generation',
+    ['backend']
+)
+
+PDF_RENDERER_BACKENDS = ("docker_pandoc", "pymupdf", "python_basic")
+
+for backend in PDF_RENDERER_BACKENDS:
+    pdf_renderer_status.labels(backend=backend).set(0)
+    pdf_renderer_last_used.labels(backend=backend).set(0)
+
+pdf_renderer_status.labels(backend="python_basic").set(1)
+pdf_renderer_status.labels(backend="pymupdf").set(1 if PYMUPDF_AVAILABLE else 0)
+
+_pandoc_docker_available: Optional[bool] = None
+_last_pdf_renderer_backend: Optional[str] = None
+
+
+def _record_last_renderer_backend(backend: str) -> None:
+    global _last_pdf_renderer_backend
+    _last_pdf_renderer_backend = backend
+
+    for candidate in PDF_RENDERER_BACKENDS:
+        pdf_renderer_last_used.labels(backend=candidate).set(1 if candidate == backend else 0)
+
+
+def _set_docker_renderer_availability(is_available: bool) -> None:
+    global _pandoc_docker_available
+    _pandoc_docker_available = is_available
+    pdf_renderer_status.labels(backend="docker_pandoc").set(1 if is_available else 0)
+
+
+def _docker_renderer_available() -> bool:
+    if _pandoc_docker_available is not None:
+        return _pandoc_docker_available
+
+    try:
+        result = subprocess.run(
+            [
+                'docker', 'exec', settings.pandoc_container_name,
+                'pandoc', '--version'
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        is_available = result.returncode == 0
+        if is_available:
+            logger.info("Docker Pandoc renderer detected as available")
+        else:
+            logger.warning(
+                "Docker Pandoc renderer check failed: %s", result.stderr.strip()
+            )
+    except FileNotFoundError:
+        logger.warning("Docker binary not found; Docker Pandoc renderer unavailable")
+        is_available = False
+    except Exception as exc:  # pragma: no cover - defensive logging
+        logger.error("Error checking Docker Pandoc availability: %s", exc)
+        is_available = False
+
+    _set_docker_renderer_availability(is_available)
+    return is_available
+
 # =======================================================================================
 # PYDANTIC МОДЕЛИ
 # =======================================================================================
@@ -245,7 +325,9 @@ class ValidationResponse(BaseModel):
     overall_score: float
     passed: bool
     processing_time: float
-    
+    renderer_backend: Optional[str] = None
+    generated_result_pdf: bool = False
+
     # Результаты отдельных валидаторов
     ocr_validation: Optional[Dict[str, Any]] = None
     visual_diff: Optional[Dict[str, Any]] = None
@@ -267,6 +349,7 @@ class HealthResponse(BaseModel):
     version: str = "4.0.0"
     validators: Dict[str, str]
     system_info: Dict[str, Any]
+    renderer_status: Dict[str, Any]
 
 # =======================================================================================
 # ИНИЦИАЛИЗАЦИЯ ВАЛИДАТОРОВ
@@ -284,11 +367,23 @@ def _sanitize_identifier(value: str) -> str:
     return re.sub(r'[^A-Za-z0-9._-]', '_', value)
 
 
-async def generate_pdf_from_markdown(markdown_content: str, document_id: str) -> str:
-    return await asyncio.to_thread(_generate_pdf_from_markdown_sync, markdown_content, document_id)
+async def generate_pdf_from_markdown(markdown_content: str, document_id: str) -> Tuple[str, str]:
+    try:
+        return await asyncio.to_thread(
+            _generate_pdf_from_markdown_sync,
+            markdown_content,
+            document_id,
+        )
+    except Exception as exc:
+        logger.error(
+            "PDF generation failed for %s: %s", document_id, exc, exc_info=True
+        )
+        raise RuntimeError(
+            f"generate_pdf_from_markdown failed for document {document_id}"
+        ) from exc
 
 
-def _generate_pdf_from_markdown_sync(markdown_content: str, document_id: str) -> str:
+def _generate_pdf_from_markdown_sync(markdown_content: str, document_id: str) -> Tuple[str, str]:
     safe_id = _sanitize_identifier(document_id or f"doc_{int(time.time())}")
     temp_dir = Path(settings.pandoc_host_mount) / f"qa_pdf_{safe_id}"
     temp_dir.mkdir(parents=True, exist_ok=True)
@@ -298,19 +393,217 @@ def _generate_pdf_from_markdown_sync(markdown_content: str, document_id: str) ->
 
     md_file.write_text(markdown_content, encoding='utf-8')
 
-    docker_cmd = [
-        'docker', 'exec', settings.pandoc_container_name,
-        'python3', '/app/render_pdf.py',
-        f"{settings.pandoc_workspace}/{temp_dir.name}/source.md",
-        f"{settings.pandoc_workspace}/{temp_dir.name}/result.pdf",
-        settings.pandoc_template_path
-    ]
+    docker_available = _docker_renderer_available()
 
-    result = subprocess.run(docker_cmd, capture_output=True, text=True)
-    if result.returncode != 0 or not pdf_file.exists():
-        raise RuntimeError(f"Pandoc rendering failed: {result.stderr.strip()}")
+    if docker_available:
+        docker_cmd = [
+            'docker', 'exec', settings.pandoc_container_name,
+            'python3', '/app/render_pdf.py',
+            f"{settings.pandoc_workspace}/{temp_dir.name}/source.md",
+            f"{settings.pandoc_workspace}/{temp_dir.name}/result.pdf",
+            settings.pandoc_template_path
+        ]
 
-    return str(pdf_file)
+        try:
+            result = subprocess.run(
+                docker_cmd,
+                capture_output=True,
+                text=True,
+                timeout=180
+            )
+        except Exception as exc:
+            logger.error("Docker Pandoc execution failed: %s", exc)
+            result = None
+
+        if result and result.returncode == 0 and pdf_file.exists():
+            _set_docker_renderer_availability(True)
+            _record_last_renderer_backend("docker_pandoc")
+            return str(pdf_file), "docker_pandoc"
+
+        logger.warning(
+            "Docker Pandoc rendering failed for %s; stderr=%s",
+            document_id,
+            (result.stderr.strip() if result else "<no output>")
+        )
+        _set_docker_renderer_availability(False)
+
+    fallback_path, backend = _generate_pdf_with_pymupdf(markdown_content, pdf_file)
+    if fallback_path:
+        _record_last_renderer_backend(backend)
+        return fallback_path, backend
+
+    raise RuntimeError("All PDF rendering backends failed")
+
+
+def _generate_pdf_with_pymupdf(markdown_content: str, pdf_file: Path) -> Tuple[Optional[str], str]:
+    if not PYMUPDF_AVAILABLE or fitz is None:
+        logger.warning(
+            "PyMuPDF unavailable; using basic Python PDF fallback"
+        )
+        pdf_renderer_status.labels(backend="pymupdf").set(0)
+        path = _generate_pdf_basic(markdown_content, pdf_file)
+        return path, "python_basic"
+
+    try:
+        try:
+            html_content = markdown.markdown(
+                markdown_content,
+                extensions=['extra', 'tables', 'sane_lists']
+            )
+        except Exception:
+            html_content = markdown.markdown(markdown_content)
+
+        if pdf_file.exists():
+            pdf_file.unlink()
+
+        html_document = fitz.open("html", html_content.encode('utf-8'))
+        try:
+            pdf_bytes = html_document.convert_to_pdf()
+        finally:
+            html_document.close()
+
+        pdf_document = fitz.open("pdf", pdf_bytes)
+        try:
+            pdf_document.save(str(pdf_file))
+        finally:
+            pdf_document.close()
+
+        logger.info("Result PDF generated via PyMuPDF fallback: %s", pdf_file)
+        pdf_renderer_status.labels(backend="pymupdf").set(1)
+        return str(pdf_file), "pymupdf"
+    except Exception as exc:
+        logger.error("PyMuPDF fallback PDF generation failed: %s", exc)
+        pdf_renderer_status.labels(backend="pymupdf").set(0)
+        path = _generate_pdf_basic(markdown_content, pdf_file)
+        return path, "python_basic"
+
+
+def _generate_pdf_basic(markdown_content: str, pdf_file: Path) -> Optional[str]:
+    try:
+        pdf_file.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            rendered_html = markdown.markdown(
+                markdown_content,
+                extensions=['extra', 'tables', 'sane_lists']
+            )
+        except Exception:
+            rendered_html = markdown.markdown(markdown_content)
+
+        plain_text = re.sub(r'<[^>]+>', '', rendered_html)
+        plain_text = html.unescape(plain_text)
+
+        wrapper = textwrap.TextWrapper(width=90, replace_whitespace=False, drop_whitespace=False)
+        lines: List[str] = []
+
+        for raw_line in plain_text.splitlines():
+            stripped = raw_line.strip()
+            if not stripped:
+                lines.append("")
+                continue
+
+            wrapped_segments = wrapper.wrap(stripped)
+            if wrapped_segments:
+                lines.extend(wrapped_segments)
+            else:
+                lines.append(stripped)
+
+        if not lines:
+            lines = [""]
+
+        max_lines_per_page = 45
+        pages = [
+            lines[i:i + max_lines_per_page]
+            for i in range(0, len(lines), max_lines_per_page)
+        ] or [[""]]
+
+        objects: List[str] = []
+
+        def add_object(body: str) -> int:
+            objects.append(body)
+            return len(objects)
+
+        catalog_idx = add_object("")
+        pages_idx = add_object("")
+        font_idx = add_object("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+
+        page_indices: List[int] = []
+
+        for page_lines in pages:
+            if not page_lines:
+                page_lines = [""]
+
+            y_position = 800
+            line_height = 14
+            content_parts: List[str] = []
+
+            for line in page_lines:
+                safe_line = line.replace('\\', r'\\').replace('(', r'\(').replace(')', r'\)')
+                if not safe_line:
+                    safe_line = " "
+                content_parts.append(
+                    f"BT /F1 12 Tf 50 {y_position} Td ({safe_line}) Tj ET"
+                )
+                y_position -= line_height
+
+            content_stream = "\n".join(content_parts) + "\n"
+            content_length = len(content_stream.encode('utf-8'))
+            content_idx = add_object(
+                "<< /Length {length} >>\nstream\n{stream}endstream".format(
+                    length=content_length,
+                    stream=content_stream
+                )
+            )
+
+            page_idx = add_object(
+                "<< /Type /Page /Parent {parent} 0 R /MediaBox [0 0 595 842] "
+                "/Contents {contents} 0 R /Resources << /Font << /F1 {font} 0 R >> >> >>".format(
+                    parent=pages_idx,
+                    contents=content_idx,
+                    font=font_idx
+                )
+            )
+
+            page_indices.append(page_idx)
+
+        objects[catalog_idx - 1] = f"<< /Type /Catalog /Pages {pages_idx} 0 R >>"
+        kids_refs = " ".join(f"{idx} 0 R" for idx in page_indices)
+        objects[pages_idx - 1] = (
+            f"<< /Type /Pages /Kids [{kids_refs}] /Count {len(page_indices)} >>"
+        )
+
+        with open(pdf_file, 'wb') as fh:
+            fh.write(b"%PDF-1.4\n")
+            offsets: List[int] = []
+
+            for index, body in enumerate(objects, start=1):
+                offsets.append(fh.tell())
+                fh.write(f"{index} 0 obj\n".encode('ascii'))
+                fh.write(body.encode('utf-8'))
+                if not body.endswith('\n'):
+                    fh.write(b"\n")
+                fh.write(b"endobj\n")
+
+            xref_offset = fh.tell()
+            fh.write(f"xref\n0 {len(objects) + 1}\n".encode('ascii'))
+            fh.write(b"0000000000 65535 f \n")
+
+            for offset in offsets:
+                fh.write(f"{offset:010d} 00000 n \n".encode('ascii'))
+
+            fh.write(
+                (
+                    f"trailer\n<< /Size {len(objects) + 1} /Root {catalog_idx} 0 R >>\n"
+                    f"startxref\n{xref_offset}\n%%EOF\n"
+                ).encode('ascii')
+            )
+
+        logger.info("Result PDF generated via basic Python fallback: %s", pdf_file)
+        pdf_renderer_status.labels(backend="python_basic").set(1)
+        return str(pdf_file)
+    except Exception as exc:
+        logger.error("Basic Python PDF fallback failed: %s", exc)
+        return None
 
 
 async def render_pdf_preview(pdf_path: str, work_dir: Path, page_index: int = 0, dpi: int = 200) -> str:
@@ -331,6 +624,8 @@ def _render_pdf_preview_sync(pdf_path: str, work_dir: Path, page_index: int, dpi
         image = images[0]
         image.save(preview_path, 'PNG')
     else:
+        if not PYMUPDF_AVAILABLE or fitz is None:
+            raise RuntimeError("PyMuPDF not available for preview rendering")
         with fitz.open(pdf_path) as doc:
             if page_index >= len(doc):
                 raise IndexError(f"PDF has only {len(doc)} pages")
@@ -486,12 +781,20 @@ async def health_check():
         "temp_files_count": len(list(Path(settings.temp_dir).glob("*"))),
         "uptime_seconds": int(time.time() - startup_time)
     }
-    
+
+    renderer_status = {
+        "docker_pandoc_available": _docker_renderer_available(),
+        "pymupdf_available": PYMUPDF_AVAILABLE,
+        "python_basic_available": True,
+        "last_backend_used": _last_pdf_renderer_backend or "unknown"
+    }
+
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now().isoformat(),
         validators=validators_status,
-        system_info=system_info
+        system_info=system_info,
+        renderer_status=renderer_status
     )
 
 @app.post("/validate", response_model=ValidationResponse)
@@ -519,22 +822,44 @@ async def validate_document(request: ValidationRequest):
         original_pdf_path = request.original_pdf_path
         result_pdf_path = request.result_pdf_path
         generated_result_pdf = False
+        renderer_backend = "external"
 
         if not result_pdf_path:
             if not request.document_content:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Provide either result_pdf_path or document_content")
-            result_pdf_path = await generate_pdf_from_markdown(request.document_content, validation_id)
+            result_pdf_path, renderer_backend = await generate_pdf_from_markdown(request.document_content, validation_id)
             generated_result_pdf = True
         elif not Path(result_pdf_path).exists():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Result PDF not found: {result_pdf_path}")
 
         validation_results = {
             "generated_result_pdf": generated_result_pdf,
+            "renderer_backend": renderer_backend,
             "paths": {
                 "original_pdf": original_pdf_path,
                 "result_pdf": result_pdf_path
             }
         }
+
+        skip_visual_diff = False
+        if generated_result_pdf and renderer_backend != "docker_pandoc":
+            logger.info(
+                "Validation %s using fallback PDF renderer: %s",
+                validation_id,
+                renderer_backend
+            )
+            if renderer_backend == "python_basic":
+                skip_visual_diff = True
+
+        if skip_visual_diff:
+            logger.info(
+                "Skipping visual diff for %s because only basic renderer output is available",
+                validation_id,
+            )
+            validation_results["visual_diff"] = {
+                "skipped": True,
+                "reason": "basic_renderer_fallback",
+            }
         recommendations: List[str] = []
 
         # Уровень 1: OCR Validation
@@ -561,7 +886,7 @@ async def validate_document(request: ValidationRequest):
                 validation_results["ocr_validation"] = {"error": str(e)}
 
         # Уровень 2: Visual Diff
-        if visual_diff_system:
+        if visual_diff_system and not skip_visual_diff:
             try:
                 diff_result = await visual_diff_system.compare_documents(
                     original_pdf_path,
@@ -689,6 +1014,8 @@ async def validate_document(request: ValidationRequest):
             overall_score=overall_score,
             passed=passed,
             processing_time=processing_time,
+            renderer_backend=renderer_backend,
+            generated_result_pdf=generated_result_pdf,
             ocr_validation=validation_results.get("ocr_validation"),
             visual_diff=validation_results.get("visual_diff"),
             ast_comparison=validation_results.get("ast_comparison"),
