@@ -436,16 +436,27 @@ def render_table_markdown(table_entry: Dict[str, Any]) -> str:
         return stripped
 
     potential_payloads: List[Dict[str, Any]] = []
+    seen_payloads: set[int] = set()
+
+    def enqueue_payload(candidate: Any) -> None:
+        if not isinstance(candidate, dict):
+            return
+        candidate_id = id(candidate)
+        if candidate_id in seen_payloads:
+            return
+        seen_payloads.add(candidate_id)
+        potential_payloads.append(candidate)
+
+    enqueue_payload(table_entry)
+    enqueue_payload(table_entry.get('data'))
     if isinstance(content, dict):
-        potential_payloads.append(content)
-        data_field = content.get('data')
-        if isinstance(data_field, dict):
-            potential_payloads.append(data_field)
+        enqueue_payload(content)
+        enqueue_payload(content.get('data'))
     metadata = table_entry.get('metadata')
     if isinstance(metadata, dict):
-        data_field = metadata.get('data') or metadata.get('table_data')
-        if isinstance(data_field, dict):
-            potential_payloads.append(data_field)
+        enqueue_payload(metadata)
+        enqueue_payload(metadata.get('data'))
+        enqueue_payload(metadata.get('table_data'))
 
     for payload in potential_payloads:
         if not isinstance(payload, dict):
