@@ -1,0 +1,17 @@
+[2025-10-09T09:48:30.333+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.trigger_stage4_quality_assurance manual__2025-10-09T09:44:48.157828+00:00 [queued]>
+[2025-10-09T09:48:30.339+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.trigger_stage4_quality_assurance manual__2025-10-09T09:44:48.157828+00:00 [queued]>
+[2025-10-09T09:48:30.339+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-09T09:48:30.347+0000] {taskinstance.py:2191} INFO - Executing <Task(TriggerDagRunOperator): trigger_stage4_quality_assurance> on 2025-10-09 09:44:48.157828+00:00
+[2025-10-09T09:48:30.352+0000] {standard_task_runner.py:60} INFO - Started process 14917 to run task
+[2025-10-09T09:48:30.354+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'trigger_stage4_quality_assurance', 'manual__2025-10-09T09:44:48.157828+00:00', '--job-id', '1055', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmpmh6pwkqp']
+[2025-10-09T09:48:30.355+0000] {standard_task_runner.py:88} INFO - Job 1055: Subtask trigger_stage4_quality_assurance
+[2025-10-09T09:48:30.397+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.trigger_stage4_quality_assurance manual__2025-10-09T09:44:48.157828+00:00 [running]> on host f7f5f9c1ae6c
+[2025-10-09T09:48:30.476+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='trigger_stage4_quality_assurance' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T09:44:48.157828+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T09:44:48.157828+00:00'
+[2025-10-09T09:48:30.541+0000] {trigger_dagrun.py:210} INFO - Waiting for quality_assurance on 2025-10-09 09:48:30.477306+00:00 to become allowed state ['success'] ...
+[2025-10-09T09:49:00.551+0000] {trigger_dagrun.py:210} INFO - Waiting for quality_assurance on 2025-10-09 09:48:30.477306+00:00 to become allowed state ['success'] ...
+[2025-10-09T09:49:30.560+0000] {trigger_dagrun.py:210} INFO - Waiting for quality_assurance on 2025-10-09 09:48:30.477306+00:00 to become allowed state ['success'] ...
+[2025-10-09T09:50:00.568+0000] {trigger_dagrun.py:210} INFO - Waiting for quality_assurance on 2025-10-09 09:48:30.477306+00:00 to become allowed state ['success'] ...
+[2025-10-09T09:50:30.576+0000] {trigger_dagrun.py:223} INFO - quality_assurance finished with allowed state success
+[2025-10-09T09:50:30.586+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=trigger_stage4_quality_assurance, execution_date=20251009T094448, start_date=20251009T094830, end_date=20251009T095030
+[2025-10-09T09:50:30.600+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T09:50:30.623+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

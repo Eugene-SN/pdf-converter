@@ -467,6 +467,12 @@ def render_table_markdown(table_entry: Dict[str, Any]) -> str:
                 return "\n".join(format_table_lines(matrix))
 
     if isinstance(content, dict):
+        table_payload = content if 'table_cells' in content else content.get('data')
+        if isinstance(table_payload, dict) and table_payload.get('table_cells'):
+            matrix = build_matrix_from_docling_table(table_payload)
+            if matrix:
+                lines = format_table_lines(matrix)
+                return "\n".join(lines)
         data = content.get('data') or content.get('rows')
         if isinstance(data, list) and data:
             matrix: List[List[Any]] = []

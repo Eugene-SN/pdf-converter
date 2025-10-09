@@ -1,0 +1,189 @@
+[2025-10-09T09:37:37.241+0000] {processor.py:161} INFO - Started process (PID=29239) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:37:37.242+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:37:37.243+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.243+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:37:37.248+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.248+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:37:37.248+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:37:37.248+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:37:37.248+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:37:37.260+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.021 seconds
+[2025-10-09T09:38:07.663+0000] {processor.py:161} INFO - Started process (PID=29252) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:07.664+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:38:07.665+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.665+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:07.670+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.670+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:38:07.671+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:07.670+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:38:07.671+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:07.683+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:38:38.071+0000] {processor.py:161} INFO - Started process (PID=29265) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:38.072+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:38:38.073+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.073+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:38.079+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.079+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:38:38.079+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:38:38.079+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:38:38.079+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:38:38.091+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:39:08.731+0000] {processor.py:161} INFO - Started process (PID=29278) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:08.732+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:39:08.733+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.733+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:08.739+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.739+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:39:08.739+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:08.739+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:39:08.740+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:08.752+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:39:39.125+0000] {processor.py:161} INFO - Started process (PID=29291) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:39.125+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:39:39.127+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.126+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:39.132+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.132+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:39:39.132+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:39:39.132+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:39:39.132+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:39:39.144+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.021 seconds
+[2025-10-09T09:40:09.542+0000] {processor.py:161} INFO - Started process (PID=29304) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:09.543+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:40:09.544+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.544+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:09.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.549+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:40:09.550+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:09.550+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:40:09.550+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:09.561+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.021 seconds
+[2025-10-09T09:40:40.061+0000] {processor.py:161} INFO - Started process (PID=29317) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:40.061+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:40:40.063+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.062+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:40.068+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.068+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:40:40.069+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:40:40.068+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:40:40.069+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:40:40.080+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:41:10.534+0000] {processor.py:161} INFO - Started process (PID=29337) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:10.534+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:41:10.535+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.535+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:10.541+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.541+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:41:10.541+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:10.541+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:41:10.541+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:10.552+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.021 seconds
+[2025-10-09T09:41:40.950+0000] {processor.py:161} INFO - Started process (PID=29350) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:40.951+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:41:40.952+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:40.952+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:40.958+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:40.957+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:41:40.958+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:41:40.958+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:41:40.958+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:41:40.970+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:42:11.431+0000] {processor.py:161} INFO - Started process (PID=29363) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:11.431+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:42:11.433+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.433+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:11.439+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.439+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:42:11.439+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:11.439+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:42:11.439+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:11.452+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.024 seconds
+[2025-10-09T09:42:42.042+0000] {processor.py:161} INFO - Started process (PID=29376) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:42.043+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:42:42.044+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.044+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:42.050+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.050+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:42:42.050+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:42:42.050+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:42:42.051+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:42:42.062+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:43:12.450+0000] {processor.py:161} INFO - Started process (PID=29389) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:12.451+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:43:12.452+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.452+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:12.458+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.458+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:43:12.458+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:12.458+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:43:12.458+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:12.472+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.024 seconds
+[2025-10-09T09:43:42.868+0000] {processor.py:161} INFO - Started process (PID=29402) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:42.869+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:43:42.870+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:42.870+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:42.876+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:42.875+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:43:42.876+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:43:42.876+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:43:42.876+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:43:42.888+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:44:13.343+0000] {processor.py:161} INFO - Started process (PID=29415) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:13.344+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:44:13.345+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.345+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:13.350+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.350+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:44:13.351+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:13.351+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:44:13.351+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:13.363+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:44:43.973+0000] {processor.py:161} INFO - Started process (PID=29428) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:43.974+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:44:43.975+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:43.975+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:43.981+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:43.981+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:44:43.981+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:44:43.981+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:44:43.981+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:44:43.994+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:45:14.384+0000] {processor.py:161} INFO - Started process (PID=29441) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:14.385+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:45:14.386+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.386+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:14.391+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.391+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:45:14.392+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:14.392+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:45:14.392+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:14.404+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:45:44.798+0000] {processor.py:161} INFO - Started process (PID=29454) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:44.798+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:45:44.800+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.799+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:44.805+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.805+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:45:44.805+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:45:44.805+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:45:44.805+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:45:44.819+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.024 seconds
+[2025-10-09T09:46:15.317+0000] {processor.py:161} INFO - Started process (PID=29467) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:15.318+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:46:15.320+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.319+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:15.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.325+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:46:15.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:15.326+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:46:15.326+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:15.338+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:46:45.772+0000] {processor.py:161} INFO - Started process (PID=29480) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:45.773+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:46:45.774+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.774+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:45.780+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.779+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:46:45.780+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:46:45.780+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:46:45.780+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:46:45.791+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:47:16.194+0000] {processor.py:161} INFO - Started process (PID=29493) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:16.195+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:47:16.196+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.196+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:16.201+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.201+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:47:16.202+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:16.202+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:47:16.202+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:16.214+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.023 seconds
+[2025-10-09T09:47:46.673+0000] {processor.py:161} INFO - Started process (PID=29506) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:46.674+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:47:46.675+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.675+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:46.681+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.681+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:47:46.681+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:47:46.681+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:47:46.681+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:47:46.693+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:48:17.312+0000] {processor.py:161} INFO - Started process (PID=29519) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:17.313+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:48:17.314+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.314+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:17.320+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.320+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:48:17.320+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:17.320+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:48:17.320+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:17.332+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:48:47.726+0000] {processor.py:161} INFO - Started process (PID=29537) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:47.726+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:48:47.728+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.728+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:47.733+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.733+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:48:47.733+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:48:47.733+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:48:47.734+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:48:47.745+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:49:18.143+0000] {processor.py:161} INFO - Started process (PID=29550) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:18.144+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:49:18.145+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.145+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:18.151+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.151+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:49:18.151+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:18.151+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:49:18.151+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:18.163+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:49:48.626+0000] {processor.py:161} INFO - Started process (PID=29563) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:48.627+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:49:48.628+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.628+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:48.634+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.634+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:49:48.634+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:49:48.634+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:49:48.634+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:49:48.647+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.024 seconds
+[2025-10-09T09:50:19.253+0000] {processor.py:161} INFO - Started process (PID=29576) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:19.254+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:50:19.255+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.255+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:19.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.260+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:50:19.261+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:19.261+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:50:19.261+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:19.273+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
+[2025-10-09T09:50:49.674+0000] {processor.py:161} INFO - Started process (PID=29589) to work on /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:49.674+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/shared_utils.py for tasks to queue
+[2025-10-09T09:50:49.676+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.675+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:49.681+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.681+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T09:50:49.681+0000] {logging_mixin.py:188} INFO - [2025-10-09T09:50:49.681+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T09:50:49.681+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/shared_utils.py
+[2025-10-09T09:50:49.693+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/shared_utils.py took 0.022 seconds
