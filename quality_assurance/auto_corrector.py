@@ -396,10 +396,18 @@ class AutoCorrector:
         try:
             if not self.http_client:
                 self.http_client = aiohttp.ClientSession()
-            
+
             # Формируем промпт для коррекции
             system_prompt = self._get_correction_prompt(correction.type, correction.description)
-            
+            prompt, excerpt_truncated = self._build_user_prompt(document_content, correction)
+
+            self.logger.info(
+                "sending_vllm_correction_request",
+                correction_type=correction.type,
+                prompt_length=len(prompt),
+                excerpt_truncated=excerpt_truncated,
+            )
+
             # Запрос к vLLM
             async with self.http_client.post(
                 f"{self.config.vllm_base_url}/v1/chat/completions",
@@ -409,8 +417,9 @@ class AutoCorrector:
                 },
                 json={
                     "model": "Qwen/Qwen2.5-32B-Instruct",
+                    "prompt": prompt,
                     "messages": [
-                        {"role": "system", "content": "You are a helpful technical editor."}, 
+                        {"role": "system", "content": system_prompt},
                         {"role": "user", "content": prompt},
                     ],
                     "temperature": 0.1,
@@ -419,16 +428,28 @@ class AutoCorrector:
             ) as response:
                 if response.status == 200:
                     result = await response.json()
-                    corrected_content = result["choices"][0]["message"]["content"]
+                    choices = result.get("choices", []) if isinstance(result, dict) else []
+                    message = choices[0].get("message", {}) if choices else {}
+                    corrected_content = message.get("content", "")
+
+                    if not corrected_content.strip():
+                        self.logger.warning(
+                            "empty_vllm_response",
+                            correction_type=correction.type,
+                        )
+                        correction.error_message = "Empty response from vLLM"
+                        correction.corrected_content = document_content
+                        return document_content
+
                     correction.corrected_content = corrected_content
                     return corrected_content
                 else:
                     raise Exception(f"vLLM request failed: {response.status}")
-                    
+
         except Exception as e:
             self.logger.error(f"Error applying correction: {e}")
             raise
-    
+
     def _get_correction_prompt(self, correction_type: str, description: str) -> str:
         """Получение промпта для коррекции определенного типа"""
         
@@ -472,8 +493,40 @@ TASK: Fix markdown formatting issues.
 - Preserve all content while improving presentation
 """
         }
-        
+
         return base_prompt + type_specific.get(correction_type, type_specific["formatting"])
+
+    def _build_user_prompt(
+        self,
+        document_content: str,
+        correction: CorrectionAction,
+        max_excerpt_length: int = 2000
+    ) -> Tuple[str, bool]:
+        """Сборка пользовательского промпта с учетом ограничения длины выдержки"""
+
+        excerpt_source = correction.original_content or document_content
+        excerpt = (excerpt_source or "").strip()
+        excerpt_truncated = False
+
+        if len(excerpt) > max_excerpt_length:
+            excerpt = excerpt[:max_excerpt_length].rstrip()
+            excerpt_truncated = True
+
+        prompt_lines = [
+            "Apply the requested correction to the provided document excerpt.",
+            f"Correction request: {correction.description.strip()}",
+            "Document excerpt:",
+            "```",
+            excerpt,
+            "```",
+            "Return only the corrected excerpt without additional commentary.",
+        ]
+
+        if excerpt_truncated:
+            prompt_lines.append("(Note: The excerpt was truncated for processing.)")
+
+        prompt = "\n".join(prompt_lines)
+        return prompt, excerpt_truncated
     
     async def _final_review_correction(
         self,
