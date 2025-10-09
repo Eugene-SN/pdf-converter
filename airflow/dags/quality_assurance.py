@@ -42,11 +42,21 @@ import base64
 import tempfile
 import subprocess
 import shutil
+import textwrap
+import html
 from typing import Dict, Any, Optional, List, Set
 from pathlib import Path
 from types import SimpleNamespace
 import importlib
 import numpy as np
+import markdown
+
+try:
+    import fitz  # type: ignore
+    PYMUPDF_AVAILABLE = True
+except ImportError:
+    fitz = None  # type: ignore
+    PYMUPDF_AVAILABLE = False
 
 # ✅ ИСПРАВЛЕНО: logger перенесен ПЕРЕД try/except блоками
 logger = logging.getLogger(__name__)
@@ -175,6 +185,9 @@ if not SSIM_AVAILABLE:
 if not SENTENCE_TRANSFORMERS_AVAILABLE:
     _warn_once("sentence-transformers не установлен, семантический анализ упрощен")
 
+if not PYMUPDF_AVAILABLE:
+    _warn_once("PyMuPDF не установлен, fallback генерация PDF недоступна")
+
 # Конфигурация DAG
 DEFAULT_ARGS = {
     'owner': 'pdf-converter',
@@ -225,6 +238,8 @@ QA_RULES = {
 }
 
 # ✅ СОХРАНЕНА: Конфигурация уровней валидации
+_VLLM_BASE_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000').rstrip('/')
+
 LEVEL_CONFIG = {
     'level1_ocr': {
         'consensus_threshold': 0.85,
@@ -248,7 +263,7 @@ LEVEL_CONFIG = {
         'formatting_score_threshold': 0.8
     },
     'level5_correction': {
-        'vllm_endpoint': 'http://vllm:8000/v1/chat/completions',
+        'vllm_endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
         'correction_model': 'Qwen/Qwen2.5-VL-32B-Instruct',
         'max_retries': 3,
         'enable_auto_correction': True
@@ -272,15 +287,19 @@ TECHNICAL_TERMS = [
 
 # ✅ ИСПРАВЛЕНА: vLLM конфигурация для авто-коррекции
 VLLM_CONFIG = {
-    'endpoint': 'http://vllm:8000/v1/chat/completions',
+    'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
     'model': 'Qwen/Qwen2.5-VL-32B-Instruct',
-    'timeout': 180,
+    'timeout': 60,
     'max_tokens': 8192,
     'temperature': 0.1,
     'top_p': 0.9,
-    'max_retries': 3,
-    'retry_delay': 5
+    'max_retries': 2,
+    'retry_delay': 2
 }
+
+SENTENCE_MODEL_CACHE_DIR = os.getenv('QA_SENTENCE_MODEL_CACHE') or os.getenv('SENTENCE_TRANSFORMERS_CACHE')
+_SENTENCE_MODEL = None
+_SENTENCE_MODEL_LOAD_FAILED = False
 
 if VISUAL_DIFF_AVAILABLE and VisualDiffConfig and VisualDiffSystem:
     VISUAL_DIFF_CONFIG = VisualDiffConfig(
@@ -327,6 +346,41 @@ def _run_visual_diff(original_pdf: str, result_pdf: str, comparison_id: str):
             pass
         asyncio.set_event_loop(None)
         loop.close()
+
+
+def _get_sentence_transformer_model():
+    """Load SentenceTransformer once, respecting optional cache configuration."""
+
+    global _SENTENCE_MODEL, _SENTENCE_MODEL_LOAD_FAILED
+
+    if not SENTENCE_TRANSFORMERS_AVAILABLE or not SentenceTransformer:
+        return None
+
+    if _SENTENCE_MODEL is not None or _SENTENCE_MODEL_LOAD_FAILED:
+        return _SENTENCE_MODEL
+
+    load_kwargs: Dict[str, Any] = {}
+    if SENTENCE_MODEL_CACHE_DIR:
+        load_kwargs['cache_folder'] = SENTENCE_MODEL_CACHE_DIR
+
+    model_name = LEVEL_CONFIG['level3_ast']['model_name']
+
+    try:
+        _SENTENCE_MODEL = SentenceTransformer(model_name, **load_kwargs)
+        cache_note = f" using cache at {SENTENCE_MODEL_CACHE_DIR}" if SENTENCE_MODEL_CACHE_DIR else ""
+        logger.info("SentenceTransformer model '%s' loaded%s", model_name, cache_note)
+    except Exception as exc:
+        _SENTENCE_MODEL_LOAD_FAILED = True
+        _warn_once(
+            f"SentenceTransformer model '{model_name}' unavailable: {exc}"
+        )
+        if SENTENCE_MODEL_CACHE_DIR:
+            _warn_once(
+                f"Ensure the model is available in {SENTENCE_MODEL_CACHE_DIR} to enable semantic QA."
+            )
+        _SENTENCE_MODEL = None
+
+    return _SENTENCE_MODEL
 
 # ================================================================================
 # ЗАГРУЗКА И ИНИЦИАЛИЗАЦИЯ
@@ -510,19 +564,9 @@ def perform_visual_comparison(**context) -> Dict[str, Any]:
         if not original_pdf_path or not os.path.exists(original_pdf_path):
             raise AirflowException(f"Original PDF not found: {original_pdf_path}")
 
-        if not check_docker_pandoc_availability():
-            logger.warning("Docker Pandoc unavailable — skipping visual comparison")
-            validation_result.update({
-                'validation_score': 0.7,
-                'issues_found': validation_result['issues_found'] + ['Docker Pandoc service unavailable'],
-                'skipped': True,
-                'processing_time': time.time() - start_time,
-            })
-            return validation_result
-
         result_pdf_path = generate_result_pdf_via_docker_pandoc(document_content, document_id)
         if not result_pdf_path or not os.path.exists(result_pdf_path):
-            logger.warning("Failed to generate result PDF via Docker Pandoc — visual comparison skipped")
+            logger.warning("Failed to generate result PDF for visual comparison — level skipped")
             validation_result.update({
                 'validation_score': 0.6,
                 'issues_found': validation_result['issues_found'] + ['Result PDF generation failed'],
@@ -582,60 +626,240 @@ def check_docker_pandoc_availability() -> bool:
             ['docker', 'exec', 'pandoc-render', 'pandoc', '--version'],
             capture_output=True, text=True, timeout=10
         )
-        
+
         if result.returncode == 0:
             logger.info("✅ Docker Pandoc service is available")
             return True
-        else:
-            logger.warning("❌ Docker Pandoc service is not responding")
-            return False
-            
+
+        logger.warning("❌ Docker Pandoc service is not responding")
+        return False
+
     except Exception as e:
         logger.error(f"Error checking Docker Pandoc availability: {e}")
         return False
 
-def generate_result_pdf_via_docker_pandoc(markdown_content: str, document_id: str) -> Optional[str]:
-    """✅ ИСПРАВЛЕНА: Генерация PDF через Docker Pandoc сервис"""
+
+def _generate_pdf_basic(markdown_content: str, pdf_file: Path) -> Optional[str]:
+    """Generate a minimal PDF using only the Python standard library."""
+
     try:
-        logger.info(f"Generating result PDF via Docker Pandoc service for document: {document_id}")
-        
-        # Проверяем доступность Docker Pandoc сервиса
-        if not check_docker_pandoc_availability():
-            logger.warning("Docker Pandoc service not available, skipping PDF generation")
-            return None
-        
-        # Используем общие временные директории, монтированные в Docker
+        pdf_file.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            rendered_html = markdown.markdown(
+                markdown_content,
+                extensions=['extra', 'tables', 'sane_lists']
+            )
+        except Exception:
+            rendered_html = markdown.markdown(markdown_content)
+
+        plain_text = re.sub(r'<[^>]+>', '', rendered_html)
+        plain_text = html.unescape(plain_text)
+
+        wrapper = textwrap.TextWrapper(width=90, replace_whitespace=False, drop_whitespace=False)
+        lines: List[str] = []
+
+        for raw_line in plain_text.splitlines():
+            stripped = raw_line.strip()
+            if not stripped:
+                lines.append("")
+                continue
+
+            wrapped_segments = wrapper.wrap(stripped)
+            if wrapped_segments:
+                lines.extend(wrapped_segments)
+            else:
+                lines.append(stripped)
+
+        if not lines:
+            lines = [""]
+
+        max_lines_per_page = 45
+        pages = [
+            lines[i:i + max_lines_per_page]
+            for i in range(0, len(lines), max_lines_per_page)
+        ] or [[""]]
+
+        objects: List[str] = []
+
+        def add_object(body: str) -> int:
+            objects.append(body)
+            return len(objects)
+
+        catalog_idx = add_object("")
+        pages_idx = add_object("")
+        font_idx = add_object("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+
+        page_indices: List[int] = []
+
+        for page_lines in pages:
+            if not page_lines:
+                page_lines = [""]
+
+            y_position = 800
+            line_height = 14
+            content_parts: List[str] = []
+
+            for line in page_lines:
+                safe_line = line.replace('\\', r'\\').replace('(', r'\(').replace(')', r'\)')
+                if not safe_line:
+                    safe_line = " "
+                content_parts.append(
+                    f"BT /F1 12 Tf 50 {y_position} Td ({safe_line}) Tj ET"
+                )
+                y_position -= line_height
+
+            content_stream = "\n".join(content_parts) + "\n"
+            content_length = len(content_stream.encode('utf-8'))
+            content_idx = add_object(
+                "<< /Length {length} >>\nstream\n{stream}endstream".format(
+                    length=content_length,
+                    stream=content_stream
+                )
+            )
+
+            page_idx = add_object(
+                "<< /Type /Page /Parent {parent} 0 R /MediaBox [0 0 595 842] "
+                "/Contents {contents} 0 R /Resources << /Font << /F1 {font} 0 R >> >> >>".format(
+                    parent=pages_idx,
+                    contents=content_idx,
+                    font=font_idx
+                )
+            )
+
+            page_indices.append(page_idx)
+
+        objects[catalog_idx - 1] = f"<< /Type /Catalog /Pages {pages_idx} 0 R >>"
+        kids_refs = " ".join(f"{idx} 0 R" for idx in page_indices)
+        objects[pages_idx - 1] = (
+            f"<< /Type /Pages /Kids [{kids_refs}] /Count {len(page_indices)} >>"
+        )
+
+        with open(pdf_file, 'wb') as fh:
+            fh.write(b"%PDF-1.4\n")
+            offsets: List[int] = []
+
+            for index, body in enumerate(objects, start=1):
+                offsets.append(fh.tell())
+                fh.write(f"{index} 0 obj\n".encode('ascii'))
+                fh.write(body.encode('utf-8'))
+                if not body.endswith('\n'):
+                    fh.write(b"\n")
+                fh.write(b"endobj\n")
+
+            xref_offset = fh.tell()
+            fh.write(f"xref\n0 {len(objects) + 1}\n".encode('ascii'))
+            fh.write(b"0000000000 65535 f \n")
+
+            for offset in offsets:
+                fh.write(f"{offset:010d} 00000 n \n".encode('ascii'))
+
+            fh.write(
+                (
+                    f"trailer\n<< /Size {len(objects) + 1} /Root {catalog_idx} 0 R >>\n"
+                    f"startxref\n{xref_offset}\n%%EOF\n"
+                ).encode('ascii')
+            )
+
+        logger.info("📄 Result PDF создан через базовый Python fallback: %s", pdf_file)
+        return str(pdf_file)
+    except Exception as exc:
+        logger.error("Basic Python PDF fallback failed: %s", exc)
+        return None
+
+
+def _generate_pdf_with_pymupdf(markdown_content: str, pdf_file: Path) -> Optional[str]:
+    """Generate a PDF directly via PyMuPDF, falling back to the basic writer when unavailable."""
+
+    if not PYMUPDF_AVAILABLE or not fitz:
+        _warn_once(
+            "PyMuPDF недоступен, используется базовый Python fallback для генерации PDF"
+        )
+        return _generate_pdf_basic(markdown_content, pdf_file)
+
+    try:
+        try:
+            html_content = markdown.markdown(
+                markdown_content,
+                extensions=['extra', 'tables', 'sane_lists']
+            )
+        except Exception:
+            html_content = markdown.markdown(markdown_content)
+
+        if pdf_file.exists():
+            pdf_file.unlink()
+
+        html_document = fitz.open("html", html_content.encode('utf-8'))
+        try:
+            pdf_bytes = html_document.convert_to_pdf()
+        finally:
+            html_document.close()
+
+        pdf_document = fitz.open("pdf", pdf_bytes)
+        try:
+            pdf_document.save(str(pdf_file))
+        finally:
+            pdf_document.close()
+
+        logger.info("📄 Result PDF создан через PyMuPDF fallback: %s", pdf_file)
+        return str(pdf_file)
+    except Exception as exc:
+        logger.error("PyMuPDF fallback PDF generation failed: %s", exc)
+        return _generate_pdf_basic(markdown_content, pdf_file)
+
+
+def generate_result_pdf_via_docker_pandoc(markdown_content: str, document_id: str) -> Optional[str]:
+    """Генерация PDF с использованием Docker Pandoc либо PyMuPDF fallback."""
+    try:
+        logger.info(f"Generating result PDF for document: {document_id}")
+
         temp_dir = Path("/opt/airflow/temp") / document_id
         temp_dir.mkdir(parents=True, exist_ok=True)
-        
+
         md_file = temp_dir / f"{document_id}_result.md"
         pdf_file = temp_dir / f"{document_id}_result.pdf"
-        
-        # Записываем Markdown файл
+
         with open(md_file, 'w', encoding='utf-8') as f:
             f.write(markdown_content)
-        
-        # ✅ ИСПРАВЛЕНО: Вызов через Docker exec в pandoc-render контейнер
-        # Учитываем монтирование: /opt/airflow/temp -> /workspace в pandoc-render
-        docker_cmd = [
-            'docker', 'exec', 'pandoc-render',
-            'python3', '/app/render_pdf.py',
-            f'/workspace/{document_id}/{document_id}_result.md',  # Путь внутри контейнера
-            f'/workspace/{document_id}/{document_id}_result.pdf', # Путь внутри контейнера  
-            '/app/templates/chinese_tech.latex'      # LaTeX шаблон
-        ]
-        
-        result = subprocess.run(docker_cmd, capture_output=True, text=True, timeout=120)
-        
-        if result.returncode == 0 and pdf_file.exists():
-            logger.info(f"✅ Result PDF создан через Docker Pandoc: {pdf_file}")
-            return str(pdf_file)
+
+        docker_available = check_docker_pandoc_availability()
+
+        if docker_available:
+            docker_cmd = [
+                'docker', 'exec', 'pandoc-render',
+                'python3', '/app/render_pdf.py',
+                f'/workspace/{document_id}/{document_id}_result.md',
+                f'/workspace/{document_id}/{document_id}_result.pdf',
+                '/app/templates/chinese_tech.latex'
+            ]
+
+            try:
+                result = subprocess.run(docker_cmd, capture_output=True, text=True, timeout=120)
+            except subprocess.TimeoutExpired as exc:
+                logger.error(f"Docker Pandoc conversion timed out: {exc}")
+                result = None
+
+            if result and result.returncode == 0 and pdf_file.exists():
+                logger.info(f"✅ Result PDF создан через Docker Pandoc: {pdf_file}")
+                return str(pdf_file)
+
+            logger.warning(
+                "Docker Pandoc conversion failed%s",
+                f": {result.stderr}" if result else ""
+            )
         else:
-            logger.warning(f"Docker Pandoc conversion failed: {result.stderr}")
-            return None
-            
+            logger.warning(
+                "Docker Pandoc service not available, falling back to PyMuPDF for %s",
+                document_id
+            )
+
+        fallback_path = _generate_pdf_with_pymupdf(markdown_content, pdf_file)
+        if fallback_path:
+            logger.info("Using fallback-generated PDF for visual comparison: %s", fallback_path)
+        return fallback_path
+
     except Exception as e:
-        logger.error(f"PDF generation via Docker Pandoc failed: {e}")
+        logger.error(f"PDF generation failed: {e}")
         return None
 
 # ================================================================================
@@ -728,12 +952,12 @@ def analyze_document_structure(content: str) -> float:
 def analyze_semantic_similarity(content: str) -> float:
     """✅ Семантический анализ (упрощенный если нет SentenceTransformer)"""
     try:
-        if SENTENCE_TRANSFORMERS_AVAILABLE and SentenceTransformer:
-            model = SentenceTransformer(LEVEL_CONFIG['level3_ast']['model_name'])
+        model = _get_sentence_transformer_model()
+        if model:
             sections = re.split(r'\n#{1,6}\s+', content)
             if len(sections) < 2:
                 return 0.8
-                
+
             embeddings = model.encode(sections)
             similarities: List[float] = []
             
@@ -745,7 +969,9 @@ def analyze_semantic_similarity(content: str) -> float:
                     
             return float(np.mean(similarities)) if similarities else 0.8
         else:
-            logger.info("Using fallback semantic analysis (SentenceTransformer unavailable)")
+            _warn_once(
+                "SentenceTransformer недоступен, используется эвристический расчет семантического балла (длина + технические термины)"
+            )
             score = 0.8
             
             if len(content) < 500:
@@ -1086,7 +1312,6 @@ def call_vllm_api(prompt: str) -> Optional[str]:
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
             try:
-                # ✅ ИСПРАВЛЕНО: content как строки, НЕ как массивы объектов
                 payload = {
                     "model": VLLM_CONFIG['model'],
                     "messages": [
@@ -1097,36 +1322,55 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                     "temperature": VLLM_CONFIG['temperature'],
                     "top_p": VLLM_CONFIG['top_p']
                 }
-                
+
                 response = requests.post(
                     VLLM_CONFIG['endpoint'],
                     json=payload,
                     timeout=VLLM_CONFIG['timeout']
                 )
-                
+
                 if response.status_code == 200:
                     result = response.json()
                     return result['choices'][0]['message']['content']
-                elif response.status_code == 500:
-                    logger.warning(f"vLLM API 500 (preprocess): {response.text[:200]}")
-                    if attempt < VLLM_CONFIG['max_retries'] - 1:
-                        time.sleep(VLLM_CONFIG['retry_delay'] * 2)
-                        continue
-                    return None
+
+                if response.status_code >= 500:
+                    logger.warning(
+                        "vLLM API server error %s: %s",
+                        response.status_code,
+                        response.text[:200]
+                    )
                 else:
-                    logger.error(f"vLLM API error: {response.status_code} {response.text[:200]}")
-                    if attempt < VLLM_CONFIG['max_retries'] - 1:
-                        time.sleep(VLLM_CONFIG['retry_delay'])
-                        continue
-                    return None
-                    
+                    logger.error(
+                        "vLLM API error %s: %s",
+                        response.status_code,
+                        response.text[:200]
+                    )
+
+            except requests.exceptions.Timeout as exc:
+                logger.error(
+                    "vLLM API timeout after %ss on attempt %d/%d: %s",
+                    VLLM_CONFIG['timeout'],
+                    attempt + 1,
+                    VLLM_CONFIG['max_retries'],
+                    exc
+                )
+            except requests.exceptions.RequestException as exc:
+                logger.warning(
+                    "vLLM API request error on attempt %d/%d: %s",
+                    attempt + 1,
+                    VLLM_CONFIG['max_retries'],
+                    exc
+                )
             except Exception as e:
                 logger.warning(f"vLLM API call attempt {attempt + 1} failed: {e}")
-                if attempt < VLLM_CONFIG['max_retries'] - 1:
-                    time.sleep(VLLM_CONFIG['retry_delay'])
-                    continue
-                return None
-                
+
+            if attempt < VLLM_CONFIG['max_retries'] - 1:
+                time.sleep(VLLM_CONFIG['retry_delay'])
+                continue
+
+            logger.error("vLLM API failed after %d attempts", VLLM_CONFIG['max_retries'])
+            return None
+
     except Exception as e:
         logger.error(f"vLLM API call failed (outer): {e}")
         return None
