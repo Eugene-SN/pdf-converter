@@ -41,6 +41,7 @@ class AutoCorrectorConfig:
     # vLLM сервер настройки
     vllm_base_url: str = "http://vllm-server:8000"
     vllm_api_key: str = "vllm-api-key"
+    vllm_request_timeout_seconds: int = 600
     
     # Пороги для применения коррекций
     ocr_confidence_threshold: float = 0.8
@@ -103,7 +104,11 @@ class AutoCorrector:
     
     async def __aenter__(self):
         """Async context manager entry"""
-        self.http_client = aiohttp.ClientSession()
+        timeout = aiohttp.ClientTimeout(
+            total=self.config.vllm_request_timeout_seconds,
+            sock_read=self.config.vllm_request_timeout_seconds,
+        )
+        self.http_client = aiohttp.ClientSession(timeout=timeout)
         return self
     
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -395,12 +400,26 @@ class AutoCorrector:
         """Применение одной коррекции через vLLM"""
         try:
             if not self.http_client:
-                self.http_client = aiohttp.ClientSession()
-            
+                timeout = aiohttp.ClientTimeout(
+                    total=self.config.vllm_request_timeout_seconds,
+                    sock_read=self.config.vllm_request_timeout_seconds,
+                )
+                self.http_client = aiohttp.ClientSession(timeout=timeout)
+
             # Формируем промпт для коррекции
             system_prompt = self._get_correction_prompt(correction.type, correction.description)
-            
+            prompt, excerpt_truncated = self._build_user_prompt(document_content, correction)
+
+            self.logger.info(
+                "sending_vllm_correction_request",
+                correction_type=correction.type,
+                prompt_length=len(prompt),
+                excerpt_truncated=excerpt_truncated,
+            )
+
             # Запрос к vLLM
+            loop = asyncio.get_running_loop()
+            request_started = loop.time()
             async with self.http_client.post(
                 f"{self.config.vllm_base_url}/v1/chat/completions",
                 headers={
@@ -409,26 +428,80 @@ class AutoCorrector:
                 },
                 json={
                     "model": "Qwen/Qwen2.5-32B-Instruct",
+                    "prompt": prompt,
                     "messages": [
-                        {"role": "system", "content": "You are a helpful technical editor."}, 
+                        {"role": "system", "content": system_prompt},
                         {"role": "user", "content": prompt},
                     ],
                     "temperature": 0.1,
                     "max_tokens": 4096
                 }
             ) as response:
-                if response.status == 200:
-                    result = await response.json()
-                    corrected_content = result["choices"][0]["message"]["content"]
-                    correction.corrected_content = corrected_content
-                    return corrected_content
-                else:
+                elapsed = loop.time() - request_started
+                raw_body = await response.text()
+
+                if response.status != 200:
+                    self.logger.error(
+                        "vllm_request_failed",
+                        correction_type=correction.type,
+                        status=response.status,
+                        elapsed_seconds=round(elapsed, 2),
+                        response_preview=raw_body[:2000],
+                    )
                     raise Exception(f"vLLM request failed: {response.status}")
-                    
+
+                if not raw_body.strip():
+                    self.logger.warning(
+                        "empty_vllm_response_body",
+                        correction_type=correction.type,
+                        elapsed_seconds=round(elapsed, 2),
+                    )
+                    correction.error_message = "Empty response from vLLM"
+                    correction.corrected_content = document_content
+                    return document_content
+
+                try:
+                    result = json.loads(raw_body)
+                except json.JSONDecodeError as decode_error:
+                    self.logger.error(
+                        "vllm_response_decode_error",
+                        correction_type=correction.type,
+                        elapsed_seconds=round(elapsed, 2),
+                        error=str(decode_error),
+                        response_preview=raw_body[:2000],
+                    )
+                    correction.error_message = "Invalid JSON from vLLM"
+                    correction.corrected_content = document_content
+                    return document_content
+
+                choices = result.get("choices", []) if isinstance(result, dict) else []
+                message = choices[0].get("message", {}) if choices else {}
+                corrected_content = message.get("content", "")
+
+                if not corrected_content.strip():
+                    self.logger.warning(
+                        "empty_vllm_response",
+                        correction_type=correction.type,
+                        elapsed_seconds=round(elapsed, 2),
+                    )
+                    correction.error_message = "Empty response from vLLM"
+                    correction.corrected_content = document_content
+                    return document_content
+
+                self.logger.info(
+                    "received_vllm_correction_response",
+                    correction_type=correction.type,
+                    elapsed_seconds=round(elapsed, 2),
+                    output_length=len(corrected_content),
+                )
+
+                correction.corrected_content = corrected_content
+                return corrected_content
+
         except Exception as e:
             self.logger.error(f"Error applying correction: {e}")
             raise
-    
+
     def _get_correction_prompt(self, correction_type: str, description: str) -> str:
         """Получение промпта для коррекции определенного типа"""
         
@@ -472,8 +545,40 @@ TASK: Fix markdown formatting issues.
 - Preserve all content while improving presentation
 """
         }
-        
+
         return base_prompt + type_specific.get(correction_type, type_specific["formatting"])
+
+    def _build_user_prompt(
+        self,
+        document_content: str,
+        correction: CorrectionAction,
+        max_excerpt_length: int = 2000
+    ) -> Tuple[str, bool]:
+        """Сборка пользовательского промпта с учетом ограничения длины выдержки"""
+
+        excerpt_source = correction.original_content or document_content
+        excerpt = (excerpt_source or "").strip()
+        excerpt_truncated = False
+
+        if len(excerpt) > max_excerpt_length:
+            excerpt = excerpt[:max_excerpt_length].rstrip()
+            excerpt_truncated = True
+
+        prompt_lines = [
+            "Apply the requested correction to the provided document excerpt.",
+            f"Correction request: {correction.description.strip()}",
+            "Document excerpt:",
+            "```",
+            excerpt,
+            "```",
+            "Return only the corrected excerpt without additional commentary.",
+        ]
+
+        if excerpt_truncated:
+            prompt_lines.append("(Note: The excerpt was truncated for processing.)")
+
+        prompt = "\n".join(prompt_lines)
+        return prompt, excerpt_truncated
     
     async def _final_review_correction(
         self,
