@@ -1,0 +1,30 @@
+[2025-10-09T17:27:13.316+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: translation_pipeline.notify_translation_completion manual__2025-10-09T17:02:54.333567+00:00 [queued]>
+[2025-10-09T17:27:13.321+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: translation_pipeline.notify_translation_completion manual__2025-10-09T17:02:54.333567+00:00 [queued]>
+[2025-10-09T17:27:13.322+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 3
+[2025-10-09T17:27:13.329+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): notify_translation_completion> on 2025-10-09 17:02:54.333567+00:00
+[2025-10-09T17:27:13.334+0000] {standard_task_runner.py:60} INFO - Started process 1437 to run task
+[2025-10-09T17:27:13.336+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'translation_pipeline', 'notify_translation_completion', 'manual__2025-10-09T17:02:54.333567+00:00', '--job-id', '1286', '--raw', '--subdir', 'DAGS_FOLDER/translation_pipeline.py', '--cfg-path', '/tmp/tmpi9pu8opt']
+[2025-10-09T17:27:13.337+0000] {standard_task_runner.py:88} INFO - Job 1286: Subtask notify_translation_completion
+[2025-10-09T17:27:13.377+0000] {task_command.py:423} INFO - Running <TaskInstance: translation_pipeline.notify_translation_completion manual__2025-10-09T17:02:54.333567+00:00 [running]> on host 55aa37341c5f
+[2025-10-09T17:27:13.440+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='translation_pipeline' AIRFLOW_CTX_TASK_ID='notify_translation_completion' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T17:02:54.333567+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T17:02:54.333567+00:00'
+[2025-10-09T17:27:13.452+0000] {translation_pipeline.py:511} INFO - 
+✅ TRANSLATION PIPELINE ЗАВЕРШЕН УСПЕШНО
+
+🌐 Целевой язык: en
+🎯 Качество перевода: 100.0%
+⏱️ Средняя задержка vLLM: 0.00 с
+📦 Чанков с ошибками: 97 из 97
+🤖 Модель: Qwen/Qwen3-30B-A3B-Instruct-2507
+📁 Файл: /app/output/en/1760029214_test_short.md
+
+[2025-10-09T17:27:13.452+0000] {shared_utils.py:224} INFO - 
+✅ УСПЕШНОЕ ЗАВЕРШЕНИЕ
+DAG: translation_pipeline
+Task: notify_translation_completion
+Время: 2025-10-09T17:27:13.452519
+Результат: Обработка завершена
+
+[2025-10-09T17:27:13.452+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-09T17:27:13.462+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=translation_pipeline, task_id=notify_translation_completion, execution_date=20251009T170254, start_date=20251009T172713, end_date=20251009T172713
+[2025-10-09T17:27:13.508+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T17:27:13.523+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

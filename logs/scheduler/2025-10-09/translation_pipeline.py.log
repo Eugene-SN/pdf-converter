@@ -1,0 +1,675 @@
+[2025-10-09T16:52:37.270+0000] {processor.py:161} INFO - Started process (PID=1577) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:52:37.271+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:52:37.272+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:52:37.272+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:52:37.287+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:52:37.287+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:52:37.287+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:52:37.287+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:52:37.292+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:52:37.313+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:52:37.312+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:52:37.322+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:52:37.322+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:52:37.334+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T16:53:07.741+0000] {processor.py:161} INFO - Started process (PID=1590) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:07.742+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:53:07.743+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:07.743+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:07.758+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:07.758+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:53:07.758+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:07.758+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:53:07.764+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:07.785+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:07.784+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:53:07.794+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:07.794+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:53:07.806+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:53:38.275+0000] {processor.py:161} INFO - Started process (PID=1603) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:38.275+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:53:38.277+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:38.276+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:38.291+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:38.291+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:53:38.291+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:38.291+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:53:38.297+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:53:38.319+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:38.318+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:53:38.329+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:53:38.328+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:53:38.341+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:54:08.710+0000] {processor.py:161} INFO - Started process (PID=1616) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:08.711+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:54:08.712+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:08.712+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:08.727+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:08.727+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:54:08.727+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:08.727+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:54:08.732+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:08.754+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:08.754+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:54:08.764+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:08.764+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:54:08.776+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:54:39.204+0000] {processor.py:161} INFO - Started process (PID=1629) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:39.204+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:54:39.206+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:39.206+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:39.220+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:39.220+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:54:39.221+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:39.220+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:54:39.226+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:54:39.246+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:39.246+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:54:39.255+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:54:39.255+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:54:39.267+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T16:55:09.737+0000] {processor.py:161} INFO - Started process (PID=1642) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:09.737+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:55:09.739+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:09.739+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:09.753+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:09.753+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:55:09.754+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:09.754+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:55:09.759+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:09.781+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:09.781+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:55:09.791+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:09.791+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:55:09.803+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T16:55:40.187+0000] {processor.py:161} INFO - Started process (PID=1655) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:40.187+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:55:40.189+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:40.188+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:40.203+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:40.203+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:55:40.203+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:40.203+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:55:40.209+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:55:40.229+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:40.229+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:55:40.239+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:55:40.239+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:55:40.250+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T16:56:10.673+0000] {processor.py:161} INFO - Started process (PID=1668) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:10.674+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:56:10.675+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:10.675+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:10.690+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:10.690+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:56:10.690+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:10.690+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:56:10.695+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:10.717+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:10.717+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:56:10.727+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:10.727+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:56:10.739+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:56:41.207+0000] {processor.py:161} INFO - Started process (PID=1681) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:41.208+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:56:41.209+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:41.209+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:41.224+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:41.224+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:56:41.224+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:41.224+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:56:41.229+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:56:41.250+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:41.249+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:56:41.260+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:56:41.259+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:56:41.271+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T16:57:11.639+0000] {processor.py:161} INFO - Started process (PID=1694) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:11.640+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:57:11.641+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:11.641+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:11.656+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:11.656+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:57:11.656+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:11.656+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:57:11.661+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:11.683+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:11.683+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:57:11.693+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:11.693+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:57:11.705+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:57:42.127+0000] {processor.py:161} INFO - Started process (PID=1707) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:42.127+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:57:42.129+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:42.129+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:42.143+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:42.143+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:57:42.144+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:42.144+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:57:42.149+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:57:42.171+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:42.171+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:57:42.181+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:57:42.181+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:57:42.193+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T16:58:12.665+0000] {processor.py:161} INFO - Started process (PID=1720) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:12.666+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:58:12.668+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:12.667+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:12.682+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:12.682+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:58:12.682+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:12.682+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:58:12.688+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:12.710+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:12.710+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:58:12.720+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:12.719+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:58:12.732+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T16:58:43.105+0000] {processor.py:161} INFO - Started process (PID=1733) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:43.106+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:58:43.107+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:43.107+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:43.122+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:43.122+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:58:43.122+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:43.122+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:58:43.127+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:58:43.149+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:43.149+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:58:43.160+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:58:43.160+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:58:43.173+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.071 seconds
+[2025-10-09T16:59:13.530+0000] {processor.py:161} INFO - Started process (PID=1746) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:13.531+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:59:13.533+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:13.532+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:13.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:13.547+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:59:13.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:13.547+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:59:13.552+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:13.574+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:13.574+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:59:13.584+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:13.584+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:59:13.596+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T16:59:44.145+0000] {processor.py:161} INFO - Started process (PID=1759) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:44.146+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T16:59:44.147+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:44.147+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:44.161+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:44.161+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T16:59:44.162+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:44.162+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T16:59:44.167+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T16:59:44.189+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:44.188+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T16:59:44.199+0000] {logging_mixin.py:188} INFO - [2025-10-09T16:59:44.198+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T16:59:44.211+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:00:14.581+0000] {processor.py:161} INFO - Started process (PID=1772) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:14.582+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:00:14.583+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:14.583+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:14.598+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:14.597+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:00:14.598+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:14.598+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:00:14.603+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:14.623+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:14.623+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:00:14.633+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:14.633+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:00:14.645+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:00:45.069+0000] {processor.py:161} INFO - Started process (PID=1785) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:45.070+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:00:45.071+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:45.071+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:45.085+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:45.085+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:00:45.086+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:45.086+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:00:45.091+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:00:45.112+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:45.111+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:00:45.121+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:00:45.121+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:00:45.133+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:01:15.603+0000] {processor.py:161} INFO - Started process (PID=1798) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:15.604+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:01:15.605+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:15.605+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:15.620+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:15.620+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:01:15.620+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:15.620+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:01:15.625+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:15.646+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:15.646+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:01:15.656+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:15.656+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:01:15.668+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:01:46.035+0000] {processor.py:161} INFO - Started process (PID=1811) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:46.036+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:01:46.037+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:46.037+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:46.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:46.051+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:01:46.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:46.052+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:01:46.057+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:01:46.077+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:46.077+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:01:46.086+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:01:46.086+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:01:46.098+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:02:16.521+0000] {processor.py:161} INFO - Started process (PID=1824) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:16.522+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:02:16.523+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:16.523+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:16.538+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:16.538+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:02:16.538+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:16.538+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:02:16.543+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:16.563+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:16.563+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:02:16.573+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:16.573+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:02:16.584+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.065 seconds
+[2025-10-09T17:02:47.050+0000] {processor.py:161} INFO - Started process (PID=1837) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:47.051+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:02:47.052+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:47.052+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:47.066+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:47.066+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:02:47.067+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:47.067+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:02:47.072+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:02:47.092+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:47.092+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:02:47.102+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:02:47.102+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:02:47.114+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:03:17.488+0000] {processor.py:161} INFO - Started process (PID=1850) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:17.489+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:03:17.490+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:17.490+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:17.505+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:17.505+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:03:17.505+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:17.505+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:03:17.510+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:17.530+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:17.530+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:03:17.540+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:17.540+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:03:17.552+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:03:47.958+0000] {processor.py:161} INFO - Started process (PID=1863) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:47.958+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:03:47.960+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:47.959+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:47.974+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:47.974+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:03:47.975+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:47.975+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:03:47.980+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:03:48.001+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:48.000+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:03:48.011+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:03:48.011+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:03:48.023+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:04:18.503+0000] {processor.py:161} INFO - Started process (PID=1876) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:18.504+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:04:18.505+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:18.505+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:18.520+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:18.520+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:04:18.520+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:18.520+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:04:18.525+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:18.545+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:18.545+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:04:18.555+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:18.555+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:04:18.566+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:04:48.936+0000] {processor.py:161} INFO - Started process (PID=1889) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:48.937+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:04:48.938+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:48.938+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:48.953+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:48.952+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:04:48.953+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:48.953+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:04:48.958+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:04:48.978+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:48.978+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:04:48.988+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:04:48.988+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:04:48.999+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:05:19.475+0000] {processor.py:161} INFO - Started process (PID=1902) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:19.476+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:05:19.477+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:19.477+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:19.492+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:19.492+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:05:19.492+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:19.492+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:05:19.497+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:19.517+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:19.517+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:05:19.527+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:19.527+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:05:19.539+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:05:49.907+0000] {processor.py:161} INFO - Started process (PID=1915) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:49.907+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:05:49.909+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:49.909+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:49.923+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:49.923+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:05:49.924+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:49.923+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:05:49.929+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:05:49.949+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:49.949+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:05:49.958+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:05:49.958+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:05:49.970+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:06:20.400+0000] {processor.py:161} INFO - Started process (PID=1928) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:20.401+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:06:20.402+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:20.402+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:20.416+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:20.416+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:06:20.417+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:20.417+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:06:20.422+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:20.442+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:20.442+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:06:20.452+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:20.452+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:06:20.463+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:06:50.926+0000] {processor.py:161} INFO - Started process (PID=1941) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:50.926+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:06:50.928+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:50.928+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:50.943+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:50.942+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:06:50.943+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:50.943+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:06:50.949+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:06:50.969+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:50.969+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:06:50.979+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:06:50.979+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:06:50.991+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:07:21.354+0000] {processor.py:161} INFO - Started process (PID=1954) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:21.355+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:07:21.357+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:21.356+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:21.371+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:21.371+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:07:21.371+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:21.371+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:07:21.377+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:21.399+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:21.398+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:07:21.409+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:21.409+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:07:21.421+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T17:07:51.851+0000] {processor.py:161} INFO - Started process (PID=1967) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:51.852+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:07:51.854+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:51.853+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:51.868+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:51.868+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:07:51.869+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:51.869+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:07:51.874+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:07:51.894+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:51.894+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:07:51.904+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:07:51.904+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:07:51.916+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:08:22.380+0000] {processor.py:161} INFO - Started process (PID=1980) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:22.381+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:08:22.382+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:22.382+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:22.396+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:22.396+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:08:22.397+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:22.397+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:08:22.402+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:22.423+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:22.423+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:08:22.433+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:22.433+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:08:22.445+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:08:52.811+0000] {processor.py:161} INFO - Started process (PID=1993) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:52.812+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:08:52.813+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:52.813+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:52.828+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:52.828+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:08:52.828+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:52.828+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:08:52.833+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:08:52.855+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:52.854+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:08:52.865+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:08:52.865+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:08:52.877+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:09:23.300+0000] {processor.py:161} INFO - Started process (PID=2006) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:23.301+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:09:23.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:23.302+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:23.317+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:23.317+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:09:23.317+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:23.317+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:09:23.322+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:23.344+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:23.344+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:09:23.354+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:23.354+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:09:23.366+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:09:53.836+0000] {processor.py:161} INFO - Started process (PID=2019) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:53.836+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:09:53.838+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:53.838+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:53.853+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:53.852+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:09:53.853+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:53.853+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:09:53.858+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:09:53.879+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:53.878+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:09:53.888+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:09:53.888+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:09:53.900+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:10:24.273+0000] {processor.py:161} INFO - Started process (PID=2032) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:24.274+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:10:24.275+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:24.275+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:24.290+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:24.289+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:10:24.290+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:24.290+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:10:24.295+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:24.315+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:24.315+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:10:24.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:24.325+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:10:24.337+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:10:54.772+0000] {processor.py:161} INFO - Started process (PID=2045) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:54.773+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:10:54.774+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:54.774+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:54.789+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:54.788+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:10:54.789+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:54.789+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:10:54.794+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:10:54.814+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:54.814+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:10:54.824+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:10:54.823+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:10:54.835+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:11:25.309+0000] {processor.py:161} INFO - Started process (PID=2058) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:25.310+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:11:25.311+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:25.311+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:25.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:25.325+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:11:25.326+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:25.326+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:11:25.331+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:25.351+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:25.351+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:11:25.361+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:25.361+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:11:25.372+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:11:55.738+0000] {processor.py:161} INFO - Started process (PID=2077) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:55.739+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:11:55.740+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:55.740+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:55.755+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:55.755+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:11:55.755+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:55.755+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:11:55.761+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:11:55.782+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:55.782+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:11:55.792+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:11:55.792+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:11:55.804+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T17:12:26.167+0000] {processor.py:161} INFO - Started process (PID=2090) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:26.168+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:12:26.169+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:26.169+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:26.184+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:26.183+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:12:26.184+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:26.184+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:12:26.189+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:26.211+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:26.210+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:12:26.221+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:26.221+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:12:26.233+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:12:56.791+0000] {processor.py:161} INFO - Started process (PID=2103) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:56.792+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:12:56.793+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:56.793+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:56.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:56.808+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:12:56.808+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:56.808+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:12:56.814+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:12:56.834+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:56.833+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:12:56.843+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:12:56.843+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:12:56.855+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:13:27.222+0000] {processor.py:161} INFO - Started process (PID=2116) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:27.223+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:13:27.224+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:27.224+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:27.239+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:27.239+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:13:27.239+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:27.239+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:13:27.244+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:27.266+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:27.266+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:13:27.276+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:27.276+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:13:27.288+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:13:57.731+0000] {processor.py:161} INFO - Started process (PID=2129) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:57.732+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:13:57.734+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:57.733+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:57.748+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:57.748+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:13:57.748+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:57.748+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:13:57.754+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:13:57.775+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:57.775+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:13:57.785+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:13:57.785+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:13:57.797+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:14:28.263+0000] {processor.py:161} INFO - Started process (PID=2142) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:28.264+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:14:28.265+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:28.265+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:28.280+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:28.279+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:14:28.280+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:28.280+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:14:28.285+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:28.306+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:28.306+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:14:28.316+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:28.316+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:14:28.328+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:14:58.694+0000] {processor.py:161} INFO - Started process (PID=2155) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:58.695+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:14:58.696+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:58.696+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:58.711+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:58.710+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:14:58.711+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:58.711+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:14:58.716+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:14:58.736+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:58.736+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:14:58.746+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:14:58.746+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:14:58.759+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:15:29.195+0000] {processor.py:161} INFO - Started process (PID=2168) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:29.196+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:15:29.197+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:29.197+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:29.212+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:29.212+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:15:29.212+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:29.212+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:15:29.217+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:29.239+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:29.239+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:15:29.250+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:29.250+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:15:29.262+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T17:15:59.727+0000] {processor.py:161} INFO - Started process (PID=2181) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:59.728+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:15:59.729+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:59.729+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:59.744+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:59.743+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:15:59.744+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:59.744+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:15:59.749+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:15:59.769+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:59.769+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:15:59.779+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:15:59.778+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:15:59.790+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:16:30.159+0000] {processor.py:161} INFO - Started process (PID=2194) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:16:30.159+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:16:30.161+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:16:30.160+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:16:30.175+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:16:30.175+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:16:30.175+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:16:30.175+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:16:30.180+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:16:30.202+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:16:30.201+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:16:30.211+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:16:30.211+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:16:30.223+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:17:00.647+0000] {processor.py:161} INFO - Started process (PID=2207) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:00.647+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:17:00.649+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:00.649+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:00.663+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:00.663+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:17:00.663+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:00.663+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:17:00.669+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:00.688+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:00.688+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:17:00.698+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:00.698+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:17:00.710+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.065 seconds
+[2025-10-09T17:17:31.175+0000] {processor.py:161} INFO - Started process (PID=2220) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:31.175+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:17:31.177+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:31.176+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:31.191+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:31.191+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:17:31.192+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:31.191+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:17:31.197+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:17:31.217+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:31.217+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:17:31.226+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:17:31.226+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:17:31.238+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:18:01.602+0000] {processor.py:161} INFO - Started process (PID=2233) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:01.603+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:18:01.604+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:01.604+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:01.618+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:01.618+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:18:01.619+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:01.619+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:18:01.624+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:01.644+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:01.644+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:18:01.653+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:01.653+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:18:01.665+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:18:32.147+0000] {processor.py:161} INFO - Started process (PID=2246) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:32.148+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:18:32.149+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:32.149+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:32.163+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:32.163+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:18:32.164+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:32.164+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:18:32.169+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:18:32.189+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:32.189+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:18:32.198+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:18:32.198+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:18:32.210+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:19:02.573+0000] {processor.py:161} INFO - Started process (PID=2259) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:02.573+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:19:02.575+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:02.574+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:02.590+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:02.589+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:19:02.590+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:02.590+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:19:02.595+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:02.615+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:02.615+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:19:02.625+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:02.625+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:19:02.636+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:19:33.062+0000] {processor.py:161} INFO - Started process (PID=2272) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:33.063+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:19:33.064+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:33.064+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:33.079+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:33.078+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:19:33.079+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:33.079+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:19:33.084+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:19:33.104+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:33.104+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:19:33.114+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:19:33.114+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:19:33.126+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:20:03.587+0000] {processor.py:161} INFO - Started process (PID=2285) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:03.588+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:20:03.589+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:03.589+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:03.604+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:03.604+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:20:03.604+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:03.604+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:20:03.609+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:03.629+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:03.629+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:20:03.639+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:03.639+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:20:03.651+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:20:34.017+0000] {processor.py:161} INFO - Started process (PID=2298) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:34.018+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:20:34.019+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:34.019+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:34.034+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:34.033+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:20:34.034+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:34.034+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:20:34.039+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:20:34.059+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:34.059+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:20:34.069+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:20:34.069+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:20:34.080+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:21:04.505+0000] {processor.py:161} INFO - Started process (PID=2311) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:04.506+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:21:04.507+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:04.507+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:04.521+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:04.521+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:21:04.522+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:04.522+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:21:04.527+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:04.547+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:04.547+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:21:04.556+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:04.556+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:21:04.568+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:21:35.025+0000] {processor.py:161} INFO - Started process (PID=2324) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:35.026+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:21:35.028+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:35.027+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:35.042+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:35.042+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:21:35.042+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:35.042+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:21:35.048+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:21:35.069+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:35.069+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:21:35.079+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:21:35.079+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:21:35.091+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:22:05.471+0000] {processor.py:161} INFO - Started process (PID=2337) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:05.472+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:22:05.473+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:05.473+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:05.488+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:05.488+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:22:05.488+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:05.488+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:22:05.494+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:05.514+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:05.514+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:22:05.524+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:05.524+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:22:05.536+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.067 seconds
+[2025-10-09T17:22:35.958+0000] {processor.py:161} INFO - Started process (PID=2350) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:35.959+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:22:35.961+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:35.960+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:35.975+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:35.975+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:22:35.975+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:35.975+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:22:35.980+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:22:36.000+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:36.000+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:22:36.010+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:22:36.010+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:22:36.022+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:23:06.477+0000] {processor.py:161} INFO - Started process (PID=2363) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:06.478+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:23:06.479+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:06.479+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:06.494+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:06.494+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:23:06.494+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:06.494+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:23:06.499+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:06.521+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:06.521+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:23:06.531+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:06.531+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:23:06.544+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.069 seconds
+[2025-10-09T17:23:36.903+0000] {processor.py:161} INFO - Started process (PID=2376) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:36.904+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:23:36.905+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:36.905+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:36.920+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:36.920+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:23:36.920+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:36.920+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:23:36.925+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:23:36.945+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:36.945+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:23:36.955+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:23:36.955+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:23:36.967+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:24:07.390+0000] {processor.py:161} INFO - Started process (PID=2389) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:07.391+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:24:07.392+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:07.392+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:07.406+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:07.406+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:24:07.407+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:07.407+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:24:07.412+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:07.433+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:07.433+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:24:07.443+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:07.443+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:24:07.455+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:24:37.921+0000] {processor.py:161} INFO - Started process (PID=2402) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:37.922+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:24:37.923+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:37.923+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:37.938+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:37.938+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:24:37.938+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:37.938+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:24:37.943+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:24:37.964+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:37.963+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:24:37.973+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:24:37.973+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:24:37.985+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:25:08.353+0000] {processor.py:161} INFO - Started process (PID=2415) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:08.354+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:25:08.355+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:08.355+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:08.370+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:08.370+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:25:08.370+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:08.370+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:25:08.375+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:08.396+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:08.396+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:25:08.406+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:08.406+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:25:08.418+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:25:38.786+0000] {processor.py:161} INFO - Started process (PID=2428) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:38.786+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:25:38.788+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:38.788+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:38.802+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:38.802+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:25:38.802+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:38.802+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:25:38.808+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:25:38.828+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:38.828+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:25:38.838+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:25:38.838+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:25:38.849+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:26:09.403+0000] {processor.py:161} INFO - Started process (PID=2441) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:09.403+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:26:09.405+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:09.405+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:09.419+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:09.419+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:26:09.420+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:09.420+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:26:09.425+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:09.445+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:09.445+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:26:09.455+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:09.454+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:26:09.466+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:26:39.826+0000] {processor.py:161} INFO - Started process (PID=2454) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:39.826+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:26:39.828+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:39.827+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:39.842+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:39.842+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:26:39.842+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:39.842+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:26:39.848+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:26:39.868+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:39.868+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:26:39.877+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:26:39.877+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:26:39.889+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:27:10.299+0000] {processor.py:161} INFO - Started process (PID=2467) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:10.300+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:27:10.302+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:10.301+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:10.316+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:10.316+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:27:10.316+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:10.316+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:27:10.321+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:10.342+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:10.341+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:27:10.351+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:10.351+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:27:10.363+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:27:40.832+0000] {processor.py:161} INFO - Started process (PID=2485) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:40.833+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:27:40.834+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:40.834+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:40.849+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:40.849+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:27:40.849+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:40.849+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:27:40.854+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:27:40.874+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:40.874+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:27:40.884+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:27:40.884+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:27:40.895+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.065 seconds
+[2025-10-09T17:28:11.269+0000] {processor.py:161} INFO - Started process (PID=2498) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:11.269+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:28:11.271+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:11.271+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:11.285+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:11.285+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:28:11.285+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:11.285+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:28:11.291+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:11.311+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:11.311+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:28:11.321+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:11.320+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:28:11.332+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:28:41.759+0000] {processor.py:161} INFO - Started process (PID=2511) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:41.760+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:28:41.761+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:41.761+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:41.776+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:41.776+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:28:41.776+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:41.776+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:28:41.781+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:28:41.803+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:41.803+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:28:41.813+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:28:41.813+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:28:41.825+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds
+[2025-10-09T17:29:12.299+0000] {processor.py:161} INFO - Started process (PID=2524) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:12.299+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:29:12.301+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:12.301+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:12.315+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:12.315+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:29:12.315+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:12.315+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:29:12.321+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:12.340+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:12.340+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:29:12.350+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:12.350+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:29:12.361+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.065 seconds
+[2025-10-09T17:29:42.724+0000] {processor.py:161} INFO - Started process (PID=2537) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:42.725+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:29:42.726+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:42.726+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:42.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:42.740+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:29:42.741+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:42.741+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:29:42.746+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:29:42.766+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:42.766+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:29:42.776+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:29:42.775+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:29:42.788+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.066 seconds
+[2025-10-09T17:30:13.213+0000] {processor.py:161} INFO - Started process (PID=2550) to work on /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:30:13.214+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/translation_pipeline.py for tasks to queue
+[2025-10-09T17:30:13.215+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:30:13.215+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:30:13.230+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:30:13.230+0000] {shared_utils.py:409} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-09T17:30:13.230+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:30:13.230+0000] {shared_utils.py:413} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-09T17:30:13.235+0000] {processor.py:840} INFO - DAG(s) 'translation_pipeline' retrieved from /opt/airflow/dags/translation_pipeline.py
+[2025-10-09T17:30:13.257+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:30:13.257+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-09T17:30:13.267+0000] {logging_mixin.py:188} INFO - [2025-10-09T17:30:13.267+0000] {dag.py:3823} INFO - Setting next_dagrun for translation_pipeline to None, run_after=None
+[2025-10-09T17:30:13.279+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/translation_pipeline.py took 0.068 seconds

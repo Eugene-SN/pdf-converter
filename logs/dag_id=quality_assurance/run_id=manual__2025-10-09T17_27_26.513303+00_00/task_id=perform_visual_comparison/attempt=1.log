@@ -1,0 +1,22 @@
+[2025-10-09T17:27:29.701+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-09T17:27:26.513303+00:00 [queued]>
+[2025-10-09T17:27:29.706+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-09T17:27:26.513303+00:00 [queued]>
+[2025-10-09T17:27:29.707+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-09T17:27:29.715+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): perform_visual_comparison> on 2025-10-09 17:27:26.513303+00:00
+[2025-10-09T17:27:29.721+0000] {standard_task_runner.py:60} INFO - Started process 1460 to run task
+[2025-10-09T17:27:29.724+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'quality_assurance', 'perform_visual_comparison', 'manual__2025-10-09T17:27:26.513303+00:00', '--job-id', '1292', '--raw', '--subdir', 'DAGS_FOLDER/quality_assurance.py', '--cfg-path', '/tmp/tmp97_y7qit']
+[2025-10-09T17:27:29.726+0000] {standard_task_runner.py:88} INFO - Job 1292: Subtask perform_visual_comparison
+[2025-10-09T17:27:29.770+0000] {task_command.py:423} INFO - Running <TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-09T17:27:26.513303+00:00 [running]> on host 55aa37341c5f
+[2025-10-09T17:27:29.987+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='quality_assurance' AIRFLOW_CTX_TASK_ID='perform_visual_comparison' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T17:27:26.513303+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T17:27:26.513303+00:00'
+[2025-10-09T17:27:29.999+0000] {quality_assurance.py:547} INFO - 🔍 Уровень 2: Visual Comparison с Docker Pandoc интеграцией
+[2025-10-09T17:27:30.000+0000] {quality_assurance.py:814} INFO - Generating result PDF for document: 1760029214_test_short
+[2025-10-09T17:27:30.011+0000] {quality_assurance.py:634} WARNING - ❌ Docker Pandoc service is not responding
+[2025-10-09T17:27:30.011+0000] {quality_assurance.py:851} WARNING - Docker Pandoc service not available, falling back to PyMuPDF for 1760029214_test_short
+[2025-10-09T17:27:30.011+0000] {quality_assurance.py:172} WARNING - PyMuPDF недоступен, используется базовый Python fallback для генерации PDF
+[2025-10-09T17:27:30.051+0000] {quality_assurance.py:764} INFO - 📄 Result PDF создан через базовый Python fallback: /opt/airflow/temp/1760029214_test_short/1760029214_test_short_result.pdf
+[2025-10-09T17:27:30.052+0000] {quality_assurance.py:858} INFO - Using fallback-generated PDF for visual comparison: /opt/***/temp/1760029214_test_short/1760029214_test_short_result.pdf
+[2025-10-09T17:27:30.052+0000] {quality_assurance.py:324} WARNING - Visual diff helpers unavailable; returning fallback comparison result
+[2025-10-09T17:27:30.052+0000] {quality_assurance.py:610} INFO - ✅ Уровень 2 завершен: SSIM=1.000, differences=0
+[2025-10-09T17:27:30.052+0000] {python.py:201} INFO - Done. Returned value was: {'level': 2, 'name': 'visual_comparison', 'overall_similarity': 1.0, 'ssim_score': 1.0, 'differences_count': 0, 'issues_found': [], 'processing_time': 0.06387114524841309, 'pandoc_integration': True, 'validation_score': 1.0, 'pages_compared': 0, 'diff_summary': {'status': 'skipped', 'reason': 'visual_diff_unavailable'}, 'diff_image_paths': [], 'result_pdf_path': '/opt/***/temp/1760029214_test_short/1760029214_test_short_result.pdf'}
+[2025-10-09T17:27:30.073+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=quality_assurance, task_id=perform_visual_comparison, execution_date=20251009T172726, start_date=20251009T172729, end_date=20251009T172730
+[2025-10-09T17:27:30.095+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T17:27:30.118+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
