@@ -348,14 +348,16 @@ def _coerce_index(value: Any, default: int) -> int:
 
 
 def build_matrix_from_docling_table(table_payload: Dict[str, Any]) -> List[List[str]]:
-    cells = table_payload.get('table_cells')
+    if not isinstance(table_payload, dict):
+        return []
+    cells = table_payload.get('table_cells') or table_payload.get('cells')
     if not isinstance(cells, list):
         return []
     num_rows = _coerce_index(table_payload.get('num_rows'), 0)
     num_cols = _coerce_index(table_payload.get('num_cols'), 0)
     max_row = num_rows - 1
     max_col = num_cols - 1
-    processed_cells: List[Tuple[int, int, str]] = []
+    processed_cells: List[Tuple[int, int, int, int, str]] = []
     for cell in cells:
         if not isinstance(cell, dict):
             continue
@@ -388,21 +390,23 @@ def build_matrix_from_docling_table(table_payload: Dict[str, Any]) -> List[List[
         max_row = max(max_row, end_row)
         max_col = max(max_col, end_col)
         text = sanitize_table_cell(cell.get('text'))
-        processed_cells.append((start_row, start_col, text))
+        processed_cells.append((start_row, end_row, start_col, end_col, text))
 
     total_rows = max_row + 1
     total_cols = max_col + 1
     if total_rows <= 0 or total_cols <= 0:
         return []
     matrix: List[List[str]] = [['' for _ in range(total_cols)] for _ in range(total_rows)]
-    for row_idx, col_idx, text in processed_cells:
+    for start_row, end_row, start_col, end_col, text in processed_cells:
         if not text:
             continue
-        if 0 <= row_idx < total_rows and 0 <= col_idx < total_cols:
-            if matrix[row_idx][col_idx]:
-                matrix[row_idx][col_idx] = f"{matrix[row_idx][col_idx]} {text}".strip()
-            else:
-                matrix[row_idx][col_idx] = text
+        for row_idx in range(start_row, min(end_row + 1, total_rows)):
+            for col_idx in range(start_col, min(end_col + 1, total_cols)):
+                if matrix[row_idx][col_idx]:
+                    if text not in matrix[row_idx][col_idx]:
+                        matrix[row_idx][col_idx] = f"{matrix[row_idx][col_idx]} {text}".strip()
+                else:
+                    matrix[row_idx][col_idx] = text
     normalized = normalize_table_matrix(matrix)
     return normalized
 
@@ -425,7 +429,42 @@ def render_table_markdown(table_entry: Dict[str, Any]) -> str:
     """Преобразует таблицу из payload в Markdown; при ошибке возвращает строку"""
     content = table_entry.get('content')
     if isinstance(content, str):
-        return content.strip()
+        stripped = content.strip()
+        if is_markdown_table_row(stripped) or '\n' in stripped:
+            normalized = _normalize_table_block(content.splitlines())
+            return "\n".join(normalized)
+        return stripped
+
+    potential_payloads: List[Dict[str, Any]] = []
+    seen_payloads: set[int] = set()
+
+    def enqueue_payload(candidate: Any) -> None:
+        if not isinstance(candidate, dict):
+            return
+        candidate_id = id(candidate)
+        if candidate_id in seen_payloads:
+            return
+        seen_payloads.add(candidate_id)
+        potential_payloads.append(candidate)
+
+    enqueue_payload(table_entry)
+    enqueue_payload(table_entry.get('data'))
+    if isinstance(content, dict):
+        enqueue_payload(content)
+        enqueue_payload(content.get('data'))
+    metadata = table_entry.get('metadata')
+    if isinstance(metadata, dict):
+        enqueue_payload(metadata)
+        enqueue_payload(metadata.get('data'))
+        enqueue_payload(metadata.get('table_data'))
+
+    for payload in potential_payloads:
+        if not isinstance(payload, dict):
+            continue
+        if payload.get('table_cells') or payload.get('cells'):
+            matrix = build_matrix_from_docling_table(payload)
+            if matrix:
+                return "\n".join(format_table_lines(matrix))
 
     if isinstance(content, dict):
         table_payload = content if 'table_cells' in content else content.get('data')
@@ -440,10 +479,12 @@ def render_table_markdown(table_entry: Dict[str, Any]) -> str:
             for row in data:
                 if isinstance(row, list):
                     matrix.append(row)
+                elif isinstance(row, dict):
+                    ordered = [row[key] for key in sorted(row.keys())]
+                    matrix.append(ordered)
             normalized = normalize_table_matrix(matrix)
             if normalized:
-                lines = format_table_lines(normalized)
-                return "\n".join(lines)
+                return "\n".join(format_table_lines(normalized))
 
     return ''
 
