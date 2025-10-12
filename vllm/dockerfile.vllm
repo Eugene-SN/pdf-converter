@@ -14,13 +14,6 @@ RUN groupadd -r vllm && useradd -r -g vllm -m vllm
 RUN mkdir -p /workspace /app/logs && \
     chown -R vllm:vllm /workspace /app/logs /home/vllm
 
-# Копирование наших файлов
-COPY model_manager.py /workspace/
-COPY dynamic_server.py /workspace/
-
-# Переменные окружения (только для путей Python)
-ENV PYTHONPATH="/workspace:$PYTHONPATH"
-
 # Рабочая директория
 WORKDIR /workspace
 
@@ -30,5 +23,6 @@ USER vllm
 # Порты
 EXPOSE 8000 8001
 
-# Команда запуска
-CMD ["python", "dynamic_server.py"]
+# Запуск стандартного OpenAI-совместимого сервера vLLM
+ENTRYPOINT ["python", "-m", "vllm.entrypoints.openai.api_server"]
+CMD ["--host", "0.0.0.0", "--port", "8000"]
