@@ -30,7 +30,7 @@ DOCLING_MODEL_PATH=/mnt/storage/models/docling
 # ================================================================================
 VLLM_SERVER_URL=http://vllm-server:8000
 
-VLLM_CONTENT_MODEL=Qwen/Qwen2.5-VL-32B-Instruct
+VLLM_CONTENT_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507
 VLLM_TRANSLATION_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507
 
 # Для совместимости с docker-compose
@@ -38,8 +38,6 @@ VLLM_MODEL_NAME=${VLLM_CONTENT_MODEL}
 
 # Тайм-ауты (секунды)
 VLLM_STANDARD_TIMEOUT=1800
-VLLM_MODEL_SWITCH_TIMEOUT=300
-
 # ✅ ИСПРАВЛЕНО: Правильные параметры для 2x A6000 (48GB total)
 VLLM_TENSOR_PARALLEL_SIZE=2
 VLLM_PIPELINE_PARALLEL_SIZE=1
@@ -48,15 +46,10 @@ VLLM_MAX_MODEL_LEN=4096
 VLLM_MAX_NUM_SEQS=16
 VLLM_BLOCK_SIZE=16
 
-# Dynamic model loading
-DYNAMIC_MODEL_LOADING=true
-MODEL_SWAP_TIMEOUT=300
-AUTO_MODEL_SELECTION=true
-
 # API ключ
 VLLM_API_KEY=pdf-converter-secure-key-2024
-VLLM_MAX_TOKENS=4096
-VLLM_TEMPERATURE=0.1
+VLLM_MAX_TOKENS=2048
+VLLM_TEMPERATURE=0.2
 
 DISABLE_THINKING=true
 

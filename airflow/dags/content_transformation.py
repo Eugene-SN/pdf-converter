@@ -6,7 +6,6 @@
 Исправления:
 - Правильный парсинг OpenAI-совместимого ответа от vLLM (choices — список)
 - Выход из ретраев после первого 200 OK и валидного парсинга
-- task_type='content_transformation' в payload для серверного автосвитча модели
 - Исправлен баг с возвратом списка вместо строки при merge_enhanced_chunks
 """
 
@@ -91,12 +90,12 @@ HEADING_PATTERNS: List[str] = [
 VLLM_CONFIG: Dict[str, Any] = {
     # Используем имя сервиса Docker Compose для корректного DNS
     'endpoint': os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000') + '/v1/chat/completions',
-    'model': os.getenv('VLLM_CONTENT_MODEL', 'Qwen/Qwen2.5-VL-32B-Instruct'),
+    'model': os.getenv('VLLM_CONTENT_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
     'timeout': int(os.getenv('VLLM_STANDARD_TIMEOUT', '300')),
-    'max_tokens': 2048,  # безопаснее для 8-16k контекстов
-    'temperature': 0.2,
+    'max_tokens': 1536,  # оптимально для текстовой модели (8k контекст)
+    'temperature': 0.3,
     'top_p': 0.9,
-    'top_k': 50,
+    'top_k': 40,
     'max_retries': 3,
     'retry_delay': 5,
     'enable_fallback': True,
@@ -1066,7 +1065,6 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "X-Task-Type": "content_transformation",
     }
     cache_key = hashlib.sha256(prompt.encode('utf-8')).hexdigest()
     cached_response = _cache_lookup(cache_key)
@@ -1084,8 +1082,6 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
         "temperature": VLLM_CONFIG['temperature'],
         "top_p": VLLM_CONFIG['top_p'],
         "top_k": VLLM_CONFIG['top_k'],
-        # Явно указываем тип задачи для автосвитча модели на сервере
-        "task_type": "content_transformation",
         "stream": False,
     }
 
