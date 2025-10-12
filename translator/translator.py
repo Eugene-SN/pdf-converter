@@ -315,6 +315,16 @@ translation_requests = Counter('translation_requests_total', 'Total translation 
 translation_duration = Histogram('translation_duration_seconds', 'Translation duration')
 translation_quality = Gauge('translation_quality_score', 'Average translation quality score')
 cache_hit_ratio = Gauge('cache_hit_ratio', 'Cache hit ratio')
+vllm_request_latency = Histogram(
+    'vllm_request_latency_seconds',
+    'Latency of vLLM API chat completion requests',
+    ['model']
+)
+vllm_model_loaded = Gauge(
+    'vllm_model_loaded',
+    'Indicates whether the vLLM backend has the requested model loaded (1=yes, 0=no)',
+    ['model']
+)
 
 # ==============================================
 # 🧠 ПРОМПТЫ v2.0 (ОТКЛЮЧЕНИЕ THINKING)
@@ -465,6 +475,10 @@ class VLLMAPIClient:
         
     async def enhanced_api_request(self, messages: List[Dict], timeout: int = REQUEST_TIMEOUT) -> Optional[str]:
         """Асинхронный запрос к vLLM API"""
+        request_start = time.perf_counter()
+        latency_recorded = False
+        model_label = TRANSLATION_MODEL
+
         try:
             # Подготовка payload для vLLM OpenAI-совместимого API
             payload = {
@@ -473,7 +487,8 @@ class VLLMAPIClient:
                 "temperature": API_TEMPERATURE,
                 "max_tokens": API_MAX_TOKENS,
                 "top_p": API_TOP_P,
-                "stream": False
+                "stream": False,
+                "task_type": "translation"
             }
 
             # Отключение thinking режима для Qwen3
@@ -486,19 +501,35 @@ class VLLMAPIClient:
                     VLLM_API_URL + VLLM_API_ENDPOINT,
                     json=payload
                 ) as response:
+                    elapsed = time.perf_counter() - request_start
+                    vllm_request_latency.labels(model=model_label).observe(elapsed)
+                    latency_recorded = True
                     if response.status == 200:
+                        vllm_model_loaded.labels(model=model_label).set(1)
                         result = await response.json()
                         if "choices" in result and len(result["choices"]) > 0:
                             translation_requests.inc()
                             return result["choices"][0]["message"]["content"]
                     else:
+                        if response.status in (425, 429, 503):
+                            vllm_model_loaded.labels(model=model_label).set(0)
+                        else:
+                            vllm_model_loaded.labels(model=model_label).set(0)
                         logger.error(f"vLLM API error: {response.status}")
-                        
+
         except asyncio.TimeoutError:
+            if not latency_recorded:
+                elapsed = time.perf_counter() - request_start
+                vllm_request_latency.labels(model=model_label).observe(elapsed)
+            vllm_model_loaded.labels(model=model_label).set(0)
             logger.warning("Таймаут vLLM API запроса")
         except Exception as e:
+            if not latency_recorded:
+                elapsed = time.perf_counter() - request_start
+                vllm_request_latency.labels(model=model_label).observe(elapsed)
+            vllm_model_loaded.labels(model=model_label).set(0)
             logger.error(f"Ошибка vLLM API: {e}")
-        
+
         return None
 
     async def translate_single(self, text: str, source_lang: str, target_lang: str, stats: TranslationStats) -> str:
