@@ -44,9 +44,16 @@ dag = DAG(
 )
 
 _service_urls = ConfigUtils.get_service_urls()
+_translator_url_from_env = os.getenv("TRANSLATOR_URL")
+_default_translator_url = _service_urls.get("translator") or "http://translator:8003"
+_resolved_translator_url = (
+    _translator_url_from_env.strip()
+    if _translator_url_from_env and _translator_url_from_env.strip()
+    else _default_translator_url
+)
 
 TRANSLATION_CONFIG: Dict[str, Any] = {
-    "service_url": os.getenv("TRANSLATOR_URL", _service_urls.get("translator", "http://translator:8002")),
+    "service_url": _resolved_translator_url,
     "endpoint": os.getenv("TRANSLATION_ENDPOINT", "/api/v1/translate"),
     "timeout": int(os.getenv("TRANSLATION_TIMEOUT", "300")),
     "max_retries": int(os.getenv("TRANSLATION_MAX_RETRIES", "3")),
@@ -279,6 +286,21 @@ def initialize_translation(**context) -> Dict[str, Any]:
 
         if not markdown_content.strip():
             raise ValueError("Нет контента для перевода")
+
+        health_url = f"{TRANSLATION_CONFIG['service_url'].rstrip('/')}/health"
+        try:
+            logger.info("🔍 Проверка доступности translator по %s", health_url)
+            response = _TRANSLATOR_SESSION.head(health_url, timeout=5)
+            if response.status_code >= 400:
+                response = _TRANSLATOR_SESSION.get(health_url, timeout=5)
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    f"Translator health endpoint returned {response.status_code}: {response.text}"
+                )
+        except requests.RequestException as health_exc:
+            raise RuntimeError(
+                f"Translator service недоступен по адресу {health_url}"
+            ) from health_exc
 
         original_config = dag_run_conf.get("original_config", {})
         target_language = original_config.get("target_language", dag_run_conf.get("target_language", "ru"))

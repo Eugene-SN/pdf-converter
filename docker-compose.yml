@@ -44,6 +44,9 @@ x-airflow-common: &airflow-common
     VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
     DYNAMIC_MODEL_LOADING: "true"
 
+    # Микросервисы Stage 3
+    TRANSLATOR_URL: ${TRANSLATOR_URL}
+
     # Доп. Python-зависимости
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}
 
