@@ -131,13 +131,23 @@ class ConfigUtils:
         return paths
 
     @staticmethod
+    def _get_env_url(env_var: str, default: str) -> str:
+        """Возвращает URL из переменной окружения или значение по умолчанию."""
+        value = os.getenv(env_var)
+        if value:
+            stripped = value.strip()
+            if stripped:
+                return stripped
+        return default
+
+    @staticmethod
     def get_service_urls() -> Dict[str, str]:
         """Получение URL сервисов"""
         return {
-            'document_processor': os.getenv('DOCUMENT_PROCESSOR_URL', 'http://document-processor:8001'),
-            'translator': os.getenv('TRANSLATOR_URL', 'http://translator:8002'),
-            'quality_assurance': os.getenv('QUALITY_ASSURANCE_URL', 'http://quality-assurance:8002'),
-            'airflow': os.getenv('AIRFLOW_URL', 'http://localhost:8080'),
+            'document_processor': ConfigUtils._get_env_url('DOCUMENT_PROCESSOR_URL', 'http://document-processor:8001'),
+            'translator': ConfigUtils._get_env_url('TRANSLATOR_URL', 'http://translator:8003'),
+            'quality_assurance': ConfigUtils._get_env_url('QUALITY_ASSURANCE_URL', 'http://quality-assurance:8002'),
+            'airflow': ConfigUtils._get_env_url('AIRFLOW_URL', 'http://localhost:8080'),
         }
 
 
