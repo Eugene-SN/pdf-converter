@@ -224,7 +224,7 @@ QA_RULES = {
     # Базовые требования к документу
     'min_content_length': 100,
     'min_headings': 1,
-    'max_chinese_chars_ratio': 0.3,
+    'max_chinese_chars_ratio': 0.2,
     'require_title': True,
     'check_table_structure': True,
     'validate_markdown_syntax': True,
@@ -1330,14 +1330,17 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
         logger.info("🔍 Уровень 4: Enhanced Content Validation")
         
         document_content = qa_session['translated_content']
-        
+        translation_metadata = qa_session.get('translation_metadata', {}) or {}
+
         issues_found: List[str] = []
-        
+
+        translation_metrics = collect_translation_metrics(document_content, translation_metadata)
+
         structure_score = check_document_structure(document_content, issues_found)
         content_score = check_content_quality(document_content, issues_found)
         terms_score = check_technical_terms(document_content, issues_found)
         markdown_score = check_markdown_syntax(document_content, issues_found)
-        translation_score = check_translation_quality(document_content, issues_found)
+        translation_score = check_translation_quality(document_content, issues_found, translation_metrics)
         formatting_score = check_advanced_formatting(document_content, issues_found)
         consistency_score = check_content_consistency(document_content, issues_found)
         completeness_score = check_content_completeness(document_content, issues_found)
@@ -1345,8 +1348,15 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
         overall_score = (structure_score + content_score + terms_score +
                         markdown_score + translation_score + formatting_score +
                         consistency_score + completeness_score) / 8 * 100
-        
-        quality_passed = overall_score >= QA_RULES['min_quality_score']
+
+        translation_threshold_ok = (
+            translation_metrics.get('chinese_translation_coverage', 1.0) >= 0.8 and
+            translation_metrics.get('technical_terms_coverage', 1.0) >= 0.8 and
+            translation_metrics.get('chinese_ratio', 0.0) <= QA_RULES['max_chinese_chars_ratio']
+        )
+        translation_metrics['threshold_passed'] = translation_threshold_ok
+
+        quality_passed = overall_score >= QA_RULES['min_quality_score'] and translation_threshold_ok
         
         validation_result = {
             'level': 4,
@@ -1365,7 +1375,10 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
                 'completeness': completeness_score
             },
             'issues_found': issues_found,
-            'processing_time': time.time() - start_time
+            'processing_time': time.time() - start_time,
+            'translation_quality_metrics': translation_metrics,
+            'chinese_ratio': translation_metrics.get('chinese_ratio'),
+            'chunks_failed': translation_metrics.get('chunks_failed'),
         }
         
         status = "✅ PASSED" if quality_passed else "❌ FAILED"
@@ -1480,21 +1493,80 @@ def check_markdown_syntax(content: str, issues_list: List) -> float:
         logger.warning(f"Ошибка проверки Markdown: {e}")
         return 0.85
 
-def check_translation_quality(content: str, issues_list: List) -> float:
+def collect_translation_metrics(content: str, translation_metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    metadata = translation_metadata or {}
+
+    total_chars = len(content)
+    chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
+    ratio_computed = chinese_chars / total_chars if total_chars > 0 else 0.0
+
+    ratio = metadata.get('chinese_ratio', ratio_computed)
+    ratio = max(0.0, min(1.0, float(ratio)))
+
+    original_chinese = metadata.get('chinese_chars_original') or 0
+    coverage = metadata.get('chinese_translation_coverage')
+    if coverage is None:
+        if original_chinese:
+            coverage = 1 - (chinese_chars / max(original_chinese, 1))
+        else:
+            coverage = 1 - ratio
+    coverage = max(0.0, min(1.0, float(coverage)))
+
+    terms_total = metadata.get('technical_terms_total') or 0
+    terms_remaining = metadata.get('technical_terms_remaining') or 0
+    term_coverage = metadata.get('technical_terms_coverage')
+    if term_coverage is None:
+        if terms_total:
+            term_coverage = 1 - (terms_remaining / max(terms_total, 1))
+        else:
+            term_coverage = 1.0
+    term_coverage = max(0.0, min(1.0, float(term_coverage)))
+
+    metrics = {
+        'total_chars': total_chars,
+        'chinese_chars': chinese_chars,
+        'chinese_ratio': ratio,
+        'chinese_translation_coverage': coverage,
+        'technical_terms_total': terms_total,
+        'technical_terms_remaining': terms_remaining,
+        'technical_terms_translated': metadata.get('technical_terms_translated', max(0, terms_total - terms_remaining)),
+        'technical_terms_coverage': term_coverage,
+        'chunks_failed': metadata.get('chunks_failed'),
+    }
+
+    return metrics
+
+
+def check_translation_quality(content: str, issues_list: List, metrics: Optional[Dict[str, Any]] = None) -> float:
     """Проверка качества перевода"""
     score = 100.0
     try:
-        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
-        total_chars = len(content)
-        
-        if total_chars > 0:
-            chinese_ratio = chinese_chars / total_chars
-            max_allowed_ratio = QA_RULES['max_chinese_chars_ratio']
-            if chinese_ratio > max_allowed_ratio:
-                issues_list.append(f"Слишком много китайских символов: {chinese_ratio:.1%}")
-                score -= 20
-                
-        return max(0, score) / 100
+        metrics = metrics or collect_translation_metrics(content, None)
+
+        chinese_ratio = metrics.get('chinese_ratio', 0.0)
+        max_allowed_ratio = QA_RULES['max_chinese_chars_ratio']
+
+        if chinese_ratio > max_allowed_ratio:
+            issues_list.append(f"Слишком много китайских символов: {chinese_ratio:.1%}")
+            return 0.0
+
+        if chinese_ratio > 0:
+            penalty = min(100.0, 100.0 * (chinese_ratio / max_allowed_ratio))
+            if penalty > 0:
+                score -= penalty
+                issues_list.append(f"Осталось китайских символов: {chinese_ratio:.1%}")
+
+        coverage = metrics.get('chinese_translation_coverage', 1.0)
+        if coverage < 0.8:
+            issues_list.append(f"Переведено только {coverage:.1%} китайского текста")
+        score = min(score, coverage * 100)
+
+        term_coverage = metrics.get('technical_terms_coverage', 1.0)
+        if term_coverage < 0.8:
+            issues_list.append(f"Переведено только {term_coverage:.1%} технических терминов")
+        score = min(score, term_coverage * 100)
+
+        return max(0, min(score, 100)) / 100
     except Exception as e:
         logger.warning(f"Ошибка проверки качества перевода: {e}")
         return 0.75
