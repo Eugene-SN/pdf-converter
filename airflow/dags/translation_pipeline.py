@@ -239,6 +239,76 @@ def count_chinese_characters(text: str) -> int:
     return len(re.findall(r"[\u4e00-\u9fff]", text))
 
 
+CHINESE_TECH_TERMS: List[str] = [
+    "问天",
+    "联想问天",
+    "天擎",
+    "至强",
+    "可扩展处理器",
+    "英特尔",
+    "处理器",
+    "内核",
+    "线程",
+    "睿频",
+    "内存",
+    "存储",
+    "硬盘",
+    "固态硬盘",
+    "机械硬盘",
+    "热插拔",
+    "冗余",
+    "背板",
+    "托架",
+    "以太网",
+    "光纤",
+    "带宽",
+    "延迟",
+    "网卡",
+    "风冷",
+    "液冷",
+    "散热",
+    "风扇",
+    "散热器",
+    "英寸",
+    "机架",
+    "插槽",
+    "转接卡",
+    "电源",
+    "铂金",
+    "钛金",
+    "芯片组",
+    "控制器",
+    "适配器",
+    "光驱",
+]
+
+
+def compute_technical_term_coverage(original: str, translated: str) -> Dict[str, Any]:
+    total_occurrences = 0
+    remaining_occurrences = 0
+
+    for term in CHINESE_TECH_TERMS:
+        original_matches = len(re.findall(re.escape(term), original))
+        if original_matches == 0:
+            continue
+
+        total_occurrences += original_matches
+        translated_matches = len(re.findall(re.escape(term), translated))
+        remaining_occurrences += min(original_matches, translated_matches)
+
+    translated_occurrences = max(0, total_occurrences - remaining_occurrences)
+    coverage = 1.0
+    if total_occurrences > 0:
+        coverage = max(0.0, min(1.0, translated_occurrences / total_occurrences))
+
+    return {
+        "total": total_occurrences,
+        "remaining": remaining_occurrences,
+        "translated": translated_occurrences,
+        "coverage": coverage,
+    }
+
+
 def validate_translation_quality(original: str, translated: str) -> float:
     try:
         if not original.strip():
@@ -399,7 +469,16 @@ def perform_translation(**context) -> Dict[str, Any]:
         final_content = "\n".join(translated_segments)
         processing_time = time.time() - start_time
         chinese_remaining = count_chinese_characters(final_content)
+        original_chinese = count_chinese_characters(markdown_content)
         quality_score = validate_translation_quality(markdown_content, final_content)
+
+        chinese_ratio = chinese_remaining / max(len(final_content), 1)
+        if original_chinese > 0:
+            chinese_coverage = max(0.0, min(1.0, 1 - (chinese_remaining / original_chinese)))
+        else:
+            chinese_coverage = 1.0
+
+        technical_term_stats = compute_technical_term_coverage(markdown_content, final_content)
 
         average_latency = mean(stats["latencies"]) if stats["latencies"] else 0.0
         max_latency = max(stats["latencies"]) if stats["latencies"] else 0.0
@@ -422,7 +501,14 @@ def perform_translation(**context) -> Dict[str, Any]:
                 "max_latency_seconds": round(max_latency, 3),
                 "model": TRANSLATION_CONFIG["model"],
                 "service_url": TRANSLATION_CONFIG["service_url"],
+                "chinese_chars_original": original_chinese,
                 "chinese_chars_remaining": chinese_remaining,
+                "chinese_ratio": chinese_ratio,
+                "chinese_translation_coverage": chinese_coverage,
+                "technical_terms_total": technical_term_stats["total"],
+                "technical_terms_remaining": technical_term_stats["remaining"],
+                "technical_terms_translated": technical_term_stats["translated"],
+                "technical_terms_coverage": technical_term_stats["coverage"],
                 "errors": stats["errors"],
             },
         }
@@ -483,7 +569,14 @@ def save_translation_result(**context) -> Dict[str, Any]:
             "chunks_failed": translation_results["translation_stats"]["chunks_failed"],
             "model": translation_results["translation_stats"]["model"],
             "service_url": translation_results["translation_stats"]["service_url"],
+            "chinese_chars_original": translation_results["translation_stats"].get("chinese_chars_original", 0),
             "chinese_chars_remaining": translation_results["translation_stats"]["chinese_chars_remaining"],
+            "chinese_ratio": translation_results["translation_stats"].get("chinese_ratio"),
+            "chinese_translation_coverage": translation_results["translation_stats"].get("chinese_translation_coverage"),
+            "technical_terms_total": translation_results["translation_stats"].get("technical_terms_total", 0),
+            "technical_terms_remaining": translation_results["translation_stats"].get("technical_terms_remaining", 0),
+            "technical_terms_translated": translation_results["translation_stats"].get("technical_terms_translated", 0),
+            "technical_terms_coverage": translation_results["translation_stats"].get("technical_terms_coverage"),
             "completion_time": datetime.now().isoformat(),
         }
 
