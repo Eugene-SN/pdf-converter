@@ -11,11 +11,11 @@ import re
 import time
 from datetime import datetime, timedelta
 from statistics import mean
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from airflow import DAG
-from airflow.exceptions import AirflowSkipException
+from airflow.exceptions import AirflowException, AirflowSkipException
 from airflow.operators.python import PythonOperator
 from requests.adapters import HTTPAdapter
 
@@ -172,7 +172,7 @@ def call_translator_with_retries(
     stats: Dict[str, Any],
     chunk_index: int,
     total_chunks: int,
-) -> Optional[str]:
+) -> Tuple[Optional[str], int]:
     url = f"{TRANSLATION_CONFIG['service_url'].rstrip('/')}{TRANSLATION_CONFIG['endpoint']}"
     payload = {
         "text": text,
@@ -209,7 +209,7 @@ def call_translator_with_retries(
                     total_chunks,
                     latency,
                 )
-                return data.get("translated_content", text)
+                return data.get("translated_content", text), attempt
 
             stats["failed_requests"] += 1
             last_error = RuntimeError(
@@ -232,7 +232,7 @@ def call_translator_with_retries(
             time.sleep(sleep_for)
 
     logger.error("❌ Не удалось перевести чанк %s/%s: %s", chunk_index + 1, total_chunks, last_error)
-    return None
+    return None, TRANSLATION_CONFIG["max_retries"]
 
 
 def count_chinese_characters(text: str) -> int:
@@ -444,7 +444,7 @@ def perform_translation(**context) -> Dict[str, Any]:
                 continue
 
             stats["total_chunks"] += 1
-            translated = call_translator_with_retries(
+            translated, attempts = call_translator_with_retries(
                 batch["content"],
                 source_lang,
                 target_language,
@@ -459,12 +459,19 @@ def perform_translation(**context) -> Dict[str, Any]:
                 stats["errors"].append({
                     "chunk_index": index,
                     "content_preview": batch["content"][:120],
+                    "source_path": session.get("markdown_file"),
+                    "attempts": attempts,
                 })
                 translated_segments.append(batch["content"])
                 continue
 
             stats["successful_chunks"] += 1
             translated_segments.append(translated)
+
+        if stats["total_chunks"] > 0 and stats["successful_chunks"] == 0:
+            raise AirflowException(
+                "Перевод не выполнен: ни один чанк не был успешно обработан translator сервисом."
+            )
 
         final_content = "\n".join(translated_segments)
         processing_time = time.time() - start_time
@@ -488,6 +495,7 @@ def perform_translation(**context) -> Dict[str, Any]:
             "source_length": len(markdown_content),
             "translated_length": len(final_content),
             "quality_score": quality_score,
+            "failed_chunks": stats["errors"],
             "translation_stats": {
                 "processing_time_seconds": processing_time,
                 "translation_method": "translator_microservice_vllm",
@@ -543,7 +551,7 @@ def save_translation_result(**context) -> Dict[str, Any]:
     start_time = time.time()
     try:
         session = context["task_instance"].xcom_pull(task_ids="initialize_translation")
-        translation_results = context["task_instance"].xcom_pull(task_ids="perform_translation")
+        translation_results = context["task_instance"].xcom_pull(task_ids="perform_translation") or {}
 
         original_config = session.get("original_config", {})
         target_language = session.get("target_language", "ru")
@@ -556,36 +564,55 @@ def save_translation_result(**context) -> Dict[str, Any]:
         translated_filename = f"{timestamp}_{filename.replace('.pdf', '.md')}"
         output_path = os.path.join(output_dir, translated_filename)
 
+        translation_stats = translation_results.get("translation_stats", {})
+        translated_content = translation_results.get("translated_content", "")
+        placeholder_used = False
+
+        if not translated_content:
+            placeholder_used = True
+            translated_content = (
+                "# TRANSLATION PLACEHOLDER\n\n"
+                "Перевод недоступен: сервис translator не вернул результат для данного файла."
+            )
+
         with open(output_path, "w", encoding="utf-8") as handle:
-            handle.write(translation_results["translated_content"])
+            handle.write(translated_content)
+
+        chunks_total = translation_stats.get("chunks_total", 0)
+        chunks_failed = translation_stats.get("chunks_failed", 0)
+        chunks_successful = translation_stats.get("chunks_successful", max(chunks_total - chunks_failed, 0))
 
         translation_metadata = {
             "target_language": target_language,
-            "quality_score": translation_results["quality_score"],
-            "translation_method": translation_results["translation_stats"]["translation_method"],
-            "avg_latency_seconds": translation_results["translation_stats"]["avg_latency_seconds"],
-            "max_latency_seconds": translation_results["translation_stats"]["max_latency_seconds"],
-            "chunks_total": translation_results["translation_stats"]["chunks_total"],
-            "chunks_failed": translation_results["translation_stats"]["chunks_failed"],
-            "model": translation_results["translation_stats"]["model"],
-            "service_url": translation_results["translation_stats"]["service_url"],
-            "chinese_chars_original": translation_results["translation_stats"].get("chinese_chars_original", 0),
-            "chinese_chars_remaining": translation_results["translation_stats"]["chinese_chars_remaining"],
-            "chinese_ratio": translation_results["translation_stats"].get("chinese_ratio"),
-            "chinese_translation_coverage": translation_results["translation_stats"].get("chinese_translation_coverage"),
-            "technical_terms_total": translation_results["translation_stats"].get("technical_terms_total", 0),
-            "technical_terms_remaining": translation_results["translation_stats"].get("technical_terms_remaining", 0),
-            "technical_terms_translated": translation_results["translation_stats"].get("technical_terms_translated", 0),
-            "technical_terms_coverage": translation_results["translation_stats"].get("technical_terms_coverage"),
+            "quality_score": translation_results.get("quality_score", 0.0),
+            "translation_method": translation_stats.get("translation_method", "translator_microservice_vllm"),
+            "avg_latency_seconds": translation_stats.get("avg_latency_seconds", 0.0),
+            "max_latency_seconds": translation_stats.get("max_latency_seconds", 0.0),
+            "chunks_total": chunks_total,
+            "chunks_successful": chunks_successful,
+            "chunks_failed": chunks_failed,
+            "model": translation_stats.get("model", TRANSLATION_CONFIG["model"]),
+            "service_url": translation_stats.get("service_url", TRANSLATION_CONFIG["service_url"]),
+            "chinese_chars_original": translation_stats.get("chinese_chars_original", 0),
+            "chinese_chars_remaining": translation_stats.get("chinese_chars_remaining", 0),
+            "chinese_ratio": translation_stats.get("chinese_ratio"),
+            "chinese_translation_coverage": translation_stats.get("chinese_translation_coverage"),
+            "technical_terms_total": translation_stats.get("technical_terms_total", 0),
+            "technical_terms_remaining": translation_stats.get("technical_terms_remaining", 0),
+            "technical_terms_translated": translation_stats.get("technical_terms_translated", 0),
+            "technical_terms_coverage": translation_stats.get("technical_terms_coverage"),
             "completion_time": datetime.now().isoformat(),
+            "placeholder_used": placeholder_used,
         }
 
         stage4_config = {
             "translated_file": output_path,
-            "translated_content": translation_results["translated_content"],
+            "translated_content": translated_content,
             "original_config": original_config,
             "stage3_completed": True,
             "translation_metadata": translation_metadata,
+            "failed_chunks": translation_results.get("failed_chunks", translation_stats.get("errors", [])),
+            "placeholder_used": placeholder_used,
         }
 
         MetricsUtils.record_processing_metrics(
@@ -611,18 +638,39 @@ def save_translation_result(**context) -> Dict[str, Any]:
 def notify_translation_completion(**context) -> None:
     try:
         stage4_config = context["task_instance"].xcom_pull(task_ids="save_translation_result")
-        translation_metadata = stage4_config["translation_metadata"]
+        if not stage4_config:
+            raise AirflowException("Нет данных о результате перевода в XCom save_translation_result")
 
-        message = f"""
-✅ TRANSLATION PIPELINE ЗАВЕРШЕН УСПЕШНО
+        translation_metadata = stage4_config.get("translation_metadata", {})
+        failed_chunks = stage4_config.get("failed_chunks", [])
 
-🌐 Целевой язык: {translation_metadata['target_language']}
-🎯 Качество перевода: {translation_metadata['quality_score']:.1f}%
-⏱️ Средняя задержка vLLM: {translation_metadata['avg_latency_seconds']:.2f} с
-📦 Чанков с ошибками: {translation_metadata['chunks_failed']} из {translation_metadata['chunks_total']}
-🤖 Модель: {translation_metadata['model']}
-📁 Файл: {stage4_config['translated_file']}
-"""
+        chunks_total = translation_metadata.get("chunks_total", 0)
+        chunks_failed = translation_metadata.get("chunks_failed", len(failed_chunks))
+        chunks_successful = translation_metadata.get(
+            "chunks_successful", max(chunks_total - chunks_failed, 0)
+        )
+
+        placeholder_used = stage4_config.get("placeholder_used", False)
+        status = "успешно" if chunks_failed == 0 and not placeholder_used else "с предупреждениями"
+        if placeholder_used:
+            status = "завершено с плейсхолдером"
+
+        message_lines = [
+            "✅ TRANSLATION PIPELINE завершен",
+            f"Статус: {status}",
+            "",
+            f"🌐 Целевой язык: {translation_metadata.get('target_language', 'n/a')}",
+            f"🎯 Качество перевода: {translation_metadata.get('quality_score', 0.0):.1f}%",
+            f"⏱️ Средняя задержка vLLM: {translation_metadata.get('avg_latency_seconds', 0.0):.2f} с",
+            f"📊 Чанки: {chunks_successful}/{chunks_total} успешных, {chunks_failed} с ошибками",
+            f"🤖 Модель: {translation_metadata.get('model', TRANSLATION_CONFIG['model'])}",
+            f"📁 Файл: {stage4_config.get('translated_file', 'n/a')}",
+        ]
+
+        if failed_chunks:
+            message_lines.append(f"❗ Неудачные чанки: {len(failed_chunks)} (см. отчет QA)")
+
+        message = "\n".join(message_lines)
         logger.info(message)
         NotificationUtils.send_success_notification(context, stage4_config)
     except Exception as exc:
