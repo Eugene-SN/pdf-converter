@@ -29,12 +29,15 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.exceptions import AirflowException
+from airflow.api.common.experimental.trigger_dag import trigger_dag
+from airflow.utils import timezone
 import os
 import sys
 import json
 import logging
 import time
 import re
+import random
 import requests
 import asyncio
 import aiohttp
@@ -44,7 +47,7 @@ import subprocess
 import shutil
 import textwrap
 import html
-from typing import Dict, Any, Optional, List, Set
+from typing import Dict, Any, Optional, List, Set, Tuple
 from pathlib import Path
 from types import SimpleNamespace
 import importlib
@@ -289,13 +292,25 @@ TECHNICAL_TERMS = [
 VLLM_CONFIG = {
     'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
     'model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
-    'timeout': 60,
+    'timeout': 150,
     'max_tokens': 2048,
     'temperature': 0.25,
     'top_p': 0.9,
     'max_retries': 2,
-    'retry_delay': 2
+    'retry_delay': 2,
+    'retry_jitter': 0.35,
 }
+
+
+def _compute_retry_delay(multiplier: float = 1.0) -> float:
+    """Return a retry delay with jitter to prevent thundering herd effects."""
+    base_delay = max(0.0, VLLM_CONFIG['retry_delay'] * multiplier)
+    jitter_ratio = max(0.0, VLLM_CONFIG.get('retry_jitter', 0.0))
+    if not jitter_ratio:
+        return base_delay
+    spread = base_delay * jitter_ratio
+    # Guarantee a small positive delay to avoid immediate retries
+    return max(0.1, base_delay + random.uniform(-spread, spread))
 
 SENTENCE_MODEL_CACHE_DIR = os.getenv('QA_SENTENCE_MODEL_CACHE') or os.getenv('SENTENCE_TRANSFORMERS_CACHE')
 _SENTENCE_MODEL = None
@@ -1223,6 +1238,61 @@ def check_content_completeness(content: str, issues_list: List) -> float:
 # УРОВЕНЬ 5: AUTO-CORRECTION ЧЕРЕЗ vLLM (ИСПРАВЛЕН)
 # ================================================================================
 
+
+def _request_vllm_warmup() -> bool:
+    """Attempt to trigger vLLM warmup for translation tasks."""
+    warmup_url = f"{_VLLM_BASE_URL}/warmup"
+    payload = {
+        "model": VLLM_CONFIG['model'],
+        "task_type": "translation",
+    }
+    try:
+        response = requests.post(warmup_url, json=payload, timeout=30)
+        if response.status_code < 400:
+            logger.info("vLLM warmup request accepted: %s", response.status_code)
+            return True
+        logger.warning(
+            "vLLM warmup request rejected (%s): %s",
+            response.status_code,
+            response.text[:200],
+        )
+    except Exception as exc:
+        logger.warning("vLLM warmup request failed: %s", exc)
+    return False
+
+
+def _schedule_auto_correction_retry(context: Dict[str, Any], reason: str, delay_minutes: int = 3) -> bool:
+    """Schedule an additional DAG run to repeat auto-correction after warmup."""
+    dag_run = context.get('dag_run')
+    if not dag_run:
+        logger.warning("Cannot schedule auto-correction retry: dag_run missing")
+        return False
+
+    dag_conf = dict(dag_run.conf or {})
+    if dag_conf.get('auto_correction_retry_scheduled'):
+        logger.info("Auto-correction retry already scheduled, skipping duplicate trigger")
+        return False
+
+    dag_conf['auto_correction_retry_scheduled'] = True
+    dag_conf['auto_correction_retry_reason'] = reason
+
+    execution_date = timezone.utcnow() + timedelta(minutes=delay_minutes)
+    run_id = f"{dag_run.run_id}__auto_correction_retry"
+
+    try:
+        trigger_dag(
+            dag_id=dag_run.dag_id,
+            run_id=run_id,
+            conf=dag_conf,
+            execution_date=execution_date,
+            replace_microseconds=False,
+        )
+        logger.info("Triggered auto-correction retry run %s for reason: %s", run_id, reason)
+        return True
+    except Exception as exc:
+        logger.error("Failed to trigger auto-correction retry: %s", exc)
+        return False
+
 def perform_auto_correction(**context) -> Dict[str, Any]:
     """✅ ИСПРАВЛЕН: Уровень 5: Автоматическое исправление через vLLM"""
     start_time = time.time()
@@ -1243,14 +1313,20 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
             'corrected_content': document_content,
             'validation_score': 1.0,
             'issues_found': [],
-            'processing_time': 0.0
+            'processing_time': 0.0,
+            'timed_out': False,
+            'warmup_requested': False,
+            'retry_scheduled': False,
+            'status': 'completed'
         }
-        
+
         if issues_found and qa_session.get('auto_correction', True) and len(issues_found) <= QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
-            corrected_content, correction_confidence = apply_vllm_corrections(
+            corrected_content, correction_confidence, timed_out = apply_vllm_corrections(
                 document_content, issues_found
             )
-            
+
+            correction_result['timed_out'] = timed_out
+
             if corrected_content and correction_confidence >= QA_RULES['AUTO_CORRECTION_CONFIDENCE']:
                 correction_result.update({
                     'corrections_applied': len(issues_found),
@@ -1259,11 +1335,17 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
                     'validation_score': correction_confidence
                 })
                 logger.info(f"✅ Применены исправления vLLM: {len(issues_found)} проблем, уверенность {correction_confidence:.3f}")
+            elif timed_out:
+                logger.warning("vLLM auto-correction timed out on all attempts; scheduling retry after warmup")
+                correction_result['issues_found'].append("vLLM correction timed out; retry scheduled after warmup")
+                correction_result['status'] = 'pending_retry'
+                correction_result['warmup_requested'] = _request_vllm_warmup()
+                correction_result['retry_scheduled'] = _schedule_auto_correction_retry(context, 'vllm_timeout')
             else:
                 correction_result['issues_found'].append(f"vLLM correction confidence too low: {correction_confidence:.3f}")
         elif len(issues_found) > QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
             correction_result['issues_found'].append(f"Too many issues for auto-correction: {len(issues_found)}")
-            
+
         correction_result['processing_time'] = time.time() - start_time
         logger.info(f"✅ Уровень 5 завершен: {correction_result['corrections_applied']} исправлений")
         return correction_result
@@ -1275,14 +1357,18 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
             'name': 'auto_correction',
             'validation_score': 0.0,
             'issues_found': [f"Auto-correction failed: {str(e)}"],
-            'processing_time': time.time() - start_time
+            'processing_time': time.time() - start_time,
+            'timed_out': False,
+            'warmup_requested': False,
+            'retry_scheduled': False,
+            'status': 'failed'
         }
 
-def apply_vllm_corrections(content: str, issues: List[str]) -> tuple[str, float]:
+def apply_vllm_corrections(content: str, issues: List[str]) -> tuple[str, float, bool]:
     """✅ Применение исправлений через vLLM"""
     try:
         logger.info("Applying vLLM corrections")
-        
+
         correction_prompt = f"""
 You are a professional document quality assurance specialist. Please fix the following issues in the markdown document:
 
@@ -1295,20 +1381,21 @@ DOCUMENT CONTENT:
 Please provide the corrected markdown document that addresses all the issues while preserving the original meaning and technical terminology. Respond with ONLY the corrected markdown content.
 """.strip()
 
-        corrected_content = call_vllm_api(correction_prompt)
-        
+        corrected_content, timed_out = call_vllm_api(correction_prompt)
+
         if corrected_content:
             correction_quality = evaluate_correction_quality(content, corrected_content, issues)
-            return corrected_content, correction_quality
-            
-        return content, 0.0
-        
+            return corrected_content, correction_quality, timed_out
+
+        return content, 0.0, timed_out
+
     except Exception as e:
         logger.error(f"vLLM correction error: {e}")
-        return content, 0.0
+        return content, 0.0, False
 
-def call_vllm_api(prompt: str) -> Optional[str]:
+def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     """✅ ИСПРАВЛЕН: Вызов vLLM API с правильным форматом messages для строк"""
+    timed_out_attempts = 0
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
             try:
@@ -1320,7 +1407,8 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                     ],
                     "max_tokens": VLLM_CONFIG['max_tokens'],
                     "temperature": VLLM_CONFIG['temperature'],
-                    "top_p": VLLM_CONFIG['top_p']
+                    "top_p": VLLM_CONFIG['top_p'],
+                    "task_type": "translation",
                 }
 
                 response = requests.post(
@@ -1331,7 +1419,7 @@ def call_vllm_api(prompt: str) -> Optional[str]:
 
                 if response.status_code == 200:
                     result = response.json()
-                    return result['choices'][0]['message']['content']
+                    return result['choices'][0]['message']['content'], False
 
                 if response.status_code >= 500:
                     logger.warning(
@@ -1347,6 +1435,7 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                     )
 
             except requests.exceptions.Timeout as exc:
+                timed_out_attempts += 1
                 logger.error(
                     "vLLM API timeout after %ss on attempt %d/%d: %s",
                     VLLM_CONFIG['timeout'],
@@ -1365,15 +1454,17 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                 logger.warning(f"vLLM API call attempt {attempt + 1} failed: {e}")
 
             if attempt < VLLM_CONFIG['max_retries'] - 1:
-                time.sleep(VLLM_CONFIG['retry_delay'])
+                time.sleep(_compute_retry_delay())
                 continue
 
             logger.error("vLLM API failed after %d attempts", VLLM_CONFIG['max_retries'])
-            return None
+            return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
 
     except Exception as e:
         logger.error(f"vLLM API call failed (outer): {e}")
-        return None
+        return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
+
+    return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
 
 def evaluate_correction_quality(original: str, corrected: str, issues: List[str]) -> float:
     """✅ Оценка качества исправления"""
