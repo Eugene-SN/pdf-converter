@@ -47,6 +47,9 @@ import subprocess
 import shutil
 import textwrap
 import html
+import glob
+import statistics
+from collections import defaultdict
 from typing import Dict, Any, Optional, List, Set, Tuple
 from pathlib import Path
 from types import SimpleNamespace
@@ -464,91 +467,405 @@ def load_translated_document(**context) -> Dict[str, Any]:
 # УРОВЕНЬ 1: OCR CROSS-VALIDATION (СОХРАНЕН)
 # ================================================================================
 
+
+def _map_to_airflow_temp_path(path: Optional[str], airflow_temp: str) -> Optional[str]:
+    """Приводит путь из контейнера document-processor к airflow temp при необходимости."""
+
+    if not path or not isinstance(path, str):
+        return None
+
+    normalized = path.strip()
+    if not normalized:
+        return None
+
+    if normalized.startswith('/app/temp'):
+        return normalized.replace('/app/temp', airflow_temp, 1)
+
+    return normalized
+
+
+def _read_json_file(path: str) -> Optional[Any]:
+    """Безопасное чтение JSON файла с защитой от ошибок."""
+
+    try:
+        with open(path, 'r', encoding='utf-8') as handle:
+            return json.load(handle)
+    except Exception as exc:
+        logger.debug("Не удалось прочитать JSON %s: %s", path, exc)
+        return None
+
+
+def _load_additional_ocr_results(qa_session: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Пытается найти и загрузить сохраненные результаты OCR из Stage 1."""
+
+    loader_info: Dict[str, Any] = {
+        'bridge_file': None,
+        'results_path': None,
+        'candidates_checked': [],
+        'missing_files': [],
+    }
+
+    original_config: Dict[str, Any] = qa_session.get('original_config', {}) or {}
+    airflow_temp = original_config.get(
+        'container_temp_dir',
+        os.getenv('AIRFLOW_TEMP_DIR', os.path.join(os.getenv('AIRFLOW_HOME', '/opt/airflow'), 'temp'))
+    ) or '/opt/airflow/temp'
+    timestamp = original_config.get('timestamp')
+
+    candidate_paths: List[str] = []
+
+    try:
+        if timestamp:
+            bridge_path = os.path.join(airflow_temp, f"stage1_bridge_{timestamp}.json")
+            if os.path.exists(bridge_path):
+                loader_info['bridge_file'] = bridge_path
+                bridge_data = _read_json_file(bridge_path) or {}
+
+                potential_sources: List[str] = []
+                if isinstance(bridge_data, dict):
+                    potential_sources.extend([
+                        bridge_data.get('intermediate_file'),
+                        bridge_data.get('docling_intermediate')
+                    ])
+                    potential_sources.extend(bridge_data.get('output_files', []) or [])
+
+                for raw_path in potential_sources:
+                    mapped = _map_to_airflow_temp_path(raw_path, airflow_temp)
+                    if not mapped:
+                        continue
+                    if os.path.exists(mapped) and mapped not in candidate_paths:
+                        candidate_paths.append(mapped)
+                    elif mapped not in loader_info['missing_files']:
+                        loader_info['missing_files'].append(mapped)
+
+        for key in ('intermediate_file', 'stage1_intermediate', 'docling_intermediate'):
+            raw_candidate = qa_session.get(key) or original_config.get(key)
+            mapped = _map_to_airflow_temp_path(raw_candidate, airflow_temp)
+            if not mapped:
+                continue
+            if os.path.exists(mapped) and mapped not in candidate_paths:
+                candidate_paths.append(mapped)
+            elif mapped not in loader_info['missing_files']:
+                loader_info['missing_files'].append(mapped)
+
+        if not candidate_paths and timestamp:
+            search_patterns = [
+                os.path.join(airflow_temp, f"*{timestamp}*result.json"),
+                os.path.join(airflow_temp, f"*{timestamp}*intermediate.json"),
+            ]
+            for pattern in search_patterns:
+                for found in glob.glob(pattern):
+                    if os.path.exists(found) and found not in candidate_paths:
+                        candidate_paths.append(found)
+
+        loader_info['candidates_checked'] = candidate_paths[:]
+
+        for path in candidate_paths:
+            data = _read_json_file(path)
+            if not isinstance(data, dict):
+                continue
+
+            metadata_candidates: List[Tuple[str, Dict[str, Any]]] = []
+            if isinstance(data.get('metadata'), dict):
+                metadata_candidates.append(('metadata', data['metadata']))
+            if isinstance(data.get('document_structure'), dict):
+                doc_meta = data['document_structure'].get('metadata')
+                if isinstance(doc_meta, dict):
+                    metadata_candidates.append(('document_structure.metadata', doc_meta))
+
+            for source_key, meta in metadata_candidates:
+                ocr_payload = meta.get('additional_ocr_results')
+                if isinstance(ocr_payload, list):
+                    loader_info['results_path'] = path
+                    loader_info['results_container_key'] = source_key
+                    return ocr_payload, loader_info
+                if isinstance(ocr_payload, str):
+                    mapped_payload = _map_to_airflow_temp_path(ocr_payload, airflow_temp)
+                    if mapped_payload and os.path.exists(mapped_payload):
+                        payload_data = _read_json_file(mapped_payload)
+                        if isinstance(payload_data, list):
+                            loader_info['results_path'] = mapped_payload
+                            loader_info['results_container_key'] = source_key
+                            return payload_data, loader_info
+                        loader_info['missing_files'].append(mapped_payload)
+
+        loader_info['error'] = 'OCR results not found in Stage 1 artifacts'
+        return [], loader_info
+
+    except Exception as exc:
+        loader_info['error'] = str(exc)
+        logger.debug("Ошибка при загрузке OCR результатов: %s", exc, exc_info=True)
+        return [], loader_info
+
+
+def _prepare_excerpt(text: str, limit: int = 160) -> str:
+    """Возвращает компактный фрагмент текста для логирования расхождений."""
+
+    if not text:
+        return ''
+    sanitized = re.sub(r'\s+', ' ', text).strip()
+    if len(sanitized) <= limit:
+        return sanitized
+    return sanitized[:limit] + '…'
+
+
+def _analyze_ocr_results(ocr_pages: List[Dict[str, Any]], document_text: str) -> Dict[str, Any]:
+    """Агрегирует данные PaddleOCR/Tesseract и вычисляет итоговый confidence."""
+
+    analysis: Dict[str, Any] = {
+        'has_data': False,
+        'engines_used': [],
+        'paddle_avg_confidence': 0.0,
+        'tesseract_avg_confidence': 0.0,
+        'overlap_ratio': 0.0,
+        'pages_analyzed': 0,
+        'pages_with_both': 0,
+        'pages_with_paddle': 0,
+        'pages_with_tesseract': 0,
+        'issues': [],
+        'mismatched_pages': [],
+        'per_engine_stats': {},
+    }
+
+    if not ocr_pages:
+        analysis['issues'].append('Empty OCR payload received')
+        return analysis
+
+    engine_confidences: Dict[str, List[float]] = defaultdict(list)
+    entries_per_engine: Dict[str, int] = defaultdict(int)
+    pages_with_engine: Dict[str, int] = defaultdict(int)
+    page_similarities: List[float] = []
+    mismatched_pages: List[Dict[str, Any]] = []
+
+    total_pages = 0
+
+    for page in ocr_pages:
+        page_results = page.get('ocr_results') or []
+        if not page_results:
+            continue
+
+        total_pages += 1
+        texts_by_engine: Dict[str, List[str]] = defaultdict(list)
+        confs_by_engine: Dict[str, List[float]] = defaultdict(list)
+        page_engines: Set[str] = set()
+
+        for item in page_results:
+            engine = str(item.get('engine') or 'unknown').lower()
+            text = item.get('text')
+            confidence = item.get('confidence')
+
+            if text:
+                texts_by_engine[engine].append(text)
+                page_engines.add(engine)
+
+            if isinstance(confidence, (int, float)):
+                conf_value = float(confidence)
+                confs_by_engine[engine].append(conf_value)
+                engine_confidences[engine].append(conf_value)
+                entries_per_engine[engine] += 1
+                page_engines.add(engine)
+
+        for engine in page_engines:
+            pages_with_engine[engine] += 1
+
+        if 'paddle' in page_engines:
+            analysis['pages_with_paddle'] += 1
+        if 'tesseract' in page_engines:
+            analysis['pages_with_tesseract'] += 1
+
+        if 'paddle' in texts_by_engine and 'tesseract' in texts_by_engine:
+            analysis['pages_with_both'] += 1
+            paddle_text = ' '.join(texts_by_engine['paddle']).strip()
+            tesseract_text = ' '.join(texts_by_engine['tesseract']).strip()
+            if paddle_text and tesseract_text:
+                similarity = SequenceMatcher(None, paddle_text, tesseract_text).ratio()
+                page_similarities.append(similarity)
+                if similarity < 0.65:
+                    mismatched_pages.append({
+                        'page': page.get('page'),
+                        'similarity': round(similarity, 3),
+                        'paddle_excerpt': _prepare_excerpt(paddle_text),
+                        'tesseract_excerpt': _prepare_excerpt(tesseract_text),
+                    })
+
+    analysis['pages_analyzed'] = total_pages
+    analysis['mismatched_pages'] = mismatched_pages
+
+    if total_pages == 0:
+        analysis['issues'].append('OCR results contain no recognized pages')
+        return analysis
+
+    engines_present = set(engine_confidences.keys()) or set(pages_with_engine.keys())
+    analysis['engines_used'] = sorted(engines_present)
+
+    if engine_confidences.get('paddle'):
+        analysis['paddle_avg_confidence'] = statistics.mean(engine_confidences['paddle'])
+    if engine_confidences.get('tesseract'):
+        analysis['tesseract_avg_confidence'] = statistics.mean(engine_confidences['tesseract'])
+
+    if page_similarities:
+        analysis['overlap_ratio'] = statistics.mean(page_similarities)
+
+    per_engine_stats: Dict[str, Dict[str, Any]] = {}
+    for engine in engines_present:
+        confidences = engine_confidences.get(engine, [])
+        per_engine_stats[engine] = {
+            'avg_confidence': round(statistics.mean(confidences), 4) if confidences else 0.0,
+            'entries': entries_per_engine.get(engine, 0),
+            'pages_with_data': pages_with_engine.get(engine, 0),
+        }
+    analysis['per_engine_stats'] = per_engine_stats
+
+    weights = 0.0
+    weighted_score = 0.0
+
+    if engine_confidences.get('paddle'):
+        weights += 0.55
+        weighted_score += analysis['paddle_avg_confidence'] * 0.55
+    if engine_confidences.get('tesseract'):
+        weights += 0.35
+        weighted_score += analysis['tesseract_avg_confidence'] * 0.35
+    if page_similarities:
+        weights += 0.10
+        weighted_score += analysis['overlap_ratio'] * 0.10
+
+    consensus = (weighted_score / weights) if weights else 0.0
+
+    text_length = len(document_text or '')
+    length_bonus = min(0.05, text_length / 10000) if text_length else 0.0
+    consensus = min(1.0, consensus + length_bonus)
+
+    analysis['consensus_confidence'] = consensus
+    analysis['has_data'] = weights > 0
+
+    if 'tesseract' not in engines_present:
+        analysis['issues'].append('Tesseract OCR results missing for cross-validation')
+    if 'paddle' not in engines_present:
+        analysis['issues'].append('PaddleOCR results missing for cross-validation')
+    if page_similarities and analysis['overlap_ratio'] < 0.65:
+        analysis['issues'].append(
+            f"Low OCR overlap ratio: {analysis['overlap_ratio']:.3f}"
+        )
+
+    return analysis
+
+
 def perform_ocr_cross_validation(**context) -> Dict[str, Any]:
     """✅ Уровень 1: Кросс-валидация OCR результатов через PaddleOCR + Tesseract"""
+
     start_time = time.time()
     try:
         qa_session = context['task_instance'].xcom_pull(task_ids='load_translated_document')
         logger.info("🔍 Уровень 1: OCR Cross-Validation")
-        
+
         original_pdf_path = qa_session.get('original_pdf_path')
-        document_content = qa_session['translated_content']
-        
-        validation_result = {
+        document_content = qa_session.get('translated_content', '')
+
+        validation_result: Dict[str, Any] = {
             'level': 1,
             'name': 'ocr_cross_validation',
             'consensus_confidence': 0.0,
             'validation_score': 0.0,
             'engines_used': [],
             'issues_found': [],
-            'processing_time': 0.0
+            'processing_time': 0.0,
+            'data_sources': {},
         }
-        
+
         if original_pdf_path and os.path.exists(original_pdf_path):
-            paddleocr_confidence = simulate_paddleocr_analysis(original_pdf_path, document_content)
-            tesseract_confidence = simulate_tesseract_ocr(original_pdf_path)
-            consensus_score = calculate_ocr_consensus(
-                paddleocr_confidence, tesseract_confidence, document_content
-            )
-            
-            validation_result.update({
-                'consensus_confidence': consensus_score,
-                'validation_score': consensus_score,
-                'engines_used': ['paddleocr', 'tesseract'],
-                'paddleocr_confidence': paddleocr_confidence,
-                'tesseract_confidence': tesseract_confidence
-            })
-            
-            if consensus_score < LEVEL_CONFIG['level1_ocr']['consensus_threshold']:
-                validation_result['issues_found'].append(
-                    f"Low OCR consensus: {consensus_score:.3f} < {LEVEL_CONFIG['level1_ocr']['consensus_threshold']}"
-                )
+            ocr_pages, loader_info = _load_additional_ocr_results(qa_session)
+            validation_result['data_sources'] = {
+                'bridge_file': loader_info.get('bridge_file'),
+                'results_path': loader_info.get('results_path'),
+                'candidates_checked': loader_info.get('candidates_checked', [])[:5],
+            }
+            if loader_info.get('missing_files'):
+                validation_result['data_sources']['missing_files'] = loader_info['missing_files'][:5]
+
+            if ocr_pages:
+                analysis = _analyze_ocr_results(ocr_pages, document_content)
+
+                if analysis['has_data']:
+                    consensus_score = analysis['consensus_confidence']
+                    validation_result.update({
+                        'consensus_confidence': consensus_score,
+                        'validation_score': consensus_score,
+                        'engines_used': analysis['engines_used'],
+                        'paddle_avg_confidence': analysis['paddle_avg_confidence'],
+                        'tesseract_avg_confidence': analysis['tesseract_avg_confidence'],
+                        'overlap_ratio': analysis['overlap_ratio'],
+                        'ocr_pages_analyzed': analysis['pages_analyzed'],
+                        'ocr_pages_with_both': analysis['pages_with_both'],
+                        'ocr_results_path': loader_info.get('results_path') or loader_info.get('bridge_file'),
+                        'metrics': {
+                            'consensus_confidence': analysis['consensus_confidence'],
+                            'paddle_avg_confidence': analysis['paddle_avg_confidence'],
+                            'tesseract_avg_confidence': analysis['tesseract_avg_confidence'],
+                            'overlap_ratio': analysis['overlap_ratio'],
+                            'pages_analyzed': analysis['pages_analyzed'],
+                            'pages_with_both': analysis['pages_with_both'],
+                            'pages_with_paddle': analysis['pages_with_paddle'],
+                            'pages_with_tesseract': analysis['pages_with_tesseract'],
+                            'per_engine': analysis['per_engine_stats'],
+                        },
+                    })
+
+                    if analysis['issues']:
+                        validation_result['issues_found'].extend(analysis['issues'])
+
+                    if analysis['mismatched_pages']:
+                        validation_result['issues_found'].append(
+                            f"OCR mismatch detected on {len(analysis['mismatched_pages'])} page(s)"
+                        )
+                        validation_result['mismatched_pages'] = analysis['mismatched_pages'][:5]
+
+                    logger.info(
+                        "📊 OCR metrics: consensus=%.3f, paddle=%.3f, tesseract=%.3f, overlap=%.3f, pages=%d, mismatches=%d",
+                        consensus_score,
+                        analysis['paddle_avg_confidence'],
+                        analysis['tesseract_avg_confidence'],
+                        analysis['overlap_ratio'],
+                        analysis['pages_analyzed'],
+                        len(analysis['mismatched_pages'])
+                    )
+
+                    if consensus_score < LEVEL_CONFIG['level1_ocr']['consensus_threshold']:
+                        validation_result['issues_found'].append(
+                            f"Low OCR consensus: {consensus_score:.3f} < {LEVEL_CONFIG['level1_ocr']['consensus_threshold']}"
+                        )
+
+                else:
+                    fallback_reason = 'OCR metrics could not be computed from available data'
+                    validation_result['issues_found'].append(fallback_reason)
+                    validation_result['validation_score'] = 0.7
+                    validation_result['consensus_confidence'] = 0.7
+            else:
+                fallback_reason = loader_info.get('error') or 'No OCR results located in Stage 1 artifacts'
+                validation_result['issues_found'].append(fallback_reason)
+                validation_result['validation_score'] = 0.7
+                validation_result['consensus_confidence'] = 0.7
         else:
             validation_result['issues_found'].append(f"Original PDF not found: {original_pdf_path}")
-            # ✅ ИСПРАВЛЕНО: Повышен fallback балл с 0.5 до 0.7
             validation_result['validation_score'] = 0.7
-            
+            validation_result['consensus_confidence'] = 0.7
+
         validation_result['processing_time'] = time.time() - start_time
-        logger.info(f"✅ Уровень 1 завершен: score={validation_result['validation_score']:.3f}")
+        logger.info(
+            "✅ Уровень 1 завершен: score=%.3f (sources=%s)",
+            validation_result['validation_score'],
+            validation_result.get('data_sources')
+        )
         return validation_result
-        
-    except Exception as e:
-        logger.error(f"❌ Ошибка уровня 1 OCR валидации: {e}")
+
+    except Exception as exc:
+        logger.error(f"❌ Ошибка уровня 1 OCR валидации: {exc}")
         return {
             'level': 1,
             'name': 'ocr_cross_validation',
             'validation_score': 0.0,
-            'issues_found': [f"OCR validation failed: {str(e)}"],
+            'issues_found': [f"OCR validation failed: {str(exc)}"],
             'processing_time': time.time() - start_time
         }
-
-def simulate_paddleocr_analysis(pdf_path: str, content: str) -> float:
-    """✅ Симуляция анализа PaddleOCR результатов"""
-    try:
-        base_confidence = 0.92
-        tech_terms_found = sum(1 for term in TECHNICAL_TERMS if term.lower() in content.lower())
-        tech_bonus = min(0.05, tech_terms_found * 0.01)
-        length_penalty = max(0, (1000 - len(content)) / 10000)
-        return min(1.0, base_confidence + tech_bonus - length_penalty)
-    except Exception:
-        return 0.85
-
-def simulate_tesseract_ocr(pdf_path: str) -> float:
-    """✅ Симуляция Tesseract OCR для кросс-валидации"""
-    try:
-        return 0.87
-    except Exception:
-        return 0.80
-
-def calculate_ocr_consensus(paddle_conf: float, tesseract_conf: float, content: str) -> float:
-    """✅ Алгоритм консенсуса для выбора лучшего OCR результата"""
-    try:
-        weights = {'paddleocr': 0.7, 'tesseract': 0.3}
-        consensus = paddle_conf * weights['paddleocr'] + tesseract_conf * weights['tesseract']
-        length_bonus = min(0.05, len(content) / 10000)
-        return min(1.0, consensus + length_bonus)
-    except Exception:
-        return 0.8
 
 # ================================================================================
 # УРОВЕНЬ 2: VISUAL COMPARISON (DOCKER PANDOC ИНТЕГРАЦИЯ) - ИСПРАВЛЕН
