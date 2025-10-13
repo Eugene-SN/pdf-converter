@@ -141,6 +141,30 @@ def _register_helper_paths() -> None:
 
 _register_helper_paths()
 
+try:
+    _qa_vllm_module = importlib.import_module("vllm_config")
+    VLLM_CONFIG = _qa_vllm_module.get_vllm_config()
+except Exception:  # pragma: no cover - fallback for misconfigured environments
+    VLLM_CONFIG = {
+        'endpoint': os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000').rstrip('/') + '/v1/chat/completions',
+        'model': os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
+        'timeout': float(os.getenv('VLLM_QA_TIMEOUT', os.getenv('VLLM_STANDARD_TIMEOUT', '240'))),
+        'max_tokens': 2048,
+        'temperature': 0.25,
+        'top_p': 0.9,
+        'max_retries': int(os.getenv('VLLM_QA_MAX_RETRIES', '5')),
+        'retry_delay': float(os.getenv('VLLM_QA_RETRY_DELAY', '5')),
+        'retry_jitter': float(os.getenv('VLLM_QA_RETRY_JITTER', '0.35')),
+        'retry_backoff_factor': float(os.getenv('VLLM_QA_RETRY_BACKOFF', '2.0')),
+    }
+
+_configured_endpoint = VLLM_CONFIG.get('endpoint')
+if isinstance(_configured_endpoint, str) and '/v1/' in _configured_endpoint:
+    _VLLM_BASE_URL = _configured_endpoint.split('/v1/')[0].rstrip('/')
+else:
+    base_candidate = _configured_endpoint or os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
+    _VLLM_BASE_URL = str(base_candidate).rstrip('/')
+
 
 def _import_visual_diff_module():
     """Try to import visual diff helpers, tolerating missing packages."""
@@ -269,9 +293,9 @@ LEVEL_CONFIG = {
         'formatting_score_threshold': 0.8
     },
     'level5_correction': {
-        'vllm_endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-        'correction_model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
-        'max_retries': 5,
+        'vllm_endpoint': VLLM_CONFIG.get('endpoint', f"{_VLLM_BASE_URL}/v1/chat/completions"),
+        'correction_model': VLLM_CONFIG.get('model', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
+        'max_retries': VLLM_CONFIG.get('max_retries', 5),
         'enable_auto_correction': True
     }
 }
@@ -291,19 +315,7 @@ TECHNICAL_TERMS = [
     'Network Adapter', 'Slot', 'Riser Card', 'Platinum', 'Titanium', 'CRPS'
 ]
 
-# ✅ ИСПРАВЛЕНА: vLLM конфигурация для авто-коррекции
-VLLM_CONFIG = {
-    'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-    'model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
-    'timeout': 240,
-    'max_tokens': 2048,
-    'temperature': 0.25,
-    'top_p': 0.9,
-    'max_retries': 5,
-    'retry_delay': 5,
-    'retry_jitter': 0.35,
-    'retry_backoff_factor': 2.0,
-}
+# ✅ ИСПРАВЛЕНА: vLLM конфигурация для авто-коррекции берется из общего модуля
 
 
 def _compute_retry_delay(attempt: int, multiplier: float = 1.0) -> float:
