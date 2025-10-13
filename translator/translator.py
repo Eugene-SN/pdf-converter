@@ -36,13 +36,17 @@ import uvicorn
 
 # HTTP клиенты
 import aiohttp
-import requests
 
 # Прогресс и мониторинг
 from tqdm.asyncio import tqdm as async_tqdm
 import prometheus_client
 from prometheus_client import Counter, Histogram, Gauge
 import structlog
+
+from translator.vllm_client import (
+    create_vllm_aiohttp_session,
+    get_vllm_server_url,
+)
 
 
 DEFAULT_MAX_BYTES = 10 * 1024 * 1024
@@ -156,7 +160,7 @@ logger = configure_logging(
 # ==============================================
 
 # vLLM API конфигурация (ИСПРАВЛЕНО)
-VLLM_API_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
+VLLM_API_URL = get_vllm_server_url()
 VLLM_API_ENDPOINT = "/v1/chat/completions"
 TRANSLATION_MODEL = os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
 
@@ -470,9 +474,24 @@ class VLLMAPIClient:
     """Клиент для работы с vLLM API"""
 
     def __init__(self):
-        self.session = requests.Session()
-        self.session.timeout = REQUEST_TIMEOUT
-        
+        self._http_client: Optional[aiohttp.ClientSession] = None
+        self._client_timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
+        self._endpoint_url = f"{VLLM_API_URL}{VLLM_API_ENDPOINT}"
+
+    async def _close_http_client(self):
+        if self._http_client and not self._http_client.closed:
+            await self._http_client.close()
+
+    async def _ensure_http_client(self) -> aiohttp.ClientSession:
+        if self._http_client is None or self._http_client.closed:
+            self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+        return self._http_client
+
+    async def _refresh_http_client(self) -> aiohttp.ClientSession:
+        await self._close_http_client()
+        self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+        return self._http_client
+
     async def enhanced_api_request(self, messages: List[Dict], timeout: int = REQUEST_TIMEOUT) -> Optional[str]:
         """Асинхронный запрос к vLLM API"""
         request_start = time.perf_counter()
@@ -496,9 +515,16 @@ class VLLMAPIClient:
                 if messages and messages[0]["role"] == "system":
                     messages[0]["content"] += "\n\nIMPORTANT: Respond directly without thinking process. No tags."
 
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as session:
-                async with session.post(
-                    VLLM_API_URL + VLLM_API_ENDPOINT,
+            attempts = 0
+            if timeout != self._client_timeout.total:
+                self._client_timeout = aiohttp.ClientTimeout(total=timeout)
+                client = await self._refresh_http_client()
+            else:
+                client = await self._ensure_http_client()
+            while attempts < 2:
+                attempts += 1
+                async with client.post(
+                    self._endpoint_url,
                     json=payload
                 ) as response:
                     elapsed = time.perf_counter() - request_start
@@ -510,12 +536,18 @@ class VLLMAPIClient:
                         if "choices" in result and len(result["choices"]) > 0:
                             translation_requests.inc()
                             return result["choices"][0]["message"]["content"]
+                    elif response.status == 401 and attempts < 2:
+                        logger.warning("vLLM API unauthorized, refreshing client and retrying")
+                        client = await self._refresh_http_client()
+                        latency_recorded = False
+                        continue
                     else:
                         if response.status in (425, 429, 503):
                             vllm_model_loaded.labels(model=model_label).set(0)
                         else:
                             vllm_model_loaded.labels(model=model_label).set(0)
                         logger.error(f"vLLM API error: {response.status}")
+                        break
 
         except asyncio.TimeoutError:
             if not latency_recorded:
