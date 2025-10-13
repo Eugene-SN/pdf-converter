@@ -870,30 +870,41 @@ async def intelligent_fix_remaining(text: str, source_lang: str, target_lang: st
 
     logger.info(f"🇨🇳 Найдено {len(chinese_fragments)} китайских фрагментов")
 
+    before_char_count = len(re.findall(r'[\u4e00-\u9fff]', text))
+
     # Ограничиваем количество исправлений
     fragments_to_fix = chinese_fragments[:10]  # Максимум 10
     current_text = text
     fixes_count = 0
 
     # Исправление по одному фрагменту
-    for fragment, span in fragments_to_fix:
+    for fragment, _ in fragments_to_fix:
         stats.fixes_attempted += 1
 
         translated = await client.translate_single(fragment, source_lang, target_lang, stats)
-        
+
+        if translated == fragment:
+            logger.warning("⚠️ vLLM вернул исходный фрагмент без изменений. Прекращаем интеллектуальное исправление.")
+            break
+
         if translated and fragment != translated and not re.search(r'[\u4e00-\u9fff]', translated):
             current_text = current_text.replace(fragment, translated, 1)
-            stats.fixes_successful += 1
             fixes_count += 1
             logger.info(f"✅ Исправлен #{fixes_count}: {fragment} → {translated[:20]}...")
 
-    final_fragments = len(re.findall(r'[\u4e00-\u9fff]', current_text))
-    improvement = len(chinese_fragments) - final_fragments
+    after_char_count = len(re.findall(r'[\u4e00-\u9fff]', current_text))
+    improvement = before_char_count - after_char_count
+
+    if improvement > 0:
+        stats.fixes_successful += improvement
 
     logger.info("📈 РЕЗУЛЬТАТ ИСПРАВЛЕНИЯ:")
-    logger.info(f"  Было: {len(chinese_fragments)}")
-    logger.info(f"  Стало: {final_fragments}")
-    logger.info(f"  Исправлено: {improvement}")
+    logger.info(f"  Было китайских символов: {before_char_count}")
+    logger.info(f"  Стало китайских символов: {after_char_count}")
+    logger.info(f"  Удалено китайских символов: {max(improvement, 0)}")
+
+    if improvement <= 0:
+        logger.info("ℹ️ Количество китайских символов не уменьшилось после интеллектуального исправления.")
 
     return current_text
 
