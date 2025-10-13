@@ -52,7 +52,7 @@ VLLM_API_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
 VLLM_API_KEY = os.getenv('VLLM_API_KEY', 'pdf-converter-secure-key-2024')
 
 # ✅ ИСПРАВЛЕНО: Правильная модель для перевода
-TRANSLATION_MODEL = os.getenv('VLLM_TRANSLATION_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
+TRANSLATION_MODEL = os.getenv('VLLM_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
 
 # ✅ ИСПРАВЛЕНО: OpenAI-совместимый endpoint для vLLM
 API_ENDPOINT = "/v1/chat/completions"
