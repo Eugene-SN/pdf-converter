@@ -76,6 +76,91 @@ log() {
     echo -e "${BLUE}[$timestamp]${NC} ${YELLOW}[$level]${NC} $message" | tee -a "$(log_file_path)"
 }
 
+format_duration() {
+    local total=${1:-0}
+
+    if ! [[ "$total" =~ ^[0-9]+$ ]]; then
+        total=0
+    fi
+
+    local hours=$((total / 3600))
+    local minutes=$(((total % 3600) / 60))
+    local seconds=$((total % 60))
+
+    if [ $hours -gt 0 ]; then
+        printf "%02d:%02d:%02d" "$hours" "$minutes" "$seconds"
+    else
+        printf "%02d:%02d" "$minutes" "$seconds"
+    fi
+}
+
+render_progress_bar() {
+    local current=${1:-0}
+    local total=${2:-1}
+    local width=${3:-30}
+
+    if [ "$total" -le 0 ]; then
+        total=1
+    fi
+
+    if [ "$current" -lt 0 ]; then
+        current=0
+    fi
+
+    if [ "$current" -gt "$total" ]; then
+        current=$total
+    fi
+
+    local percent=$((current * 100 / total))
+    local filled=$((percent * width / 100))
+    local empty=$((width - filled))
+    local bar=""
+
+    for ((i = 0; i < filled; i++)); do
+        bar+="█"
+    done
+
+    for ((i = 0; i < empty; i++)); do
+        bar+="·"
+    done
+
+    printf "[%s] %3d%%" "$bar" "$percent"
+}
+
+fetch_task_overview() {
+    local dag_name="$1"
+    local dag_run_id="$2"
+
+    local response
+    response=$(curl -s \
+        --user "$AIRFLOW_USERNAME:$AIRFLOW_PASSWORD" \
+        "$AIRFLOW_URL/api/v1/dags/$dag_name/dagRuns/$dag_run_id/taskInstances")
+
+    if [ -z "$response" ]; then
+        echo "error"
+        return 1
+    fi
+
+    local overview
+    overview=$(echo "$response" | jq -r '{
+        total: (.task_instances | length),
+        success: ([.task_instances[] | select(.state == "success")] | length),
+        running: ([.task_instances[] | select(.state == "running")] | length),
+        failed: ([.task_instances[] | select(.state == "failed" or .state == "upstream_failed")] | length),
+        queued: ([.task_instances[] | select(.state == "queued" or .state == "scheduled")] | length),
+        retries: ([.task_instances[] | select(.state == "up_for_retry")] | length),
+        chunks_total: ([.task_instances[] | select((.task_id // "") | test("chunk"; "i"))] | length),
+        chunks_done: ([.task_instances[] | select((.task_id // "") | test("chunk"; "i") and .state == "success")] | length)
+    } | "\(.total)|\(.success)|\(.running)|\(.failed)|\(.queued)|\(.retries)|\(.chunks_total)|\(.chunks_done)"' 2>/dev/null)
+
+    if [ -z "$overview" ] || [ "$overview" == "null" ]; then
+        echo "error"
+        return 1
+    fi
+
+    echo "$overview"
+}
+
 show_header() {
     echo -e "${CYAN}"
     echo "==============================================================================="
@@ -290,8 +375,11 @@ process_pdf_with_translation() {
         log "INFO" "✅ Обработка запущена. Run ID: $dag_run_id"
 
         # Ожидание завершения
-        wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"
-        return $?
+        if wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"; then
+            show_translation_results "$filename" "$target_language" "$output_dir"
+            return 0
+        fi
+        return 1
     else
         if [ -n "$body" ]; then
             log "ERROR" "❌ Ошибка запуска обработки: HTTP $http_code — $(echo "$body" | tr '\n' ' ')"
@@ -415,8 +503,11 @@ translate_single_md() {
         log "INFO" "✅ Перевод запущен. Run ID: $dag_run_id"
 
         # Ожидание завершения
-        wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"
-        return $?
+        if wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"; then
+            show_translation_results "$filename" "$target_language" "$output_dir"
+            return 0
+        fi
+        return 1
     else
         if [ -n "$body" ]; then
             log "ERROR" "❌ Ошибка запуска перевода: HTTP $http_code — $(echo "$body" | tr '\n' ' ')"
@@ -425,6 +516,162 @@ translate_single_md() {
         fi
         return 1
     fi
+}
+
+find_related_output_file() {
+    local output_dir="$1"
+    local source_filename="$2"
+
+    local base
+    base="${source_filename%.*}"
+
+    local latest_match=""
+    local latest_ts=0
+
+    while IFS= read -r -d '' file; do
+        local ts
+        if ts=$(stat -c %Y "$file" 2>/dev/null); then
+            :
+        else
+            ts=$(stat -f %m "$file" 2>/dev/null || echo 0)
+        fi
+
+        if [[ "$(basename "$file")" == "$base"* ]] && [ "$ts" -ge "$latest_ts" ]; then
+            latest_match="$file"
+            latest_ts=$ts
+        fi
+    done < <(find "$output_dir" -maxdepth 1 -type f \( -name "*.md" -o -name "*.txt" \) -print0 2>/dev/null)
+
+    if [ -n "$latest_match" ]; then
+        echo "$latest_match"
+        return 0
+    fi
+
+    local fallback_file=""
+    local fallback_ts=0
+
+    while IFS= read -r -d '' file; do
+        local ts
+        if ts=$(stat -c %Y "$file" 2>/dev/null); then
+            :
+        else
+            ts=$(stat -f %m "$file" 2>/dev/null || echo 0)
+        fi
+
+        if [ "$ts" -ge "$fallback_ts" ]; then
+            fallback_ts=$ts
+            fallback_file="$file"
+        fi
+    done < <(find "$output_dir" -maxdepth 1 -type f \( -name "*.md" -o -name "*.txt" \) -print0 2>/dev/null)
+
+    echo "$fallback_file"
+}
+
+analyze_markdown_file() {
+    local file="$1"
+    local context="$2"
+
+    if [ -z "$file" ] || [ ! -f "$file" ]; then
+        log "WARN" "⚠️ Файл для анализа не найден ($context)"
+        return 1
+    fi
+
+    local lines words chars
+    lines=$(wc -l < "$file" 2>/dev/null || echo 0)
+    words=$(wc -w < "$file" 2>/dev/null || echo 0)
+    chars=$(wc -m < "$file" 2>/dev/null || wc -c < "$file" 2>/dev/null || echo 0)
+
+    local tables
+    tables=$(awk '
+        BEGIN { tables = 0; in_table = 0 }
+        /^[[:space:]]*\|.*\|[[:space:]]*$/ {
+            if (in_table == 0) {
+                tables++
+                in_table = 1
+            }
+            next
+        }
+        /^[[:space:]]*:-{2,}/ {
+            if (in_table == 0) {
+                tables++
+                in_table = 1
+            }
+            next
+        }
+        {
+            in_table = 0
+        }
+        END { print tables }
+    ' "$file" 2>/dev/null || echo 0)
+
+    local images links headers lists code_blocks chunk_markers paragraphs
+    images=$(grep -cE '![^!]*\[[^]]*\]\([^)]*\)' "$file" 2>/dev/null || echo 0)
+    links=$(grep -cE '\[[^]]+\]\([^)]*\)' "$file" 2>/dev/null || echo 0)
+    headers=$(grep -cE '^[[:space:]]*#{1,6}[[:space:]]+' "$file" 2>/dev/null || echo 0)
+    lists=$(grep -cE '^[[:space:]]*([-*+]\s+|[0-9]+\.\s+)' "$file" 2>/dev/null || echo 0)
+    code_blocks=$(grep -cE '^[[:space:]]*```' "$file" 2>/dev/null || echo 0)
+    chunk_markers=$(grep -ciE '<!--\s*chunk' "$file" 2>/dev/null || echo 0)
+
+    if [ "$chunk_markers" -eq 0 ]; then
+        paragraphs=$(awk '
+            BEGIN { chunks = 0; in_para = 0 }
+            /[^[:space:]]/ {
+                if (in_para == 0) {
+                    chunks++
+                    in_para = 1
+                }
+                next
+            }
+            {
+                in_para = 0
+            }
+            END { print chunks }
+        ' "$file" 2>/dev/null || echo 0)
+        chunk_markers=$paragraphs
+    fi
+
+    log "INFO" "📦 Аналитика результата ($context):"
+    log "INFO" "  • Строк: $lines"
+    log "INFO" "  • Слов: $words"
+    log "INFO" "  • Символов: $chars"
+    log "INFO" "  • Заголовков: $headers"
+    log "INFO" "  • Таблиц: $tables"
+    log "INFO" "  • Изображений: $images"
+    log "INFO" "  • Списков: $lists"
+    log "INFO" "  • Блоков кода: $code_blocks"
+    log "INFO" "  • Ссылок: $links"
+    log "INFO" "  • Чанков: $chunk_markers"
+
+    local chars_numeric="$chars"
+    if ! [[ "$chars_numeric" =~ ^[0-9]+$ ]]; then
+        chars_numeric=0
+    fi
+
+    if [ "$chars_numeric" -ge 100 ]; then
+        log "INFO" "✅ Качество: файл содержит достаточно контента"
+    else
+        log "WARN" "⚠️ Качество: файл может быть слишком коротким"
+    fi
+
+    log "INFO" "📄 Превью содержимого:"
+    head -5 "$file" | sed 's/^/  /'
+}
+
+show_translation_results() {
+    local filename="$1"
+    local target_language="$2"
+    local output_dir="$3"
+
+    local result_file
+    result_file=$(find_related_output_file "$output_dir" "$filename")
+
+    if [ -z "$result_file" ]; then
+        log "WARN" "⚠️ Не удалось определить результат перевода для $filename"
+        return 1
+    fi
+
+    log "INFO" "📁 Результирующий файл ($target_language): $result_file"
+    analyze_markdown_file "$result_file" "Перевод → $target_language"
 }
 
 # Сценарий 5: Только конвертация
@@ -535,6 +782,7 @@ wait_for_conversion_completion() {
         local elapsed=$((current_time - start_time))
 
         if [ $elapsed -gt $timeout ]; then
+            printf "\r\033[K"
             log "ERROR" "❌ Таймаут конвертации"
             return 1
         fi
@@ -547,20 +795,72 @@ wait_for_conversion_completion() {
         local state
         state=$(echo "$response" | jq -r '.state // "unknown"' 2>/dev/null || echo "error")
 
+        local overview_data
+        overview_data=$(fetch_task_overview "orchestrator_dag" "$dag_run_id")
+        local progress_line=""
+
+        if [ -n "$overview_data" ] && [ "$overview_data" != "error" ]; then
+            IFS='|' read -r total success_count running_count failed_count queued_count retries_count chunks_total chunks_done <<< "$overview_data"
+
+            local total_count=${total:-0}
+            if ! [[ "$total_count" =~ ^[0-9]+$ ]]; then
+                total_count=0
+            fi
+
+            if [ "$total_count" -le 0 ]; then
+                total_count=1
+            fi
+
+            local success_numeric=${success_count:-0}
+            local failed_numeric=${failed_count:-0}
+            local running_numeric=${running_count:-0}
+            local queued_numeric=${queued_count:-0}
+            local retries_numeric=${retries_count:-0}
+            local chunks_total_numeric=${chunks_total:-0}
+            local chunks_done_numeric=${chunks_done:-0}
+
+            local value
+            for value_name in success_numeric failed_numeric running_numeric queued_numeric retries_numeric chunks_total_numeric chunks_done_numeric; do
+                value=${!value_name}
+                if ! [[ "$value" =~ ^[0-9]+$ ]]; then
+                    printf -v "$value_name" '%d' 0
+                fi
+            done
+
+            local completed=$(( success_numeric + failed_numeric ))
+            local duration_text
+            duration_text=$(format_duration "$elapsed")
+            local bar
+            bar=$(render_progress_bar "$completed" "$total_count" 32)
+
+            progress_line="$bar $duration_text | ✔ $success_numeric • ⏳ $running_numeric • ❌ $failed_numeric • ⏱ $queued_numeric"
+
+            if [ "$retries_numeric" -gt 0 ]; then
+                progress_line+=" • 🔁 $retries_numeric"
+            fi
+
+            if [ "$chunks_total_numeric" -gt 0 ]; then
+                progress_line+=" | чанки: $chunks_done_numeric/$chunks_total_numeric"
+            fi
+        else
+            progress_line="Выполняется ($(format_duration "$elapsed"))"
+        fi
+
         case "$state" in
             "success")
+                printf "\r\033[K"
                 log "INFO" "✅ Конвертация завершена успешно!"
                 show_conversion_results "$filename"
                 return 0
                 ;;
             "failed"|"upstream_failed")
+                printf "\r\033[K"
                 log "ERROR" "❌ Конвертация завершена с ошибкой"
                 log "ERROR" "🔍 Проверьте детали в Airflow UI: $AIRFLOW_URL/dags/orchestrator_dag/grid?dag_run_id=$dag_run_id"
                 return 1
                 ;;
-            "running")
-                local progress_msg="Выполняется (${elapsed}s)"
-                printf "\r${YELLOW}[КОНВЕРТАЦИЯ]${NC} $progress_msg "
+            "running"|"queued"|"scheduled")
+                printf "\r${YELLOW}[КОНВЕРТАЦИЯ]${NC} %s" "$progress_line"
                 sleep 10
                 ;;
             *)
@@ -576,30 +876,11 @@ show_conversion_results() {
     log "INFO" "📊 Результаты конвертации:"
 
     local latest_file
-    latest_file=$(find "$HOST_OUTPUT_ZH_DIR" -name "*.md" -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2- 2>/dev/null || echo "")
+    latest_file=$(find_related_output_file "$HOST_OUTPUT_ZH_DIR" "$filename")
 
     if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
         log "INFO" "📁 Результирующий файл: $latest_file"
-        local file_size
-        file_size=$(wc -c < "$latest_file" 2>/dev/null || echo "0")
-        log "INFO" "📊 Размер файла: $file_size байт"
-
-        local lines words
-        lines=$(wc -l < "$latest_file" 2>/dev/null || echo "0")
-        words=$(wc -w < "$latest_file" 2>/dev/null || echo "0")
-
-        log "INFO" "📈 Статистика:"
-        log "INFO" "  - Строк: $lines"
-        log "INFO" "  - Слов: $words"
-        log "INFO" "  - Символов: $file_size"
-
-        if [ "$file_size" -gt 100 ]; then
-            log "INFO" "✅ Качество: Файл содержит достаточно контента"
-            log "INFO" "📖 Превью содержимого:"
-            head -5 "$latest_file" | sed 's/^/  /'
-        else
-            log "WARN" "⚠️ Качество: Файл может быть слишком коротким"
-        fi
+        analyze_markdown_file "$latest_file" "Конвертация"
     else
         log "WARN" "⚠️ Результирующий файл не найден в $HOST_OUTPUT_ZH_DIR"
         log "INFO" "🔍 Поиск любых файлов в выходной папке..."
@@ -712,6 +993,7 @@ wait_for_translation_completion() {
         local elapsed=$((current_time - start_time))
 
         if [ $elapsed -gt $timeout ]; then
+            printf "\r\033[K"
             log "ERROR" "❌ Таймаут обработки"
             return 1
         fi
@@ -737,18 +1019,91 @@ except:
     print('error')
 " 2>/dev/null || echo "error")
 
+        local overview_data
+        overview_data=$(fetch_task_overview "$dag_name" "$dag_run_id")
+        local progress_line=""
+
+        if [ -n "$overview_data" ] && [ "$overview_data" != "error" ]; then
+            IFS='|' read -r total success_count running_count failed_count queued_count retries_count chunks_total chunks_done <<< "$overview_data"
+
+            local total_count=${total:-0}
+            if ! [[ "$total_count" =~ ^[0-9]+$ ]]; then
+                total_count=0
+            fi
+
+            local success_numeric=${success_count:-0}
+            local failed_numeric=${failed_count:-0}
+            local running_numeric=${running_count:-0}
+            local queued_numeric=${queued_count:-0}
+            local retries_numeric=${retries_count:-0}
+            local chunks_total_numeric=${chunks_total:-0}
+            local chunks_done_numeric=${chunks_done:-0}
+
+            if ! [[ "$success_numeric" =~ ^[0-9]+$ ]]; then
+                success_numeric=0
+            fi
+
+            if ! [[ "$failed_numeric" =~ ^[0-9]+$ ]]; then
+                failed_numeric=0
+            fi
+
+            if ! [[ "$running_numeric" =~ ^[0-9]+$ ]]; then
+                running_numeric=0
+            fi
+
+            if ! [[ "$queued_numeric" =~ ^[0-9]+$ ]]; then
+                queued_numeric=0
+            fi
+
+            if ! [[ "$retries_numeric" =~ ^[0-9]+$ ]]; then
+                retries_numeric=0
+            fi
+
+            if ! [[ "$chunks_total_numeric" =~ ^[0-9]+$ ]]; then
+                chunks_total_numeric=0
+            fi
+
+            if ! [[ "$chunks_done_numeric" =~ ^[0-9]+$ ]]; then
+                chunks_done_numeric=0
+            fi
+
+            local completed=$(( success_numeric + failed_numeric ))
+
+            if [ "$total_count" -le 0 ]; then
+                total_count=1
+            fi
+
+            local duration_text
+            duration_text=$(format_duration "$elapsed")
+            local bar
+            bar=$(render_progress_bar "$completed" "$total_count" 32)
+
+            progress_line="$bar $duration_text | ✔ $success_numeric • ⏳ $running_numeric • ❌ $failed_numeric • ⏱ $queued_numeric"
+
+            if [ "$retries_numeric" -gt 0 ]; then
+                progress_line+=" • 🔁 $retries_numeric"
+            fi
+
+            if [ "$chunks_total_numeric" -gt 0 ]; then
+                progress_line+=" | чанки: $chunks_done_numeric/$chunks_total_numeric"
+            fi
+        else
+            progress_line="Выполняется ($(format_duration "$elapsed"))"
+        fi
+
         case "$state" in
             "success")
+                printf "\r\033[K"
                 log "INFO" "✅ Обработка завершена успешно!"
                 return 0
                 ;;
             "failed"|"upstream_failed")
+                printf "\r\033[K"
                 log "ERROR" "❌ Обработка завершена с ошибкой"
                 return 1
                 ;;
-            "running")
-                local progress_msg="Выполняется (${elapsed}s)"
-                printf "\r${YELLOW}[ОБРАБОТКА]${NC} $progress_msg "
+            "running"|"queued"|"scheduled")
+                printf "\r${YELLOW}[ОБРАБОТКА]${NC} %s" "$progress_line"
                 sleep 10
                 ;;
             *)
