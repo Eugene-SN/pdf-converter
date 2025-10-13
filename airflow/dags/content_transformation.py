@@ -27,6 +27,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Any, List, Optional, Tuple
 from requests.adapters import HTTPAdapter
 
+from translator.vllm_client import (
+    build_vllm_headers,
+    create_vllm_requests_session,
+)
+
 # ✅ logger до любых try/except
 logger = logging.getLogger(__name__)
 
@@ -118,7 +123,7 @@ _VLLM_SEMAPHORE = threading.Semaphore(VLLM_CONFIG.get('max_concurrent_requests',
 
 # Общая HTTP‑сессия с расширенным пулом соединений
 _VLLM_HTTP_POOL = max(4, VLLM_CONFIG['max_concurrent_requests'] * 4)
-_VLLM_SESSION = requests.Session()
+_VLLM_SESSION = create_vllm_requests_session()
 _VLLM_ADAPTER = HTTPAdapter(pool_connections=_VLLM_HTTP_POOL, pool_maxsize=_VLLM_HTTP_POOL)
 _VLLM_SESSION.mount('http://', _VLLM_ADAPTER)
 _VLLM_SESSION.mount('https://', _VLLM_ADAPTER)
@@ -1073,10 +1078,8 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
     """
     Делает до max_retries попыток вызвать vLLM chat/completions, выходит при первом успехе.
     """
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
+    headers = build_vllm_headers("application/json")
+    headers.setdefault("Accept", "application/json")
     cache_key = hashlib.sha256(prompt.encode('utf-8')).hexdigest()
     cached_response = _cache_lookup(cache_key)
     if cached_response:

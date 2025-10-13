@@ -13,7 +13,7 @@ import logging
 from typing import Dict, List, Optional, Any, Tuple, Union
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 # HTTP клиенты для взаимодействия с vLLM
@@ -24,6 +24,13 @@ from aiohttp import ClientTimeout
 # Утилиты
 import structlog
 from prometheus_client import Counter, Histogram, Gauge
+
+from translator.vllm_client import (
+    build_vllm_headers,
+    create_vllm_aiohttp_session,
+    get_vllm_api_key,
+    get_vllm_server_url,
+)
 
 # =======================================================================================
 # КОНФИГУРАЦИЯ И МЕТРИКИ
@@ -40,8 +47,8 @@ corrections_applied = Counter('corrections_applied_total', 'Total corrections ap
 class AutoCorrectorConfig:
     """Конфигурация автокоррекции"""
     # vLLM сервер настройки
-    vllm_base_url: str = "http://vllm-server:8000"
-    vllm_api_key: str = "vllm-api-key"
+    vllm_base_url: str = field(default_factory=get_vllm_server_url)
+    vllm_api_key: Optional[str] = field(default_factory=get_vllm_api_key)
     vllm_connect_timeout: float = 10.0
     vllm_request_timeout: float = 300.0
     vllm_max_retries: int = 1
@@ -117,7 +124,11 @@ class AutoCorrector:
 
     async def __aenter__(self):
         """Async context manager entry"""
-        self.http_client = aiohttp.ClientSession(timeout=self._build_client_timeout())
+        self.http_client = create_vllm_aiohttp_session(
+            timeout=self._build_client_timeout(),
+            api_key=self.config.vllm_api_key,
+            base_url=self.config.vllm_base_url,
+        )
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -128,7 +139,11 @@ class AutoCorrector:
     async def _ensure_http_client(self) -> aiohttp.ClientSession:
         """Гарантирует наличие активного HTTP клиента."""
         if self.http_client is None or self.http_client.closed:
-            self.http_client = aiohttp.ClientSession(timeout=self._build_client_timeout())
+            self.http_client = create_vllm_aiohttp_session(
+                timeout=self._build_client_timeout(),
+                api_key=self.config.vllm_api_key,
+                base_url=self.config.vllm_base_url,
+            )
         return self.http_client
     
     async def apply_corrections(
@@ -438,15 +453,14 @@ class AutoCorrector:
                 try:
                     async with client.post(
                         f"{self.config.vllm_base_url}/v1/chat/completions",
-                        headers={
-                            "Authorization": f"Bearer {self.config.vllm_api_key}",
-                            "Content-Type": "application/json"
-                        },
-                    json={
-                        "model": "Qwen/Qwen2.5-32B-Instruct",
-                        "prompt": prompt,
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
+                        headers=build_vllm_headers(
+                            "application/json", api_key=self.config.vllm_api_key
+                        ),
+                        json={
+                            "model": "Qwen/Qwen2.5-32B-Instruct",
+                            "prompt": prompt,
+                            "messages": [
+                                {"role": "system", "content": system_prompt},
                             {"role": "user", "content": prompt},
                         ],
                         "temperature": 0.1,
