@@ -52,6 +52,7 @@ VLLM_API_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
 VLLM_API_KEY = os.getenv('VLLM_API_KEY', 'pdf-converter-secure-key-2024')
 
 # ✅ ИСПРАВЛЕНО: Правильная модель для перевода
+# ✅ Централизованная переменная окружения `VLLM_MODEL_NAME` используется всеми DAG/микросервисами
 TRANSLATION_MODEL = os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
 
 # ✅ ИСПРАВЛЕНО: OpenAI-совместимый endpoint для vLLM
