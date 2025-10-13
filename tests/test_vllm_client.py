@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from translator.vllm_client import create_vllm_requests_session
+from translator.vllm_client import MissingVLLMApiKeyError, create_vllm_requests_session
 
 
 class _ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
@@ -65,14 +65,10 @@ def test_vllm_session_attaches_bearer_token(monkeypatch: pytest.MonkeyPatch, moc
     base_url = _server_url(mock_vllm_server)
     monkeypatch.setenv("VLLM_SERVER_URL", base_url)
 
-    # No key -> unauthorized
+    # No key -> explicit failure
     monkeypatch.delenv("VLLM_API_KEY", raising=False)
-    session = create_vllm_requests_session()
-    try:
-        response = session.post(f"{base_url}/v1/chat/completions", json={})
-    finally:
-        session.close()
-    assert response.status_code == 401
+    with pytest.raises(MissingVLLMApiKeyError):
+        create_vllm_requests_session()
 
     # With key -> authorized
     monkeypatch.setenv("VLLM_API_KEY", "test-key")

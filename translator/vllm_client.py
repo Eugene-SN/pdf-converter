@@ -19,6 +19,10 @@ if TYPE_CHECKING:  # pragma: no cover
 DEFAULT_VLLM_URL = "http://vllm-server:8000"
 
 
+class MissingVLLMApiKeyError(RuntimeError):
+    """Raised when a vLLM API key is required but not configured."""
+
+
 def get_vllm_server_url() -> str:
     """Return the configured vLLM base URL."""
 
@@ -32,6 +36,17 @@ def get_vllm_api_key() -> Optional[str]:
     return api_key or None
 
 
+def require_vllm_api_key() -> str:
+    """Return the configured vLLM API key or raise a clear error."""
+
+    api_key = get_vllm_api_key()
+    if not api_key:
+        raise MissingVLLMApiKeyError(
+            "VLLM_API_KEY environment variable is required for vLLM requests"
+        )
+    return api_key
+
+
 def build_vllm_headers(
     content_type: Optional[str] = None,
     *,
@@ -40,9 +55,8 @@ def build_vllm_headers(
     """Construct default headers for talking to vLLM."""
 
     headers: Dict[str, str] = {}
-    api_key = api_key or get_vllm_api_key()
-    if api_key:
-        headers["Authorization"] = f"Bearer {api_key}"
+    resolved_api_key = (api_key or "").strip() or require_vllm_api_key()
+    headers["Authorization"] = f"Bearer {resolved_api_key}"
     if content_type:
         headers["Content-Type"] = content_type
     return headers
@@ -73,10 +87,12 @@ def create_vllm_aiohttp_session(
 
 
 __all__ = [
+    "MissingVLLMApiKeyError",
     "build_vllm_headers",
     "create_vllm_aiohttp_session",
     "create_vllm_requests_session",
     "get_vllm_api_key",
     "get_vllm_server_url",
+    "require_vllm_api_key",
 ]
 
