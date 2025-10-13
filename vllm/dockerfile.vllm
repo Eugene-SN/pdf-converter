@@ -14,6 +14,9 @@ RUN groupadd -r vllm && useradd -r -g vllm -m vllm
 RUN mkdir -p /workspace /app/logs && \
     chown -R vllm:vllm /workspace /app/logs /home/vllm
 
+# Переменные окружения (только для путей Python)
+ENV PYTHONPATH="/workspace:$PYTHONPATH"
+
 # Рабочая директория
 WORKDIR /workspace
 
@@ -24,5 +27,5 @@ USER vllm
 EXPOSE 8000 8001
 
 # Запуск стандартного OpenAI-совместимого сервера vLLM
-ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+ENTRYPOINT ["/usr/bin/env", "python3", "-m", "vllm.entrypoints.openai.api_server"]
 CMD ["--host", "0.0.0.0", "--port", "8000"]
