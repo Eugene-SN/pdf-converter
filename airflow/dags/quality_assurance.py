@@ -29,12 +29,15 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.exceptions import AirflowException
+from airflow.api.common.experimental.trigger_dag import trigger_dag
+from airflow.utils import timezone
 import os
 import sys
 import json
 import logging
 import time
 import re
+import random
 import requests
 import asyncio
 import aiohttp
@@ -44,7 +47,10 @@ import subprocess
 import shutil
 import textwrap
 import html
-from typing import Dict, Any, Optional, List, Set
+import glob
+import statistics
+from collections import defaultdict
+from typing import Dict, Any, Optional, List, Set, Tuple
 from pathlib import Path
 from types import SimpleNamespace
 import importlib
@@ -218,7 +224,7 @@ QA_RULES = {
     # Базовые требования к документу
     'min_content_length': 100,
     'min_headings': 1,
-    'max_chinese_chars_ratio': 0.3,
+    'max_chinese_chars_ratio': 0.2,
     'require_title': True,
     'check_table_structure': True,
     'validate_markdown_syntax': True,
@@ -264,8 +270,8 @@ LEVEL_CONFIG = {
     },
     'level5_correction': {
         'vllm_endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-        'correction_model': 'Qwen/Qwen2.5-VL-32B-Instruct',
-        'max_retries': 3,
+        'correction_model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
+        'max_retries': 5,
         'enable_auto_correction': True
     }
 }
@@ -288,14 +294,29 @@ TECHNICAL_TERMS = [
 # ✅ ИСПРАВЛЕНА: vLLM конфигурация для авто-коррекции
 VLLM_CONFIG = {
     'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-    'model': 'Qwen/Qwen2.5-VL-32B-Instruct',
-    'timeout': 60,
-    'max_tokens': 8192,
-    'temperature': 0.1,
+    'model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
+    'timeout': 240,
+    'max_tokens': 2048,
+    'temperature': 0.25,
     'top_p': 0.9,
-    'max_retries': 2,
-    'retry_delay': 2
+    'max_retries': 5,
+    'retry_delay': 5,
+    'retry_jitter': 0.35,
+    'retry_backoff_factor': 2.0,
 }
+
+
+def _compute_retry_delay(attempt: int, multiplier: float = 1.0) -> float:
+    """Return an exponential retry delay with jitter for resiliency."""
+    base_delay = max(0.0, VLLM_CONFIG['retry_delay'])
+    backoff_factor = max(1.0, VLLM_CONFIG.get('retry_backoff_factor', 1.0))
+    delay = base_delay * (backoff_factor ** max(0, attempt - 1)) * multiplier
+    jitter_ratio = max(0.0, VLLM_CONFIG.get('retry_jitter', 0.0))
+    if not jitter_ratio:
+        return delay
+    spread = delay * jitter_ratio
+    # Guarantee a small positive delay to avoid immediate retries
+    return max(0.1, delay + random.uniform(-spread, spread))
 
 SENTENCE_MODEL_CACHE_DIR = os.getenv('QA_SENTENCE_MODEL_CACHE') or os.getenv('SENTENCE_TRANSFORMERS_CACHE')
 _SENTENCE_MODEL = None
@@ -449,91 +470,405 @@ def load_translated_document(**context) -> Dict[str, Any]:
 # УРОВЕНЬ 1: OCR CROSS-VALIDATION (СОХРАНЕН)
 # ================================================================================
 
+
+def _map_to_airflow_temp_path(path: Optional[str], airflow_temp: str) -> Optional[str]:
+    """Приводит путь из контейнера document-processor к airflow temp при необходимости."""
+
+    if not path or not isinstance(path, str):
+        return None
+
+    normalized = path.strip()
+    if not normalized:
+        return None
+
+    if normalized.startswith('/app/temp'):
+        return normalized.replace('/app/temp', airflow_temp, 1)
+
+    return normalized
+
+
+def _read_json_file(path: str) -> Optional[Any]:
+    """Безопасное чтение JSON файла с защитой от ошибок."""
+
+    try:
+        with open(path, 'r', encoding='utf-8') as handle:
+            return json.load(handle)
+    except Exception as exc:
+        logger.debug("Не удалось прочитать JSON %s: %s", path, exc)
+        return None
+
+
+def _load_additional_ocr_results(qa_session: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Пытается найти и загрузить сохраненные результаты OCR из Stage 1."""
+
+    loader_info: Dict[str, Any] = {
+        'bridge_file': None,
+        'results_path': None,
+        'candidates_checked': [],
+        'missing_files': [],
+    }
+
+    original_config: Dict[str, Any] = qa_session.get('original_config', {}) or {}
+    airflow_temp = original_config.get(
+        'container_temp_dir',
+        os.getenv('AIRFLOW_TEMP_DIR', os.path.join(os.getenv('AIRFLOW_HOME', '/opt/airflow'), 'temp'))
+    ) or '/opt/airflow/temp'
+    timestamp = original_config.get('timestamp')
+
+    candidate_paths: List[str] = []
+
+    try:
+        if timestamp:
+            bridge_path = os.path.join(airflow_temp, f"stage1_bridge_{timestamp}.json")
+            if os.path.exists(bridge_path):
+                loader_info['bridge_file'] = bridge_path
+                bridge_data = _read_json_file(bridge_path) or {}
+
+                potential_sources: List[str] = []
+                if isinstance(bridge_data, dict):
+                    potential_sources.extend([
+                        bridge_data.get('intermediate_file'),
+                        bridge_data.get('docling_intermediate')
+                    ])
+                    potential_sources.extend(bridge_data.get('output_files', []) or [])
+
+                for raw_path in potential_sources:
+                    mapped = _map_to_airflow_temp_path(raw_path, airflow_temp)
+                    if not mapped:
+                        continue
+                    if os.path.exists(mapped) and mapped not in candidate_paths:
+                        candidate_paths.append(mapped)
+                    elif mapped not in loader_info['missing_files']:
+                        loader_info['missing_files'].append(mapped)
+
+        for key in ('intermediate_file', 'stage1_intermediate', 'docling_intermediate'):
+            raw_candidate = qa_session.get(key) or original_config.get(key)
+            mapped = _map_to_airflow_temp_path(raw_candidate, airflow_temp)
+            if not mapped:
+                continue
+            if os.path.exists(mapped) and mapped not in candidate_paths:
+                candidate_paths.append(mapped)
+            elif mapped not in loader_info['missing_files']:
+                loader_info['missing_files'].append(mapped)
+
+        if not candidate_paths and timestamp:
+            search_patterns = [
+                os.path.join(airflow_temp, f"*{timestamp}*result.json"),
+                os.path.join(airflow_temp, f"*{timestamp}*intermediate.json"),
+            ]
+            for pattern in search_patterns:
+                for found in glob.glob(pattern):
+                    if os.path.exists(found) and found not in candidate_paths:
+                        candidate_paths.append(found)
+
+        loader_info['candidates_checked'] = candidate_paths[:]
+
+        for path in candidate_paths:
+            data = _read_json_file(path)
+            if not isinstance(data, dict):
+                continue
+
+            metadata_candidates: List[Tuple[str, Dict[str, Any]]] = []
+            if isinstance(data.get('metadata'), dict):
+                metadata_candidates.append(('metadata', data['metadata']))
+            if isinstance(data.get('document_structure'), dict):
+                doc_meta = data['document_structure'].get('metadata')
+                if isinstance(doc_meta, dict):
+                    metadata_candidates.append(('document_structure.metadata', doc_meta))
+
+            for source_key, meta in metadata_candidates:
+                ocr_payload = meta.get('additional_ocr_results')
+                if isinstance(ocr_payload, list):
+                    loader_info['results_path'] = path
+                    loader_info['results_container_key'] = source_key
+                    return ocr_payload, loader_info
+                if isinstance(ocr_payload, str):
+                    mapped_payload = _map_to_airflow_temp_path(ocr_payload, airflow_temp)
+                    if mapped_payload and os.path.exists(mapped_payload):
+                        payload_data = _read_json_file(mapped_payload)
+                        if isinstance(payload_data, list):
+                            loader_info['results_path'] = mapped_payload
+                            loader_info['results_container_key'] = source_key
+                            return payload_data, loader_info
+                        loader_info['missing_files'].append(mapped_payload)
+
+        loader_info['error'] = 'OCR results not found in Stage 1 artifacts'
+        return [], loader_info
+
+    except Exception as exc:
+        loader_info['error'] = str(exc)
+        logger.debug("Ошибка при загрузке OCR результатов: %s", exc, exc_info=True)
+        return [], loader_info
+
+
+def _prepare_excerpt(text: str, limit: int = 160) -> str:
+    """Возвращает компактный фрагмент текста для логирования расхождений."""
+
+    if not text:
+        return ''
+    sanitized = re.sub(r'\s+', ' ', text).strip()
+    if len(sanitized) <= limit:
+        return sanitized
+    return sanitized[:limit] + '…'
+
+
+def _analyze_ocr_results(ocr_pages: List[Dict[str, Any]], document_text: str) -> Dict[str, Any]:
+    """Агрегирует данные PaddleOCR/Tesseract и вычисляет итоговый confidence."""
+
+    analysis: Dict[str, Any] = {
+        'has_data': False,
+        'engines_used': [],
+        'paddle_avg_confidence': 0.0,
+        'tesseract_avg_confidence': 0.0,
+        'overlap_ratio': 0.0,
+        'pages_analyzed': 0,
+        'pages_with_both': 0,
+        'pages_with_paddle': 0,
+        'pages_with_tesseract': 0,
+        'issues': [],
+        'mismatched_pages': [],
+        'per_engine_stats': {},
+    }
+
+    if not ocr_pages:
+        analysis['issues'].append('Empty OCR payload received')
+        return analysis
+
+    engine_confidences: Dict[str, List[float]] = defaultdict(list)
+    entries_per_engine: Dict[str, int] = defaultdict(int)
+    pages_with_engine: Dict[str, int] = defaultdict(int)
+    page_similarities: List[float] = []
+    mismatched_pages: List[Dict[str, Any]] = []
+
+    total_pages = 0
+
+    for page in ocr_pages:
+        page_results = page.get('ocr_results') or []
+        if not page_results:
+            continue
+
+        total_pages += 1
+        texts_by_engine: Dict[str, List[str]] = defaultdict(list)
+        confs_by_engine: Dict[str, List[float]] = defaultdict(list)
+        page_engines: Set[str] = set()
+
+        for item in page_results:
+            engine = str(item.get('engine') or 'unknown').lower()
+            text = item.get('text')
+            confidence = item.get('confidence')
+
+            if text:
+                texts_by_engine[engine].append(text)
+                page_engines.add(engine)
+
+            if isinstance(confidence, (int, float)):
+                conf_value = float(confidence)
+                confs_by_engine[engine].append(conf_value)
+                engine_confidences[engine].append(conf_value)
+                entries_per_engine[engine] += 1
+                page_engines.add(engine)
+
+        for engine in page_engines:
+            pages_with_engine[engine] += 1
+
+        if 'paddle' in page_engines:
+            analysis['pages_with_paddle'] += 1
+        if 'tesseract' in page_engines:
+            analysis['pages_with_tesseract'] += 1
+
+        if 'paddle' in texts_by_engine and 'tesseract' in texts_by_engine:
+            analysis['pages_with_both'] += 1
+            paddle_text = ' '.join(texts_by_engine['paddle']).strip()
+            tesseract_text = ' '.join(texts_by_engine['tesseract']).strip()
+            if paddle_text and tesseract_text:
+                similarity = SequenceMatcher(None, paddle_text, tesseract_text).ratio()
+                page_similarities.append(similarity)
+                if similarity < 0.65:
+                    mismatched_pages.append({
+                        'page': page.get('page'),
+                        'similarity': round(similarity, 3),
+                        'paddle_excerpt': _prepare_excerpt(paddle_text),
+                        'tesseract_excerpt': _prepare_excerpt(tesseract_text),
+                    })
+
+    analysis['pages_analyzed'] = total_pages
+    analysis['mismatched_pages'] = mismatched_pages
+
+    if total_pages == 0:
+        analysis['issues'].append('OCR results contain no recognized pages')
+        return analysis
+
+    engines_present = set(engine_confidences.keys()) or set(pages_with_engine.keys())
+    analysis['engines_used'] = sorted(engines_present)
+
+    if engine_confidences.get('paddle'):
+        analysis['paddle_avg_confidence'] = statistics.mean(engine_confidences['paddle'])
+    if engine_confidences.get('tesseract'):
+        analysis['tesseract_avg_confidence'] = statistics.mean(engine_confidences['tesseract'])
+
+    if page_similarities:
+        analysis['overlap_ratio'] = statistics.mean(page_similarities)
+
+    per_engine_stats: Dict[str, Dict[str, Any]] = {}
+    for engine in engines_present:
+        confidences = engine_confidences.get(engine, [])
+        per_engine_stats[engine] = {
+            'avg_confidence': round(statistics.mean(confidences), 4) if confidences else 0.0,
+            'entries': entries_per_engine.get(engine, 0),
+            'pages_with_data': pages_with_engine.get(engine, 0),
+        }
+    analysis['per_engine_stats'] = per_engine_stats
+
+    weights = 0.0
+    weighted_score = 0.0
+
+    if engine_confidences.get('paddle'):
+        weights += 0.55
+        weighted_score += analysis['paddle_avg_confidence'] * 0.55
+    if engine_confidences.get('tesseract'):
+        weights += 0.35
+        weighted_score += analysis['tesseract_avg_confidence'] * 0.35
+    if page_similarities:
+        weights += 0.10
+        weighted_score += analysis['overlap_ratio'] * 0.10
+
+    consensus = (weighted_score / weights) if weights else 0.0
+
+    text_length = len(document_text or '')
+    length_bonus = min(0.05, text_length / 10000) if text_length else 0.0
+    consensus = min(1.0, consensus + length_bonus)
+
+    analysis['consensus_confidence'] = consensus
+    analysis['has_data'] = weights > 0
+
+    if 'tesseract' not in engines_present:
+        analysis['issues'].append('Tesseract OCR results missing for cross-validation')
+    if 'paddle' not in engines_present:
+        analysis['issues'].append('PaddleOCR results missing for cross-validation')
+    if page_similarities and analysis['overlap_ratio'] < 0.65:
+        analysis['issues'].append(
+            f"Low OCR overlap ratio: {analysis['overlap_ratio']:.3f}"
+        )
+
+    return analysis
+
+
 def perform_ocr_cross_validation(**context) -> Dict[str, Any]:
     """✅ Уровень 1: Кросс-валидация OCR результатов через PaddleOCR + Tesseract"""
+
     start_time = time.time()
     try:
         qa_session = context['task_instance'].xcom_pull(task_ids='load_translated_document')
         logger.info("🔍 Уровень 1: OCR Cross-Validation")
-        
+
         original_pdf_path = qa_session.get('original_pdf_path')
-        document_content = qa_session['translated_content']
-        
-        validation_result = {
+        document_content = qa_session.get('translated_content', '')
+
+        validation_result: Dict[str, Any] = {
             'level': 1,
             'name': 'ocr_cross_validation',
             'consensus_confidence': 0.0,
             'validation_score': 0.0,
             'engines_used': [],
             'issues_found': [],
-            'processing_time': 0.0
+            'processing_time': 0.0,
+            'data_sources': {},
         }
-        
+
         if original_pdf_path and os.path.exists(original_pdf_path):
-            paddleocr_confidence = simulate_paddleocr_analysis(original_pdf_path, document_content)
-            tesseract_confidence = simulate_tesseract_ocr(original_pdf_path)
-            consensus_score = calculate_ocr_consensus(
-                paddleocr_confidence, tesseract_confidence, document_content
-            )
-            
-            validation_result.update({
-                'consensus_confidence': consensus_score,
-                'validation_score': consensus_score,
-                'engines_used': ['paddleocr', 'tesseract'],
-                'paddleocr_confidence': paddleocr_confidence,
-                'tesseract_confidence': tesseract_confidence
-            })
-            
-            if consensus_score < LEVEL_CONFIG['level1_ocr']['consensus_threshold']:
-                validation_result['issues_found'].append(
-                    f"Low OCR consensus: {consensus_score:.3f} < {LEVEL_CONFIG['level1_ocr']['consensus_threshold']}"
-                )
+            ocr_pages, loader_info = _load_additional_ocr_results(qa_session)
+            validation_result['data_sources'] = {
+                'bridge_file': loader_info.get('bridge_file'),
+                'results_path': loader_info.get('results_path'),
+                'candidates_checked': loader_info.get('candidates_checked', [])[:5],
+            }
+            if loader_info.get('missing_files'):
+                validation_result['data_sources']['missing_files'] = loader_info['missing_files'][:5]
+
+            if ocr_pages:
+                analysis = _analyze_ocr_results(ocr_pages, document_content)
+
+                if analysis['has_data']:
+                    consensus_score = analysis['consensus_confidence']
+                    validation_result.update({
+                        'consensus_confidence': consensus_score,
+                        'validation_score': consensus_score,
+                        'engines_used': analysis['engines_used'],
+                        'paddle_avg_confidence': analysis['paddle_avg_confidence'],
+                        'tesseract_avg_confidence': analysis['tesseract_avg_confidence'],
+                        'overlap_ratio': analysis['overlap_ratio'],
+                        'ocr_pages_analyzed': analysis['pages_analyzed'],
+                        'ocr_pages_with_both': analysis['pages_with_both'],
+                        'ocr_results_path': loader_info.get('results_path') or loader_info.get('bridge_file'),
+                        'metrics': {
+                            'consensus_confidence': analysis['consensus_confidence'],
+                            'paddle_avg_confidence': analysis['paddle_avg_confidence'],
+                            'tesseract_avg_confidence': analysis['tesseract_avg_confidence'],
+                            'overlap_ratio': analysis['overlap_ratio'],
+                            'pages_analyzed': analysis['pages_analyzed'],
+                            'pages_with_both': analysis['pages_with_both'],
+                            'pages_with_paddle': analysis['pages_with_paddle'],
+                            'pages_with_tesseract': analysis['pages_with_tesseract'],
+                            'per_engine': analysis['per_engine_stats'],
+                        },
+                    })
+
+                    if analysis['issues']:
+                        validation_result['issues_found'].extend(analysis['issues'])
+
+                    if analysis['mismatched_pages']:
+                        validation_result['issues_found'].append(
+                            f"OCR mismatch detected on {len(analysis['mismatched_pages'])} page(s)"
+                        )
+                        validation_result['mismatched_pages'] = analysis['mismatched_pages'][:5]
+
+                    logger.info(
+                        "📊 OCR metrics: consensus=%.3f, paddle=%.3f, tesseract=%.3f, overlap=%.3f, pages=%d, mismatches=%d",
+                        consensus_score,
+                        analysis['paddle_avg_confidence'],
+                        analysis['tesseract_avg_confidence'],
+                        analysis['overlap_ratio'],
+                        analysis['pages_analyzed'],
+                        len(analysis['mismatched_pages'])
+                    )
+
+                    if consensus_score < LEVEL_CONFIG['level1_ocr']['consensus_threshold']:
+                        validation_result['issues_found'].append(
+                            f"Low OCR consensus: {consensus_score:.3f} < {LEVEL_CONFIG['level1_ocr']['consensus_threshold']}"
+                        )
+
+                else:
+                    fallback_reason = 'OCR metrics could not be computed from available data'
+                    validation_result['issues_found'].append(fallback_reason)
+                    validation_result['validation_score'] = 0.7
+                    validation_result['consensus_confidence'] = 0.7
+            else:
+                fallback_reason = loader_info.get('error') or 'No OCR results located in Stage 1 artifacts'
+                validation_result['issues_found'].append(fallback_reason)
+                validation_result['validation_score'] = 0.7
+                validation_result['consensus_confidence'] = 0.7
         else:
             validation_result['issues_found'].append(f"Original PDF not found: {original_pdf_path}")
-            # ✅ ИСПРАВЛЕНО: Повышен fallback балл с 0.5 до 0.7
             validation_result['validation_score'] = 0.7
-            
+            validation_result['consensus_confidence'] = 0.7
+
         validation_result['processing_time'] = time.time() - start_time
-        logger.info(f"✅ Уровень 1 завершен: score={validation_result['validation_score']:.3f}")
+        logger.info(
+            "✅ Уровень 1 завершен: score=%.3f (sources=%s)",
+            validation_result['validation_score'],
+            validation_result.get('data_sources')
+        )
         return validation_result
-        
-    except Exception as e:
-        logger.error(f"❌ Ошибка уровня 1 OCR валидации: {e}")
+
+    except Exception as exc:
+        logger.error(f"❌ Ошибка уровня 1 OCR валидации: {exc}")
         return {
             'level': 1,
             'name': 'ocr_cross_validation',
             'validation_score': 0.0,
-            'issues_found': [f"OCR validation failed: {str(e)}"],
+            'issues_found': [f"OCR validation failed: {str(exc)}"],
             'processing_time': time.time() - start_time
         }
-
-def simulate_paddleocr_analysis(pdf_path: str, content: str) -> float:
-    """✅ Симуляция анализа PaddleOCR результатов"""
-    try:
-        base_confidence = 0.92
-        tech_terms_found = sum(1 for term in TECHNICAL_TERMS if term.lower() in content.lower())
-        tech_bonus = min(0.05, tech_terms_found * 0.01)
-        length_penalty = max(0, (1000 - len(content)) / 10000)
-        return min(1.0, base_confidence + tech_bonus - length_penalty)
-    except Exception:
-        return 0.85
-
-def simulate_tesseract_ocr(pdf_path: str) -> float:
-    """✅ Симуляция Tesseract OCR для кросс-валидации"""
-    try:
-        return 0.87
-    except Exception:
-        return 0.80
-
-def calculate_ocr_consensus(paddle_conf: float, tesseract_conf: float, content: str) -> float:
-    """✅ Алгоритм консенсуса для выбора лучшего OCR результата"""
-    try:
-        weights = {'paddleocr': 0.7, 'tesseract': 0.3}
-        consensus = paddle_conf * weights['paddleocr'] + tesseract_conf * weights['tesseract']
-        length_bonus = min(0.05, len(content) / 10000)
-        return min(1.0, consensus + length_bonus)
-    except Exception:
-        return 0.8
 
 # ================================================================================
 # УРОВЕНЬ 2: VISUAL COMPARISON (DOCKER PANDOC ИНТЕГРАЦИЯ) - ИСПРАВЛЕН
@@ -998,14 +1333,17 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
         logger.info("🔍 Уровень 4: Enhanced Content Validation")
         
         document_content = qa_session['translated_content']
-        
+        translation_metadata = qa_session.get('translation_metadata', {}) or {}
+
         issues_found: List[str] = []
-        
+
+        translation_metrics = collect_translation_metrics(document_content, translation_metadata)
+
         structure_score = check_document_structure(document_content, issues_found)
         content_score = check_content_quality(document_content, issues_found)
         terms_score = check_technical_terms(document_content, issues_found)
         markdown_score = check_markdown_syntax(document_content, issues_found)
-        translation_score = check_translation_quality(document_content, issues_found)
+        translation_score = check_translation_quality(document_content, issues_found, translation_metrics)
         formatting_score = check_advanced_formatting(document_content, issues_found)
         consistency_score = check_content_consistency(document_content, issues_found)
         completeness_score = check_content_completeness(document_content, issues_found)
@@ -1013,8 +1351,15 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
         overall_score = (structure_score + content_score + terms_score +
                         markdown_score + translation_score + formatting_score +
                         consistency_score + completeness_score) / 8 * 100
-        
-        quality_passed = overall_score >= QA_RULES['min_quality_score']
+
+        translation_threshold_ok = (
+            translation_metrics.get('chinese_translation_coverage', 1.0) >= 0.8 and
+            translation_metrics.get('technical_terms_coverage', 1.0) >= 0.8 and
+            translation_metrics.get('chinese_ratio', 0.0) <= QA_RULES['max_chinese_chars_ratio']
+        )
+        translation_metrics['threshold_passed'] = translation_threshold_ok
+
+        quality_passed = overall_score >= QA_RULES['min_quality_score'] and translation_threshold_ok
         
         validation_result = {
             'level': 4,
@@ -1033,7 +1378,10 @@ def perform_enhanced_content_validation(**context) -> Dict[str, Any]:
                 'completeness': completeness_score
             },
             'issues_found': issues_found,
-            'processing_time': time.time() - start_time
+            'processing_time': time.time() - start_time,
+            'translation_quality_metrics': translation_metrics,
+            'chinese_ratio': translation_metrics.get('chinese_ratio'),
+            'chunks_failed': translation_metrics.get('chunks_failed'),
         }
         
         status = "✅ PASSED" if quality_passed else "❌ FAILED"
@@ -1148,21 +1496,80 @@ def check_markdown_syntax(content: str, issues_list: List) -> float:
         logger.warning(f"Ошибка проверки Markdown: {e}")
         return 0.85
 
-def check_translation_quality(content: str, issues_list: List) -> float:
+def collect_translation_metrics(content: str, translation_metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    metadata = translation_metadata or {}
+
+    total_chars = len(content)
+    chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
+    ratio_computed = chinese_chars / total_chars if total_chars > 0 else 0.0
+
+    ratio = metadata.get('chinese_ratio', ratio_computed)
+    ratio = max(0.0, min(1.0, float(ratio)))
+
+    original_chinese = metadata.get('chinese_chars_original') or 0
+    coverage = metadata.get('chinese_translation_coverage')
+    if coverage is None:
+        if original_chinese:
+            coverage = 1 - (chinese_chars / max(original_chinese, 1))
+        else:
+            coverage = 1 - ratio
+    coverage = max(0.0, min(1.0, float(coverage)))
+
+    terms_total = metadata.get('technical_terms_total') or 0
+    terms_remaining = metadata.get('technical_terms_remaining') or 0
+    term_coverage = metadata.get('technical_terms_coverage')
+    if term_coverage is None:
+        if terms_total:
+            term_coverage = 1 - (terms_remaining / max(terms_total, 1))
+        else:
+            term_coverage = 1.0
+    term_coverage = max(0.0, min(1.0, float(term_coverage)))
+
+    metrics = {
+        'total_chars': total_chars,
+        'chinese_chars': chinese_chars,
+        'chinese_ratio': ratio,
+        'chinese_translation_coverage': coverage,
+        'technical_terms_total': terms_total,
+        'technical_terms_remaining': terms_remaining,
+        'technical_terms_translated': metadata.get('technical_terms_translated', max(0, terms_total - terms_remaining)),
+        'technical_terms_coverage': term_coverage,
+        'chunks_failed': metadata.get('chunks_failed'),
+    }
+
+    return metrics
+
+
+def check_translation_quality(content: str, issues_list: List, metrics: Optional[Dict[str, Any]] = None) -> float:
     """Проверка качества перевода"""
     score = 100.0
     try:
-        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', content))
-        total_chars = len(content)
-        
-        if total_chars > 0:
-            chinese_ratio = chinese_chars / total_chars
-            max_allowed_ratio = QA_RULES['max_chinese_chars_ratio']
-            if chinese_ratio > max_allowed_ratio:
-                issues_list.append(f"Слишком много китайских символов: {chinese_ratio:.1%}")
-                score -= 20
-                
-        return max(0, score) / 100
+        metrics = metrics or collect_translation_metrics(content, None)
+
+        chinese_ratio = metrics.get('chinese_ratio', 0.0)
+        max_allowed_ratio = QA_RULES['max_chinese_chars_ratio']
+
+        if chinese_ratio > max_allowed_ratio:
+            issues_list.append(f"Слишком много китайских символов: {chinese_ratio:.1%}")
+            return 0.0
+
+        if chinese_ratio > 0:
+            penalty = min(100.0, 100.0 * (chinese_ratio / max_allowed_ratio))
+            if penalty > 0:
+                score -= penalty
+                issues_list.append(f"Осталось китайских символов: {chinese_ratio:.1%}")
+
+        coverage = metrics.get('chinese_translation_coverage', 1.0)
+        if coverage < 0.8:
+            issues_list.append(f"Переведено только {coverage:.1%} китайского текста")
+        score = min(score, coverage * 100)
+
+        term_coverage = metrics.get('technical_terms_coverage', 1.0)
+        if term_coverage < 0.8:
+            issues_list.append(f"Переведено только {term_coverage:.1%} технических терминов")
+        score = min(score, term_coverage * 100)
+
+        return max(0, min(score, 100)) / 100
     except Exception as e:
         logger.warning(f"Ошибка проверки качества перевода: {e}")
         return 0.75
@@ -1223,6 +1630,61 @@ def check_content_completeness(content: str, issues_list: List) -> float:
 # УРОВЕНЬ 5: AUTO-CORRECTION ЧЕРЕЗ vLLM (ИСПРАВЛЕН)
 # ================================================================================
 
+
+def _request_vllm_warmup() -> bool:
+    """Attempt to trigger vLLM warmup for translation tasks."""
+    warmup_url = f"{_VLLM_BASE_URL}/warmup"
+    payload = {
+        "model": VLLM_CONFIG['model'],
+        "task_type": "translation",
+    }
+    try:
+        response = requests.post(warmup_url, json=payload, timeout=30)
+        if response.status_code < 400:
+            logger.info("vLLM warmup request accepted: %s", response.status_code)
+            return True
+        logger.warning(
+            "vLLM warmup request rejected (%s): %s",
+            response.status_code,
+            response.text[:200],
+        )
+    except Exception as exc:
+        logger.warning("vLLM warmup request failed: %s", exc)
+    return False
+
+
+def _schedule_auto_correction_retry(context: Dict[str, Any], reason: str, delay_minutes: int = 3) -> bool:
+    """Schedule an additional DAG run to repeat auto-correction after warmup."""
+    dag_run = context.get('dag_run')
+    if not dag_run:
+        logger.warning("Cannot schedule auto-correction retry: dag_run missing")
+        return False
+
+    dag_conf = dict(dag_run.conf or {})
+    if dag_conf.get('auto_correction_retry_scheduled'):
+        logger.info("Auto-correction retry already scheduled, skipping duplicate trigger")
+        return False
+
+    dag_conf['auto_correction_retry_scheduled'] = True
+    dag_conf['auto_correction_retry_reason'] = reason
+
+    execution_date = timezone.utcnow() + timedelta(minutes=delay_minutes)
+    run_id = f"{dag_run.run_id}__auto_correction_retry"
+
+    try:
+        trigger_dag(
+            dag_id=dag_run.dag_id,
+            run_id=run_id,
+            conf=dag_conf,
+            execution_date=execution_date,
+            replace_microseconds=False,
+        )
+        logger.info("Triggered auto-correction retry run %s for reason: %s", run_id, reason)
+        return True
+    except Exception as exc:
+        logger.error("Failed to trigger auto-correction retry: %s", exc)
+        return False
+
 def perform_auto_correction(**context) -> Dict[str, Any]:
     """✅ ИСПРАВЛЕН: Уровень 5: Автоматическое исправление через vLLM"""
     start_time = time.time()
@@ -1243,14 +1705,22 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
             'corrected_content': document_content,
             'validation_score': 1.0,
             'issues_found': [],
-            'processing_time': 0.0
+            'processing_time': 0.0,
+            'timed_out': False,
+            'warmup_requested': False,
+            'retry_scheduled': False,
+            'status': 'completed',
+            'partial_success': False,
+            'requires_manual_followup': False
         }
-        
+
         if issues_found and qa_session.get('auto_correction', True) and len(issues_found) <= QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
-            corrected_content, correction_confidence = apply_vllm_corrections(
+            corrected_content, correction_confidence, timed_out = apply_vllm_corrections(
                 document_content, issues_found
             )
-            
+
+            correction_result['timed_out'] = timed_out
+
             if corrected_content and correction_confidence >= QA_RULES['AUTO_CORRECTION_CONFIDENCE']:
                 correction_result.update({
                     'corrections_applied': len(issues_found),
@@ -1259,13 +1729,48 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
                     'validation_score': correction_confidence
                 })
                 logger.info(f"✅ Применены исправления vLLM: {len(issues_found)} проблем, уверенность {correction_confidence:.3f}")
+                logger.info("Auto-correction status: completed")
+            elif timed_out:
+                logger.warning("vLLM auto-correction timed out on all attempts; scheduling retry after warmup")
+                correction_result['issues_found'].append("vLLM correction timed out; retry scheduled after warmup")
+                correction_result['status'] = 'waiting_retry'
+                correction_result['requires_manual_followup'] = True
+                correction_result['validation_score'] = 0.0
+                correction_result['warmup_requested'] = _request_vllm_warmup()
+                correction_result['retry_scheduled'] = _schedule_auto_correction_retry(context, 'vllm_timeout')
+                logger.info("Intermediate status: auto-correction is waiting for a retry after timeout")
             else:
+                if corrected_content and corrected_content != document_content:
+                    correction_result.update({
+                        'partial_success': True,
+                        'corrections_applied': len(issues_found),
+                        'corrected_content': corrected_content,
+                        'correction_confidence': correction_confidence,
+                        'validation_score': correction_confidence
+                    })
                 correction_result['issues_found'].append(f"vLLM correction confidence too low: {correction_confidence:.3f}")
+                correction_result['correction_confidence'] = correction_confidence
+                correction_result['validation_score'] = correction_confidence
+                correction_result['status'] = 'partial_success' if correction_result['partial_success'] else 'needs_review'
+                correction_result['requires_manual_followup'] = True
+                logger.info(
+                    "Intermediate status: auto-correction requires manual follow-up (status %s)",
+                    correction_result['status']
+                )
         elif len(issues_found) > QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
             correction_result['issues_found'].append(f"Too many issues for auto-correction: {len(issues_found)}")
-            
+            correction_result['status'] = 'skipped'
+            correction_result['requires_manual_followup'] = True
+            correction_result['validation_score'] = 0.0
+            logger.info("Auto-correction skipped due to excessive issues; manual intervention required")
+
         correction_result['processing_time'] = time.time() - start_time
-        logger.info(f"✅ Уровень 5 завершен: {correction_result['corrections_applied']} исправлений")
+        logger.info(
+            "Уровень 5 завершен со статусом %s: %d исправлений, частичный успех=%s",
+            correction_result['status'],
+            correction_result['corrections_applied'],
+            correction_result['partial_success']
+        )
         return correction_result
         
     except Exception as e:
@@ -1275,14 +1780,18 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
             'name': 'auto_correction',
             'validation_score': 0.0,
             'issues_found': [f"Auto-correction failed: {str(e)}"],
-            'processing_time': time.time() - start_time
+            'processing_time': time.time() - start_time,
+            'timed_out': False,
+            'warmup_requested': False,
+            'retry_scheduled': False,
+            'status': 'failed'
         }
 
-def apply_vllm_corrections(content: str, issues: List[str]) -> tuple[str, float]:
+def apply_vllm_corrections(content: str, issues: List[str]) -> tuple[str, float, bool]:
     """✅ Применение исправлений через vLLM"""
     try:
         logger.info("Applying vLLM corrections")
-        
+
         correction_prompt = f"""
 You are a professional document quality assurance specialist. Please fix the following issues in the markdown document:
 
@@ -1295,22 +1804,29 @@ DOCUMENT CONTENT:
 Please provide the corrected markdown document that addresses all the issues while preserving the original meaning and technical terminology. Respond with ONLY the corrected markdown content.
 """.strip()
 
-        corrected_content = call_vllm_api(correction_prompt)
-        
+        corrected_content, timed_out = call_vllm_api(correction_prompt)
+
         if corrected_content:
             correction_quality = evaluate_correction_quality(content, corrected_content, issues)
-            return corrected_content, correction_quality
-            
-        return content, 0.0
-        
+            return corrected_content, correction_quality, timed_out
+
+        return content, 0.0, timed_out
+
     except Exception as e:
         logger.error(f"vLLM correction error: {e}")
-        return content, 0.0
+        return content, 0.0, False
 
-def call_vllm_api(prompt: str) -> Optional[str]:
+def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     """✅ ИСПРАВЛЕН: Вызов vLLM API с правильным форматом messages для строк"""
+    timed_out_attempts = 0
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
+            attempt_number = attempt + 1
+            logger.info(
+                "vLLM API request attempt %d/%d for auto-correction",
+                attempt_number,
+                VLLM_CONFIG['max_retries']
+            )
             try:
                 payload = {
                     "model": VLLM_CONFIG['model'],
@@ -1320,7 +1836,8 @@ def call_vllm_api(prompt: str) -> Optional[str]:
                     ],
                     "max_tokens": VLLM_CONFIG['max_tokens'],
                     "temperature": VLLM_CONFIG['temperature'],
-                    "top_p": VLLM_CONFIG['top_p']
+                    "top_p": VLLM_CONFIG['top_p'],
+                    "task_type": "translation",
                 }
 
                 response = requests.post(
@@ -1331,49 +1848,94 @@ def call_vllm_api(prompt: str) -> Optional[str]:
 
                 if response.status_code == 200:
                     result = response.json()
-                    return result['choices'][0]['message']['content']
+                    return result['choices'][0]['message']['content'], False
 
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 if response.status_code >= 500:
                     logger.warning(
                         "vLLM API server error %s: %s",
                         response.status_code,
                         response.text[:200]
                     )
+                    if should_retry:
+                        delay = _compute_retry_delay(attempt_number)
+                        logger.info(
+                            "Intermediate status: retrying vLLM request after %.1fs due to server error",
+                            delay
+                        )
+                        time.sleep(delay)
+                    continue
                 else:
                     logger.error(
                         "vLLM API error %s: %s",
                         response.status_code,
                         response.text[:200]
                     )
+                    if should_retry:
+                        delay = _compute_retry_delay(attempt_number)
+                        logger.info(
+                            "Intermediate status: retrying vLLM request after %.1fs due to client error",
+                            delay
+                        )
+                        time.sleep(delay)
+                    continue
 
             except requests.exceptions.Timeout as exc:
-                logger.error(
+                timed_out_attempts += 1
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
+                logger.warning(
                     "vLLM API timeout after %ss on attempt %d/%d: %s",
                     VLLM_CONFIG['timeout'],
-                    attempt + 1,
+                    attempt_number,
                     VLLM_CONFIG['max_retries'],
                     exc
                 )
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: waiting %.1fs before retrying vLLM request after timeout",
+                        delay
+                    )
+                    time.sleep(delay)
+                else:
+                    logger.error("vLLM API timed out on final attempt; giving up")
+                continue
             except requests.exceptions.RequestException as exc:
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 logger.warning(
                     "vLLM API request error on attempt %d/%d: %s",
-                    attempt + 1,
+                    attempt_number,
                     VLLM_CONFIG['max_retries'],
                     exc
                 )
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: retrying vLLM request after %.1fs due to connectivity issue",
+                        delay
+                    )
+                    time.sleep(delay)
+                continue
             except Exception as e:
-                logger.warning(f"vLLM API call attempt {attempt + 1} failed: {e}")
-
-            if attempt < VLLM_CONFIG['max_retries'] - 1:
-                time.sleep(VLLM_CONFIG['retry_delay'])
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
+                logger.warning(f"vLLM API call attempt {attempt_number} failed: {e}")
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: retrying vLLM request after %.1fs due to unexpected error",
+                        delay
+                    )
+                    time.sleep(delay)
                 continue
 
             logger.error("vLLM API failed after %d attempts", VLLM_CONFIG['max_retries'])
-            return None
+            return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
 
     except Exception as e:
         logger.error(f"vLLM API call failed (outer): {e}")
-        return None
+        return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
+
+    return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
 
 def evaluate_correction_quality(original: str, corrected: str, issues: List[str]) -> float:
     """✅ Оценка качества исправления"""
@@ -1413,7 +1975,7 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
         level3_results = context['task_instance'].xcom_pull(task_ids='perform_ast_structure_comparison')
         level4_results = context['task_instance'].xcom_pull(task_ids='perform_enhanced_content_validation')
         level5_results = context['task_instance'].xcom_pull(task_ids='perform_auto_correction')
-        
+
         level_scores = [
             level1_results.get('validation_score', 0),
             level2_results.get('validation_score', 0),
@@ -1421,10 +1983,21 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
             level4_results.get('validation_score', 0),
             level5_results.get('validation_score', 0)
         ]
-        
+
         overall_score = sum(level_scores) / len(level_scores) * 100
-        quality_passed = overall_score >= QA_RULES['OVERALL_QA_THRESHOLD'] * 100
-        
+        auto_correction_status = level5_results.get('status')
+        manual_followup_required = level5_results.get('requires_manual_followup', False)
+        quality_passed = (
+            overall_score >= QA_RULES['OVERALL_QA_THRESHOLD'] * 100
+            and auto_correction_status == 'completed'
+            and not manual_followup_required
+        )
+        if manual_followup_required:
+            logger.info(
+                "Comprehensive QA report flagged manual follow-up: auto-correction status %s",
+                auto_correction_status
+            )
+
         comprehensive_report = {
             'session_id': qa_session['session_id'],
             'document_file': qa_session['translated_file'],
@@ -1450,9 +2023,12 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
             'corrections_applied': level5_results.get('corrections_applied', 0),
             'corrected_content': level5_results.get('corrected_content'),
             'qa_rules_used': QA_RULES,
-            'level_configs_used': LEVEL_CONFIG
+            'level_configs_used': LEVEL_CONFIG,
+            'auto_correction_status': auto_correction_status,
+            'auto_correction_partial_success': level5_results.get('partial_success', False),
+            'auto_correction_requires_manual_followup': manual_followup_required
         }
-        
+
         airflow_temp = os.getenv('AIRFLOW_TEMP_DIR', '/opt/airflow/temp')
         SharedUtils.ensure_directory(airflow_temp)
         
@@ -1492,8 +2068,11 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
         final_document = (comprehensive_report.get('corrected_content') or 
                          qa_session['translated_content'])
         
+        auto_correction_summary = comprehensive_report['level_results']['level5_auto_correction']
+        auto_correction_status = auto_correction_summary.get('status')
+        auto_correction_followup = auto_correction_summary.get('requires_manual_followup', False)
         final_result = {
-            'qa_completed': True,
+            'qa_completed': auto_correction_status == 'completed' and not auto_correction_followup,
             'enterprise_validation': True,
             'quality_score': comprehensive_report['overall_score'],
             'quality_passed': comprehensive_report['quality_passed'],
@@ -1502,15 +2081,18 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
             'qa_report': comprehensive_report['report_file'],
             'issues_count': len(comprehensive_report['all_issues']),
             'corrections_applied': comprehensive_report.get('corrections_applied', 0),
-            'pipeline_ready': comprehensive_report['quality_passed'],
+            'pipeline_ready': comprehensive_report['quality_passed'] and final_result['qa_completed'],
             '5_level_validation_complete': True,
             'level_scores': comprehensive_report['level_scores'],
             'pdf_comparison_performed': True,
             'ocr_validation_performed': True,
             'semantic_analysis_performed': True,
-            'auto_correction_performed': comprehensive_report.get('corrections_applied', 0) > 0
+            'auto_correction_performed': comprehensive_report.get('corrections_applied', 0) > 0,
+            'auto_correction_status': auto_correction_status,
+            'auto_correction_partial_success': auto_correction_summary.get('partial_success', False),
+            'auto_correction_requires_manual_followup': auto_correction_followup
         }
-        
+
         status = "✅ КАЧЕСТВО ПРОШЛО 5-УРОВНЕВУЮ ВАЛИДАЦИЮ" if comprehensive_report['quality_passed'] else "❌ ЕСТЬ ПРОБЛЕМЫ"
         logger.info(f"🎯 Полный 5-уровневый QA завершен: {comprehensive_report['overall_score']:.1f}% - {status}")
         return final_result
@@ -1523,14 +2105,33 @@ def notify_qa_completion(**context) -> None:
     """✅ Уведомление о завершении полного контроля качества"""
     try:
         final_result = context['task_instance'].xcom_pull(task_ids='finalize_qa_process')
-        
+
         quality_score = final_result['quality_score']
         quality_passed = final_result['quality_passed']
         corrections_applied = final_result['corrections_applied']
-        
+        auto_correction_status = final_result.get('auto_correction_status', 'unknown')
+        auto_correction_followup = final_result.get('auto_correction_requires_manual_followup', False)
+        auto_correction_partial = final_result.get('auto_correction_partial_success', False)
+        auto_correction_status_str = str(auto_correction_status or 'unknown')
+
+        status_icon_map = {
+            'completed': '✅',
+            'waiting_retry': '⏳',
+            'partial_success': '⚠️',
+            'needs_review': '⚠️',
+            'skipped': '⚠️'
+        }
+        auto_correction_icon = status_icon_map.get(auto_correction_status, 'ℹ️')
+        auto_correction_details = [auto_correction_status_str.replace('_', ' ')]
+        if auto_correction_partial:
+            auto_correction_details.append('partial success')
+        if auto_correction_followup:
+            auto_correction_details.append('manual follow-up required')
+        auto_correction_summary = ' '.join(auto_correction_details)
+
         status_icon = "✅" if quality_passed else "❌"
         status_text = "ENTERPRISE QA PASSED" if quality_passed else "NEEDS REVIEW"
-        
+
         message = f"""
 {status_icon} 5-УРОВНЕВАЯ QUALITY ASSURANCE ЗАВЕРШЕНА
 
@@ -1545,7 +2146,7 @@ def notify_qa_completion(**context) -> None:
 - PDF визуальное сравнение: ✅ Выполнено
 - OCR кросс-валидация: ✅ Выполнено
 - Семантический анализ: ✅ Выполнено
-- vLLM автокоррекция: ✅ Выполнено
+- vLLM автокоррекция: {auto_correction_icon} {auto_correction_summary}
 
 📁 Документ: {final_result['final_document']}
 📋 Отчет: {final_result['qa_report']}
@@ -1609,7 +2210,10 @@ level4_content = PythonOperator(
 level5_correction = PythonOperator(
     task_id='perform_auto_correction',
     python_callable=perform_auto_correction,
-    execution_timeout=timedelta(minutes=20),
+    execution_timeout=timedelta(minutes=30),
+    retries=3,
+    retry_delay=timedelta(minutes=5),
+    retry_exponential_backoff=True,
     dag=dag
 )
 

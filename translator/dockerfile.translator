@@ -41,6 +41,7 @@ USER translator
 # Переменные окружения
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
+ENV SERVICE_PORT=8003
 
 # Экспонирование порта
 EXPOSE 8003

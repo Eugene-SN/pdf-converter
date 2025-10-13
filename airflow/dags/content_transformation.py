@@ -6,7 +6,6 @@
 Исправления:
 - Правильный парсинг OpenAI-совместимого ответа от vLLM (choices — список)
 - Выход из ретраев после первого 200 OK и валидного парсинга
-- task_type='content_transformation' в payload для серверного автосвитча модели
 - Исправлен баг с возвратом списка вместо строки при merge_enhanced_chunks
 """
 
@@ -19,6 +18,7 @@ import json
 import logging
 import time
 import re
+import random
 import hashlib
 from collections import OrderedDict
 import requests
@@ -91,17 +91,27 @@ HEADING_PATTERNS: List[str] = [
 VLLM_CONFIG: Dict[str, Any] = {
     # Используем имя сервиса Docker Compose для корректного DNS
     'endpoint': os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000') + '/v1/chat/completions',
-    'model': os.getenv('VLLM_CONTENT_MODEL', 'Qwen/Qwen2.5-VL-32B-Instruct'),
-    'timeout': int(os.getenv('VLLM_STANDARD_TIMEOUT', '300')),
-    'max_tokens': 2048,  # безопаснее для 8-16k контекстов
-    'temperature': 0.2,
+    'model': os.getenv('VLLM_CONTENT_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
+    'timeout': int(os.getenv('VLLM_STANDARD_TIMEOUT', '150')),
+    'max_tokens': 2048,
+    'temperature': 0.3,
     'top_p': 0.9,
-    'top_k': 50,
+    'top_k': 40,
     'max_retries': 3,
     'retry_delay': 5,
+    'retry_jitter': 0.35,
     'enable_fallback': True,
     'max_concurrent_requests': max(1, int(os.getenv('VLLM_MAX_CONCURRENT', '2'))),
 }
+
+# Функция расчета задержки с джиттером для ретраев vLLM
+def _compute_vllm_retry_delay(multiplier: float = 1.0) -> float:
+    base_delay = max(0.0, VLLM_CONFIG['retry_delay'] * multiplier)
+    jitter_ratio = max(0.0, VLLM_CONFIG.get('retry_jitter', 0.0))
+    if not jitter_ratio:
+        return base_delay
+    spread = base_delay * jitter_ratio
+    return max(0.1, base_delay + random.uniform(-spread, spread))
 
 # Семафор для ограничения параллелизма запросов к vLLM
 _VLLM_SEMAPHORE = threading.Semaphore(VLLM_CONFIG.get('max_concurrent_requests', 1))
@@ -1066,7 +1076,6 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "X-Task-Type": "content_transformation",
     }
     cache_key = hashlib.sha256(prompt.encode('utf-8')).hexdigest()
     cached_response = _cache_lookup(cache_key)
@@ -1084,9 +1093,8 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
         "temperature": VLLM_CONFIG['temperature'],
         "top_p": VLLM_CONFIG['top_p'],
         "top_k": VLLM_CONFIG['top_k'],
-        # Явно указываем тип задачи для автосвитча модели на сервере
-        "task_type": "content_transformation",
         "stream": False,
+        "task_type": "translation",
     }
 
     for attempt in range(VLLM_CONFIG['max_retries']):
@@ -1106,7 +1114,7 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
                 except Exception as parse_err:
                     logger.warning(f"vLLM API 200, но ошибка парсинга: {parse_err}")
                     if attempt < VLLM_CONFIG['max_retries'] - 1:
-                        time.sleep(VLLM_CONFIG['retry_delay'])
+                        time.sleep(_compute_vllm_retry_delay())
                         continue
                     return None
 
@@ -1118,14 +1126,14 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
 
                 logger.warning("vLLM API 200, но пустой content")
                 if attempt < VLLM_CONFIG['max_retries'] - 1:
-                    time.sleep(VLLM_CONFIG['retry_delay'])
+                    time.sleep(_compute_vllm_retry_delay())
                     continue
                 return None
 
             elif response.status_code == 500:
                 logger.warning(f"vLLM API 500 (препроцессинг): {response.text[:200]}")
                 if attempt < VLLM_CONFIG['max_retries'] - 1:
-                    time.sleep(VLLM_CONFIG['retry_delay'] * 2)
+                    time.sleep(_compute_vllm_retry_delay(2))
                     continue
                 logger.error("Все попытки vLLM неудачны (500 ошибка)")
                 return None
@@ -1133,7 +1141,7 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
             elif response.status_code in (429, 503):
                 logger.warning(f"vLLM перегружен ({response.status_code}), повтор через задержку")
                 if attempt < VLLM_CONFIG['max_retries'] - 1:
-                    time.sleep(VLLM_CONFIG['retry_delay'] * 2)
+                    time.sleep(_compute_vllm_retry_delay(2))
                     continue
                 return None
 
@@ -1143,7 +1151,7 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
         except Exception as e:
             logger.warning(f"vLLM попытка {attempt + 1} неудачна: {e}")
             if attempt < VLLM_CONFIG['max_retries'] - 1:
-                time.sleep(VLLM_CONFIG['retry_delay'])
+                time.sleep(_compute_vllm_retry_delay())
                 continue
 
     logger.error("Все попытки vLLM API неудачны")

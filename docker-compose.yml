@@ -38,11 +38,14 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__PARALLELISM: ${AIRFLOW__CORE__PARALLELISM}
     AIRFLOW__CELERY__WORKER_CONCURRENCY: ${AIRFLOW__CELERY__WORKER_CONCURRENCY}
 
-    # Переменные для интеграции Dynamic vLLM
+    # Параметры интеграции vLLM
     VLLM_SERVER_URL: ${VLLM_SERVER_URL}
+    VLLM_CONTENT_MODEL: ${VLLM_CONTENT_MODEL}
     VLLM_MODEL_NAME: ${VLLM_MODEL_NAME}
     VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
-    DYNAMIC_MODEL_LOADING: "true"
+
+    # Микросервисы Stage 3
+    TRANSLATOR_URL: ${TRANSLATOR_URL}
 
     # Доп. Python-зависимости
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}
@@ -166,53 +169,39 @@ services:
     networks:
       - ai-net
 
-  # Dynamic vLLM Server - ИСПРАВЛЕНО
+  # vLLM Server (статический OpenAI-совместимый endpoint)
   vllm-server:
     build:
       context: ./vllm
       dockerfile: dockerfile.vllm
-    entrypoint: ["python3", "/workspace/dynamic_server.py"]
-    command: []
     container_name: vllm
+    command:
+      [
+        "--model", "${VLLM_MODEL_NAME}",
+        "--host", "0.0.0.0",
+        "--port", "8000",
+        "--api-key", "${VLLM_API_KEY}",
+        "--tensor-parallel-size", "${VLLM_TENSOR_PARALLEL_SIZE}",
+        "--pipeline-parallel-size", "${VLLM_PIPELINE_PARALLEL_SIZE}",
+        "--gpu-memory-utilization", "${VLLM_GPU_MEMORY_UTILIZATION}",
+        "--max-model-len", "${VLLM_MAX_MODEL_LEN}",
+        "--trust-remote-code"
+      ]
     environment:
-      # ИСПРАВЛЕННЫЕ модели
-      VLLM_CONTENT_MODEL: ${VLLM_CONTENT_MODEL}
-      VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
-    
-      # ИСПРАВЛЕННЫЕ настройки GPU
-      VLLM_TENSOR_PARALLEL_SIZE: ${VLLM_TENSOR_PARALLEL_SIZE}
-      VLLM_PIPELINE_PARALLEL_SIZE: ${VLLM_PIPELINE_PARALLEL_SIZE}
-      VLLM_GPU_MEMORY_UTILIZATION: ${VLLM_GPU_MEMORY_UTILIZATION}
-      VLLM_MAX_MODEL_LEN: ${VLLM_MAX_MODEL_LEN}
-    
-      # Dynamic config
-      DYNAMIC_MODEL_LOADING: "true"
-      MODEL_SWAP_TIMEOUT: "300"
-      AUTO_MODEL_SELECTION: "true"
-    
-      # Paths
-      HOST: "0.0.0.0"
-      PORT: "8000"
-      VLLM_API_KEY: ${VLLM_API_KEY}
       HF_HOME: ${HF_HOME}
       TRANSFORMERS_CACHE: ${TRANSFORMERS_CACHE}
       HF_HUB_CACHE: ${HF_HUB_CACHE}
       HF_MODULES_CACHE: ${HF_MODULES_CACHE}
-    
-      # CUDA оптимизация
       CUDA_VISIBLE_DEVICES: "0,1"
       NCCL_DEBUG: "WARN"
       NCCL_P2P_DISABLE: "1"
-    
+
     ports:
       - "8000:8000"
       - "8004:8001"  # Метрики
     volumes:
       - ${HF_HOME}:${HF_HOME}
-      # Монтируем наши файлы
       - ${VLLM_CACHE}:/home/vllm/.cache
-      - ./vllm/model_manager.py:/workspace/model_manager.py:ro
-      - ./vllm/dynamic_server.py:/workspace/dynamic_server.py:ro
     shm_size: 64g
     networks:
       - ai-net
@@ -333,7 +322,6 @@ services:
       # Service integration
       VLLM_SERVER_URL: ${VLLM_SERVER_URL}
       DOCUMENT_PROCESSOR_URL: ${DOCUMENT_PROCESSOR_URL}
-      DYNAMIC_MODEL_AWARE: "true"
       
       # Paths
       INPUT_DIR: ${INPUT_DIR}
@@ -384,7 +372,6 @@ services:
       # vLLM интеграция
       VLLM_SERVER_URL: ${VLLM_SERVER_URL}
       VLLM_TRANSLATION_MODEL: ${VLLM_TRANSLATION_MODEL}
-      DYNAMIC_MODEL_AWARE: "true"
       
       # Translation settings
       PRESERVE_TECHNICAL_TERMS: "true"
@@ -549,8 +536,6 @@ services:
       EMBED_IMAGES_IN_MD: ${EMBED_IMAGES_IN_MD}
 
       VLLM_SERVER_URL: ${VLLM_SERVER_URL}
-
-      DYNAMIC_MODEL_LOADING: "true"
     volumes:
       - ${PROJ_DIR}/input:/app/input
       - ${PROJ_DIR}/output/zh:/app/output/zh
