@@ -1,0 +1,14 @@
+[2025-10-13T15:00:24.251+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.prepare_stage1_config manual__2025-10-13T15:00:22.116333+00:00 [queued]>
+[2025-10-13T15:00:24.256+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.prepare_stage1_config manual__2025-10-13T15:00:22.116333+00:00 [queued]>
+[2025-10-13T15:00:24.256+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-13T15:00:24.264+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): prepare_stage1_config> on 2025-10-13 15:00:22.116333+00:00
+[2025-10-13T15:00:24.269+0000] {standard_task_runner.py:60} INFO - Started process 192 to run task
+[2025-10-13T15:00:24.271+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'prepare_stage1_config', 'manual__2025-10-13T15:00:22.116333+00:00', '--job-id', '1305', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmp2vglvrk1']
+[2025-10-13T15:00:24.272+0000] {standard_task_runner.py:88} INFO - Job 1305: Subtask prepare_stage1_config
+[2025-10-13T15:00:24.314+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.prepare_stage1_config manual__2025-10-13T15:00:22.116333+00:00 [running]> on host 0bf6e5e06c77
+[2025-10-13T15:00:24.378+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='prepare_stage1_config' AIRFLOW_CTX_EXECUTION_DATE='2025-10-13T15:00:22.116333+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-13T15:00:22.116333+00:00'
+[2025-10-13T15:00:24.391+0000] {orchestrator_dag.py:139} INFO - 🚀 Подготовлен запуск Stage 1: Document Preprocessing
+[2025-10-13T15:00:24.391+0000] {python.py:201} INFO - Done. Returned value was: {'input_file': '/app/input/test_short.pdf', 'filename': 'test_short.pdf', 'enable_ocr': True, 'preserve_structure': True, 'extract_tables': True, 'extract_images': True, 'chinese_document': True, 'quality_level': 'high', 'timestamp': 1760367621, 'master_run_id': 'manual__2025-10-13T15:00:22.116333+00:00', 'language': 'zh-CN', 'chinese_optimization': True, 'processing_timeout': 1800, 'pipeline_version': '4.0_fixed', 'processing_mode': 'chinese_optimized', 'output_mode': 'orchestrated', 'temp_base_dir': '/opt/***/temp'}
+[2025-10-13T15:00:24.410+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=prepare_stage1_config, execution_date=20251013T150022, start_date=20251013T150024, end_date=20251013T150024
+[2025-10-13T15:00:24.443+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-13T15:00:24.467+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

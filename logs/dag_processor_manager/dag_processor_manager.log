@@ -1,0 +1,1326 @@
+[2025-10-13T10:39:44.827+0000] {manager.py:469} INFO - Processing files using up to 2 processes at a time 
+[2025-10-13T10:39:44.827+0000] {manager.py:470} INFO - Process each file at most once every 30 seconds
+[2025-10-13T10:39:44.827+0000] {manager.py:471} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2025-10-13T10:39:44.827+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T10:39:44.829+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T10:39:44.899+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/translation_pipeline.py       94  0.02s             0           0
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T10:39:44
+/opt/airflow/dags/content_transformation.py                           0           0
+/opt/airflow/dags/orchestrator_dag.py                                 0           0
+/opt/airflow/dags/quality_assurance.py                                0           0
+/opt/airflow/dags/document_preprocessing.py                           0           0
+================================================================================
+[2025-10-13T10:40:15.169+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              112  0.02s             0           0  0.04s           2025-10-13T10:39:44
+/opt/airflow/dags/translation_pipeline.py      113  0.00s             1           0  0.08s           2025-10-13T10:39:44
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:39:45
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.07s           2025-10-13T10:39:45
+/opt/airflow/dags/quality_assurance.py                                1           0  1.09s           2025-10-13T10:39:46
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.06s           2025-10-13T10:39:45
+================================================================================
+[2025-10-13T10:40:45.747+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              125  0.02s             0           0  0.04s           2025-10-13T10:40:15
+/opt/airflow/dags/translation_pipeline.py      126  0.00s             1           0  0.23s           2025-10-13T10:40:15
+/opt/airflow/dags/content_transformation.py                           1           0  0.17s           2025-10-13T10:40:15
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.13s           2025-10-13T10:40:15
+/opt/airflow/dags/quality_assurance.py                                1           0  0.37s           2025-10-13T10:40:17
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.12s           2025-10-13T10:40:15
+================================================================================
+[2025-10-13T10:41:16.023+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              138  0.02s             0           0  0.03s           2025-10-13T10:40:45
+/opt/airflow/dags/translation_pipeline.py      139  0.00s             1           0  0.08s           2025-10-13T10:40:45
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:40:45
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:40:45
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T10:40:48
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:40:45
+================================================================================
+[2025-10-13T10:41:46.386+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              151  0.02s             0           0  0.03s           2025-10-13T10:41:16
+/opt/airflow/dags/translation_pipeline.py      152  0.00s             1           0  0.08s           2025-10-13T10:41:16
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:41:16
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:41:16
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:41:19
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:41:16
+================================================================================
+[2025-10-13T10:42:16.656+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              164  0.02s             0           0  0.04s           2025-10-13T10:41:46
+/opt/airflow/dags/translation_pipeline.py      165  0.00s             1           0  0.08s           2025-10-13T10:41:46
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:41:46
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:41:46
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:41:50
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:41:46
+================================================================================
+[2025-10-13T10:42:47.021+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              177  0.02s             0           0  0.03s           2025-10-13T10:42:16
+/opt/airflow/dags/translation_pipeline.py      178  0.00s             1           0  0.08s           2025-10-13T10:42:16
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:42:16
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:42:16
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T10:42:22
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:42:16
+================================================================================
+[2025-10-13T10:43:17.298+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              190  0.02s             0           0  0.04s           2025-10-13T10:42:47
+/opt/airflow/dags/translation_pipeline.py      191  0.00s             1           0  0.08s           2025-10-13T10:42:47
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:42:47
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:42:47
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T10:42:53
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:42:47
+================================================================================
+[2025-10-13T10:43:47.570+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              203  0.02s             0           0  0.04s           2025-10-13T10:43:17
+/opt/airflow/dags/translation_pipeline.py      204  0.00s             1           0  0.08s           2025-10-13T10:43:17
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:43:17
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:43:17
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:43:24
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:43:17
+================================================================================
+[2025-10-13T10:44:17.955+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              216  0.02s             0           0  0.04s           2025-10-13T10:43:47
+/opt/airflow/dags/translation_pipeline.py      217  0.00s             1           0  0.08s           2025-10-13T10:43:47
+/opt/airflow/dags/content_transformation.py                           1           0  0.18s           2025-10-13T10:43:47
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:43:47
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:43:56
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:43:47
+================================================================================
+[2025-10-13T10:44:45.202+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T10:44:45.204+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T10:44:48.236+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              229  0.02s             0           0  0.03s           2025-10-13T10:44:17
+/opt/airflow/dags/translation_pipeline.py      230  0.00s             1           0  0.08s           2025-10-13T10:44:18
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:44:18
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:44:18
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T10:44:27
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:44:18
+================================================================================
+[2025-10-13T10:45:18.582+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              242  0.02s             0           0  0.03s           2025-10-13T10:44:48
+/opt/airflow/dags/translation_pipeline.py      243  0.00s             1           0  0.07s           2025-10-13T10:44:48
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:44:48
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.06s           2025-10-13T10:44:48
+/opt/airflow/dags/quality_assurance.py                                1           0  0.37s           2025-10-13T10:44:58
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.06s           2025-10-13T10:44:48
+================================================================================
+[2025-10-13T10:45:48.975+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              255  0.02s             0           0  0.03s           2025-10-13T10:45:18
+/opt/airflow/dags/translation_pipeline.py      256  0.00s             1           0  0.14s           2025-10-13T10:45:18
+/opt/airflow/dags/content_transformation.py                           1           0  0.13s           2025-10-13T10:45:18
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.14s           2025-10-13T10:45:18
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:45:29
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.12s           2025-10-13T10:45:18
+================================================================================
+[2025-10-13T10:46:19.338+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              268  0.02s             0           0  0.03s           2025-10-13T10:45:48
+/opt/airflow/dags/translation_pipeline.py      269  0.00s             1           0  0.08s           2025-10-13T10:45:49
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:45:49
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:45:49
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:46:00
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:45:49
+================================================================================
+[2025-10-13T10:46:49.614+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              281  0.02s             0           0  0.04s           2025-10-13T10:46:19
+/opt/airflow/dags/translation_pipeline.py      282  0.00s             1           0  0.08s           2025-10-13T10:46:19
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:46:19
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:46:19
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T10:46:31
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:46:19
+================================================================================
+[2025-10-13T10:47:19.888+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              294  0.02s             0           0  0.03s           2025-10-13T10:46:49
+/opt/airflow/dags/translation_pipeline.py      295  0.00s             1           0  0.08s           2025-10-13T10:46:49
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:46:49
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:46:49
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:47:03
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:46:49
+================================================================================
+[2025-10-13T10:47:50.304+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              307  0.02s             0           0  0.04s           2025-10-13T10:47:19
+/opt/airflow/dags/translation_pipeline.py      308  0.00s             1           0  0.14s           2025-10-13T10:47:20
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:47:20
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:47:20
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T10:47:34
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:47:20
+================================================================================
+[2025-10-13T10:48:20.588+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              320  0.02s             0           0  0.04s           2025-10-13T10:47:50
+/opt/airflow/dags/translation_pipeline.py      321  0.00s             1           0  0.08s           2025-10-13T10:47:50
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:47:50
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:47:50
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:48:05
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:47:50
+================================================================================
+[2025-10-13T10:48:50.975+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              333  0.02s             0           0  0.04s           2025-10-13T10:48:20
+/opt/airflow/dags/translation_pipeline.py      334  0.00s             1           0  0.08s           2025-10-13T10:48:20
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:48:20
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.18s           2025-10-13T10:48:20
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:48:37
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:48:20
+================================================================================
+[2025-10-13T10:49:21.259+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              346  0.02s             0           0  0.04s           2025-10-13T10:48:50
+/opt/airflow/dags/translation_pipeline.py      347  0.00s             1           0  0.08s           2025-10-13T10:48:51
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:48:51
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:48:51
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:49:08
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:48:51
+================================================================================
+[2025-10-13T10:49:45.570+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T10:49:45.572+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T10:49:51.611+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              359  0.02s             0           0  0.03s           2025-10-13T10:49:21
+/opt/airflow/dags/translation_pipeline.py      360  0.00s             1           0  0.07s           2025-10-13T10:49:21
+/opt/airflow/dags/content_transformation.py                           1           0  0.07s           2025-10-13T10:49:21
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.06s           2025-10-13T10:49:21
+/opt/airflow/dags/quality_assurance.py                                1           0  0.37s           2025-10-13T10:49:39
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.06s           2025-10-13T10:49:21
+================================================================================
+[2025-10-13T10:50:21.997+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              372  0.02s             0           0  0.03s           2025-10-13T10:49:51
+/opt/airflow/dags/translation_pipeline.py      373  0.00s             1           0  0.13s           2025-10-13T10:49:51
+/opt/airflow/dags/content_transformation.py                           1           0  0.13s           2025-10-13T10:49:51
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.13s           2025-10-13T10:49:51
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:50:10
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.13s           2025-10-13T10:49:51
+================================================================================
+[2025-10-13T10:50:52.277+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              385  0.02s             0           0  0.03s           2025-10-13T10:50:22
+/opt/airflow/dags/translation_pipeline.py      386  0.00s             1           0  0.08s           2025-10-13T10:50:22
+/opt/airflow/dags/content_transformation.py                           1           0  0.08s           2025-10-13T10:50:22
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.07s           2025-10-13T10:50:22
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T10:50:41
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:50:22
+================================================================================
+[2025-10-13T10:51:22.656+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py              398  0.02s             0           0  0.03s           2025-10-13T10:50:52
+/opt/airflow/dags/translation_pipeline.py      399  0.00s             1           0  0.08s           2025-10-13T10:50:52
+/opt/airflow/dags/content_transformation.py                           1           0  0.19s           2025-10-13T10:50:52
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T10:50:52
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T10:51:12
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T10:50:52
+================================================================================
+[2025-10-13T10:51:32.786+0000] {manager.py:451} INFO - Exiting gracefully upon receiving signal 15
+[2025-10-13T13:36:14.058+0000] {manager.py:469} INFO - Processing files using up to 2 processes at a time 
+[2025-10-13T13:36:14.058+0000] {manager.py:470} INFO - Process each file at most once every 30 seconds
+[2025-10-13T13:36:14.058+0000] {manager.py:471} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2025-10-13T13:36:14.059+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T13:36:14.060+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T13:36:14.158+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/translation_pipeline.py      100  0.03s             0           0
+/opt/airflow/dags/shared_utils.py                                     0           0  0.06s           2025-10-13T13:36:14
+/opt/airflow/dags/content_transformation.py                           0           0
+/opt/airflow/dags/orchestrator_dag.py                                 0           0
+/opt/airflow/dags/quality_assurance.py                                0           0
+/opt/airflow/dags/document_preprocessing.py                           0           0
+================================================================================
+[2025-10-13T13:36:17.630+0000] {manager.py:451} INFO - Exiting gracefully upon receiving signal 15
+[2025-10-13T14:02:28.841+0000] {manager.py:469} INFO - Processing files using up to 2 processes at a time 
+[2025-10-13T14:02:28.841+0000] {manager.py:470} INFO - Process each file at most once every 30 seconds
+[2025-10-13T14:02:28.842+0000] {manager.py:471} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2025-10-13T14:02:28.842+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:02:28.843+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:02:28.923+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  ----------
+/opt/airflow/dags/translation_pipeline.py       93  0.04s             0           0
+/opt/airflow/dags/shared_utils.py                                     0           0
+/opt/airflow/dags/content_transformation.py     94  0.02s             0           0
+/opt/airflow/dags/orchestrator_dag.py                                 0           0
+/opt/airflow/dags/quality_assurance.py                                0           0
+/opt/airflow/dags/document_preprocessing.py                           0           0
+================================================================================
+[2025-10-13T14:02:59.281+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.06s           2025-10-13T14:02:29
+/opt/airflow/dags/translation_pipeline.py      112  0.03s             1           0  0.09s           2025-10-13T14:02:28
+/opt/airflow/dags/content_transformation.py    113  0.00s             1           0  0.11s           2025-10-13T14:02:29
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.07s           2025-10-13T14:02:30
+/opt/airflow/dags/quality_assurance.py                                1           0  1.17s           2025-10-13T14:02:30
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:02:30
+================================================================================
+[2025-10-13T14:03:30.208+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:02:59
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.14s           2025-10-13T14:03:30
+/opt/airflow/dags/content_transformation.py    126  0.01s             1           0  0.21s           2025-10-13T14:02:59
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.26s           2025-10-13T14:03:00
+/opt/airflow/dags/quality_assurance.py                                1           0  0.47s           2025-10-13T14:03:00
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.26s           2025-10-13T14:03:01
+================================================================================
+[2025-10-13T14:04:00.561+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:03:30
+/opt/airflow/dags/translation_pipeline.py      138  0.03s             1           0  0.14s           2025-10-13T14:03:30
+/opt/airflow/dags/content_transformation.py    139  0.00s             1           0  0.08s           2025-10-13T14:03:30
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:03:31
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:03:31
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:03:31
+================================================================================
+[2025-10-13T14:04:31.036+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:04:00
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.13s           2025-10-13T14:04:31
+/opt/airflow/dags/content_transformation.py    152  0.01s             1           0  0.09s           2025-10-13T14:04:00
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:04:01
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:04:02
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:04:01
+================================================================================
+[2025-10-13T14:05:01.429+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:04:31
+/opt/airflow/dags/translation_pipeline.py      164  0.02s             1           0  0.13s           2025-10-13T14:04:31
+/opt/airflow/dags/content_transformation.py    165  0.00s             1           0  0.08s           2025-10-13T14:04:31
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:04:32
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:04:32
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:04:32
+================================================================================
+[2025-10-13T14:05:31.806+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:05:01
+/opt/airflow/dags/translation_pipeline.py      177  0.03s             1           0  0.08s           2025-10-13T14:05:01
+/opt/airflow/dags/content_transformation.py    178  0.00s             1           0  0.08s           2025-10-13T14:05:01
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:05:02
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:05:02
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:05:02
+================================================================================
+[2025-10-13T14:06:02.297+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:05:31
+/opt/airflow/dags/translation_pipeline.py      190  0.02s             1           0  0.08s           2025-10-13T14:05:31
+/opt/airflow/dags/content_transformation.py    191  0.00s             1           0  0.19s           2025-10-13T14:05:31
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:05:33
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:05:33
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:05:33
+================================================================================
+[2025-10-13T14:06:32.664+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:06:02
+/opt/airflow/dags/translation_pipeline.py      203  0.03s             1           0  0.08s           2025-10-13T14:06:02
+/opt/airflow/dags/content_transformation.py    204  0.00s             1           0  0.08s           2025-10-13T14:06:02
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:06:03
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:06:03
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:06:03
+================================================================================
+[2025-10-13T14:07:03.032+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:06:32
+/opt/airflow/dags/translation_pipeline.py      216  0.02s             1           0  0.08s           2025-10-13T14:06:32
+/opt/airflow/dags/content_transformation.py    217  0.00s             1           0  0.08s           2025-10-13T14:06:32
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:06:33
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:06:34
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.17s           2025-10-13T14:06:33
+================================================================================
+[2025-10-13T14:07:29.274+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:07:29.275+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:07:33.321+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:07:03
+/opt/airflow/dags/translation_pipeline.py      229  0.02s             1           0  0.08s           2025-10-13T14:07:03
+/opt/airflow/dags/content_transformation.py    230  0.00s             1           0  0.08s           2025-10-13T14:07:03
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:07:04
+/opt/airflow/dags/quality_assurance.py                                1           0  0.45s           2025-10-13T14:07:05
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:07:04
+================================================================================
+[2025-10-13T14:08:03.731+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:07:33
+/opt/airflow/dags/translation_pipeline.py      242  0.15s             1           0  0.08s           2025-10-13T14:07:33
+/opt/airflow/dags/content_transformation.py    243  0.01s             1           0  0.08s           2025-10-13T14:07:33
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:07:34
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:07:36
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:07:34
+================================================================================
+[2025-10-13T14:08:33.993+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:08:03
+/opt/airflow/dags/translation_pipeline.py      255  0.02s             1           0  0.21s           2025-10-13T14:08:03
+/opt/airflow/dags/content_transformation.py    256  0.00s             1           0  0.09s           2025-10-13T14:08:03
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.09s           2025-10-13T14:08:04
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:08:08
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:08:04
+================================================================================
+[2025-10-13T14:09:04.378+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:08:34
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T14:09:04
+/opt/airflow/dags/content_transformation.py    269  0.01s             1           0  0.08s           2025-10-13T14:08:34
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:08:35
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:08:39
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:08:35
+================================================================================
+[2025-10-13T14:09:34.677+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:09:04
+/opt/airflow/dags/translation_pipeline.py      281  0.03s             1           0  0.12s           2025-10-13T14:09:04
+/opt/airflow/dags/content_transformation.py    282  0.00s             1           0  0.09s           2025-10-13T14:09:04
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:09:05
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:09:10
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:09:05
+================================================================================
+[2025-10-13T14:10:04.964+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:09:34
+/opt/airflow/dags/translation_pipeline.py      294  0.02s             1           0  0.09s           2025-10-13T14:09:34
+/opt/airflow/dags/content_transformation.py    295  0.00s             1           0  0.08s           2025-10-13T14:09:34
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:09:35
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:09:42
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:09:35
+================================================================================
+[2025-10-13T14:10:35.288+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:10:05
+/opt/airflow/dags/translation_pipeline.py      307  0.02s             1           0  0.09s           2025-10-13T14:10:05
+/opt/airflow/dags/content_transformation.py    308  0.00s             1           0  0.09s           2025-10-13T14:10:05
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:10:06
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:10:13
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:10:06
+================================================================================
+[2025-10-13T14:11:05.555+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:10:35
+/opt/airflow/dags/translation_pipeline.py      320  0.02s             1           0  0.08s           2025-10-13T14:10:35
+/opt/airflow/dags/content_transformation.py    321  0.00s             1           0  0.08s           2025-10-13T14:10:35
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.09s           2025-10-13T14:10:36
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:10:44
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:10:36
+================================================================================
+[2025-10-13T14:11:35.946+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:11:05
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T14:11:35
+/opt/airflow/dags/content_transformation.py    334  0.01s             1           0  0.08s           2025-10-13T14:11:05
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:11:06
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:11:16
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:11:06
+================================================================================
+[2025-10-13T14:12:06.215+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:11:36
+/opt/airflow/dags/translation_pipeline.py      346  0.03s             1           0  0.12s           2025-10-13T14:11:35
+/opt/airflow/dags/content_transformation.py    347  0.00s             1           0  0.09s           2025-10-13T14:11:36
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.09s           2025-10-13T14:11:37
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:11:47
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:11:37
+================================================================================
+[2025-10-13T14:12:29.460+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:12:29.461+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:12:36.511+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:12:06
+/opt/airflow/dags/translation_pipeline.py      359  0.02s             1           0  0.08s           2025-10-13T14:12:06
+/opt/airflow/dags/content_transformation.py    360  0.00s             1           0  0.08s           2025-10-13T14:12:06
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:12:07
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:12:18
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:12:07
+================================================================================
+[2025-10-13T14:13:06.899+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:12:36
+/opt/airflow/dags/translation_pipeline.py      372  0.03s             1           0  0.08s           2025-10-13T14:12:36
+/opt/airflow/dags/content_transformation.py    373  0.00s             1           0  0.08s           2025-10-13T14:12:36
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:12:37
+/opt/airflow/dags/quality_assurance.py                                1           0  0.35s           2025-10-13T14:12:50
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.18s           2025-10-13T14:12:37
+================================================================================
+[2025-10-13T14:13:37.194+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:13:06
+/opt/airflow/dags/translation_pipeline.py      385  0.03s             1           0  0.08s           2025-10-13T14:13:06
+/opt/airflow/dags/content_transformation.py    386  0.00s             1           0  0.08s           2025-10-13T14:13:06
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:13:08
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:13:21
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:13:08
+================================================================================
+[2025-10-13T14:14:07.491+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:13:37
+/opt/airflow/dags/translation_pipeline.py      398  0.03s             1           0  0.08s           2025-10-13T14:13:37
+/opt/airflow/dags/content_transformation.py    399  0.00s             1           0  0.08s           2025-10-13T14:13:37
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:13:38
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:13:52
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:13:38
+================================================================================
+[2025-10-13T14:14:37.787+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:14:07
+/opt/airflow/dags/translation_pipeline.py      411  0.02s             1           0  0.08s           2025-10-13T14:14:07
+/opt/airflow/dags/content_transformation.py    412  0.00s             1           0  0.08s           2025-10-13T14:14:07
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:14:08
+/opt/airflow/dags/quality_assurance.py                                1           0  0.47s           2025-10-13T14:14:24
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:14:08
+================================================================================
+[2025-10-13T14:15:08.171+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:14:37
+/opt/airflow/dags/translation_pipeline.py      424  0.03s             1           0  0.08s           2025-10-13T14:14:37
+/opt/airflow/dags/content_transformation.py    425  0.00s             1           0  0.08s           2025-10-13T14:14:37
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:14:38
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:14:55
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:14:38
+================================================================================
+[2025-10-13T14:15:38.479+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:15:08
+/opt/airflow/dags/translation_pipeline.py      437  0.03s             1           0  0.08s           2025-10-13T14:15:08
+/opt/airflow/dags/content_transformation.py    438  0.00s             1           0  0.09s           2025-10-13T14:15:08
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:15:09
+/opt/airflow/dags/quality_assurance.py                                1           0  0.33s           2025-10-13T14:15:26
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:15:09
+================================================================================
+[2025-10-13T14:16:08.878+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:15:38
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T14:16:08
+/opt/airflow/dags/content_transformation.py    451  0.01s             1           0  0.08s           2025-10-13T14:15:38
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:15:39
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:15:58
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:15:39
+================================================================================
+[2025-10-13T14:16:39.188+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:16:08
+/opt/airflow/dags/translation_pipeline.py      463  0.03s             1           0  0.12s           2025-10-13T14:16:08
+/opt/airflow/dags/content_transformation.py    464  0.00s             1           0  0.08s           2025-10-13T14:16:08
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:16:10
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:16:29
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:16:10
+================================================================================
+[2025-10-13T14:17:09.490+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:16:39
+/opt/airflow/dags/translation_pipeline.py      476  0.03s             1           0  0.08s           2025-10-13T14:16:39
+/opt/airflow/dags/content_transformation.py    477  0.00s             1           0  0.08s           2025-10-13T14:16:39
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:16:40
+/opt/airflow/dags/quality_assurance.py                                1           0  0.44s           2025-10-13T14:17:00
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:16:40
+================================================================================
+[2025-10-13T14:17:29.715+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:17:29.716+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:17:39.892+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:17:09
+/opt/airflow/dags/translation_pipeline.py      489  0.02s             1           0  0.08s           2025-10-13T14:17:09
+/opt/airflow/dags/content_transformation.py    490  0.00s             1           0  0.08s           2025-10-13T14:17:09
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:17:10
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:17:32
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.18s           2025-10-13T14:17:10
+================================================================================
+[2025-10-13T14:18:10.142+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:17:39
+/opt/airflow/dags/translation_pipeline.py      502  0.02s             1           0  0.08s           2025-10-13T14:17:39
+/opt/airflow/dags/content_transformation.py    503  0.00s             1           0  0.08s           2025-10-13T14:17:39
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.09s           2025-10-13T14:17:41
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:18:03
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:17:41
+================================================================================
+[2025-10-13T14:18:40.533+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:18:10
+/opt/airflow/dags/translation_pipeline.py      515  0.03s             1           0  0.08s           2025-10-13T14:18:10
+/opt/airflow/dags/content_transformation.py    516  0.00s             1           0  0.08s           2025-10-13T14:18:10
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:18:11
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:18:34
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:18:11
+================================================================================
+[2025-10-13T14:19:10.777+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:18:40
+/opt/airflow/dags/translation_pipeline.py      528  0.02s             1           0  0.08s           2025-10-13T14:18:40
+/opt/airflow/dags/content_transformation.py    529  0.00s             1           0  0.08s           2025-10-13T14:18:40
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:18:41
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:19:06
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:18:41
+================================================================================
+[2025-10-13T14:19:41.203+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:19:10
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.13s           2025-10-13T14:19:41
+/opt/airflow/dags/content_transformation.py    542  0.01s             1           0  0.08s           2025-10-13T14:19:10
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:19:11
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:19:37
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:19:11
+================================================================================
+[2025-10-13T14:20:11.466+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:19:41
+/opt/airflow/dags/translation_pipeline.py      554  0.03s             1           0  0.13s           2025-10-13T14:19:41
+/opt/airflow/dags/content_transformation.py    555  0.00s             1           0  0.08s           2025-10-13T14:19:41
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:19:42
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:20:08
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:19:42
+================================================================================
+[2025-10-13T14:20:41.773+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:20:11
+/opt/airflow/dags/translation_pipeline.py      567  0.03s             1           0  0.08s           2025-10-13T14:20:11
+/opt/airflow/dags/content_transformation.py    568  0.00s             1           0  0.08s           2025-10-13T14:20:11
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:20:12
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:20:40
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:20:12
+================================================================================
+[2025-10-13T14:21:12.168+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:20:41
+/opt/airflow/dags/translation_pipeline.py      580  0.03s             1           0  0.08s           2025-10-13T14:20:41
+/opt/airflow/dags/content_transformation.py    581  0.00s             1           0  0.08s           2025-10-13T14:20:41
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:20:42
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:21:11
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:20:42
+================================================================================
+[2025-10-13T14:21:42.464+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:21:12
+/opt/airflow/dags/translation_pipeline.py      591  0.03s             1           0  0.09s           2025-10-13T14:21:12
+/opt/airflow/dags/content_transformation.py    592  0.00s             1           0  0.09s           2025-10-13T14:21:12
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.09s           2025-10-13T14:21:13
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:21:11
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.09s           2025-10-13T14:21:13
+================================================================================
+[2025-10-13T14:22:12.767+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:21:42
+/opt/airflow/dags/translation_pipeline.py      604  0.03s             1           0  0.08s           2025-10-13T14:21:42
+/opt/airflow/dags/content_transformation.py    605  0.00s             1           0  0.08s           2025-10-13T14:21:42
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:21:43
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:21:42
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:21:43
+================================================================================
+[2025-10-13T14:22:30.170+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:22:30.171+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:22:43.246+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:22:12
+/opt/airflow/dags/translation_pipeline.py      617  0.02s             1           0  0.08s           2025-10-13T14:22:12
+/opt/airflow/dags/content_transformation.py    618  0.00s             1           0  0.08s           2025-10-13T14:22:12
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:22:14
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:22:14
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:22:14
+================================================================================
+[2025-10-13T14:23:13.637+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:22:43
+/opt/airflow/dags/translation_pipeline.py      630  0.03s             1           0  0.08s           2025-10-13T14:22:43
+/opt/airflow/dags/content_transformation.py    631  0.01s             1           0  0.08s           2025-10-13T14:22:43
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:22:44
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:22:44
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.09s           2025-10-13T14:22:44
+================================================================================
+[2025-10-13T14:23:44.018+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:23:13
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T14:23:44
+/opt/airflow/dags/content_transformation.py    644  0.01s             1           0  0.09s           2025-10-13T14:23:13
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:23:14
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:23:15
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.09s           2025-10-13T14:23:14
+================================================================================
+[2025-10-13T14:24:14.308+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:23:44
+/opt/airflow/dags/translation_pipeline.py      656  0.03s             1           0  0.12s           2025-10-13T14:23:44
+/opt/airflow/dags/content_transformation.py    657  0.00s             1           0  0.08s           2025-10-13T14:23:44
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:23:45
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:23:46
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:23:45
+================================================================================
+[2025-10-13T14:24:44.600+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:24:14
+/opt/airflow/dags/translation_pipeline.py      669  0.02s             1           0  0.08s           2025-10-13T14:24:14
+/opt/airflow/dags/content_transformation.py    670  0.00s             1           0  0.09s           2025-10-13T14:24:14
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:24:15
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T14:24:17
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:24:15
+================================================================================
+[2025-10-13T14:25:14.973+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:24:44
+/opt/airflow/dags/translation_pipeline.py      682  0.03s             1           0  0.08s           2025-10-13T14:24:44
+/opt/airflow/dags/content_transformation.py    683  0.00s             1           0  0.08s           2025-10-13T14:24:44
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:24:45
+/opt/airflow/dags/quality_assurance.py                                1           0  0.33s           2025-10-13T14:24:49
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T14:24:45
+================================================================================
+[2025-10-13T14:25:23.508+0000] {manager.py:451} INFO - Exiting gracefully upon receiving signal 15
+[2025-10-13T14:54:37.359+0000] {manager.py:469} INFO - Processing files using up to 2 processes at a time 
+[2025-10-13T14:54:37.360+0000] {manager.py:470} INFO - Process each file at most once every 30 seconds
+[2025-10-13T14:54:37.360+0000] {manager.py:471} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2025-10-13T14:54:37.360+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:54:37.361+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:54:37.450+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  ----------
+/opt/airflow/dags/translation_pipeline.py       93  0.05s             0           0
+/opt/airflow/dags/shared_utils.py                                     0           0
+/opt/airflow/dags/content_transformation.py     94  0.03s             0           0
+/opt/airflow/dags/orchestrator_dag.py                                 0           0
+/opt/airflow/dags/quality_assurance.py                                0           0
+/opt/airflow/dags/document_preprocessing.py                           0           0
+================================================================================
+[2025-10-13T14:55:07.766+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:54:37
+/opt/airflow/dags/translation_pipeline.py      112  0.02s             1           0  0.11s           2025-10-13T14:54:37
+/opt/airflow/dags/content_transformation.py    113  0.00s             1           0  0.10s           2025-10-13T14:54:37
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.07s           2025-10-13T14:54:37
+/opt/airflow/dags/quality_assurance.py                                1           0  1.11s           2025-10-13T14:54:38
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:54:37
+================================================================================
+[2025-10-13T14:55:38.384+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:55:08
+/opt/airflow/dags/translation_pipeline.py      125  0.15s             1           0  0.23s           2025-10-13T14:55:07
+/opt/airflow/dags/content_transformation.py    126  0.01s             1           0  0.20s           2025-10-13T14:55:07
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.15s           2025-10-13T14:55:08
+/opt/airflow/dags/quality_assurance.py                                1           0  0.47s           2025-10-13T14:55:09
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.12s           2025-10-13T14:55:08
+================================================================================
+[2025-10-13T14:56:08.714+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:55:38
+/opt/airflow/dags/translation_pipeline.py      138  0.02s             1           0  0.19s           2025-10-13T14:55:38
+/opt/airflow/dags/content_transformation.py    139  0.00s             1           0  0.09s           2025-10-13T14:55:38
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:55:38
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:55:40
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:55:38
+================================================================================
+[2025-10-13T14:56:39.108+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:56:08
+/opt/airflow/dags/translation_pipeline.py      151  0.13s             1           0  0.08s           2025-10-13T14:56:08
+/opt/airflow/dags/content_transformation.py    152  0.01s             1           0  0.08s           2025-10-13T14:56:08
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:56:08
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T14:56:12
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:56:08
+================================================================================
+[2025-10-13T14:57:09.457+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:56:39
+/opt/airflow/dags/translation_pipeline.py      164  0.02s             1           0  0.18s           2025-10-13T14:56:39
+/opt/airflow/dags/content_transformation.py    165  0.00s             1           0  0.09s           2025-10-13T14:56:39
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:56:39
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:56:42
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:56:39
+================================================================================
+[2025-10-13T14:57:39.849+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:57:09
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.13s           2025-10-13T14:57:39
+/opt/airflow/dags/content_transformation.py    178  0.01s             1           0  0.08s           2025-10-13T14:57:09
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:57:09
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T14:57:14
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:57:09
+================================================================================
+[2025-10-13T14:58:10.148+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:57:39
+/opt/airflow/dags/translation_pipeline.py      190  0.02s             1           0  0.13s           2025-10-13T14:57:39
+/opt/airflow/dags/content_transformation.py    191  0.00s             1           0  0.09s           2025-10-13T14:57:39
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:57:40
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:57:45
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:57:40
+================================================================================
+[2025-10-13T14:58:40.437+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:58:10
+/opt/airflow/dags/translation_pipeline.py      203  0.02s             1           0  0.08s           2025-10-13T14:58:10
+/opt/airflow/dags/content_transformation.py    204  0.00s             1           0  0.08s           2025-10-13T14:58:10
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:58:10
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T14:58:16
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:58:10
+================================================================================
+[2025-10-13T14:59:10.803+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T14:58:40
+/opt/airflow/dags/translation_pipeline.py      216  0.02s             1           0  0.08s           2025-10-13T14:58:40
+/opt/airflow/dags/content_transformation.py    217  0.00s             1           0  0.08s           2025-10-13T14:58:40
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:58:40
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T14:58:48
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:58:40
+================================================================================
+[2025-10-13T14:59:38.058+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T14:59:38.060+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T14:59:41.104+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:59:10
+/opt/airflow/dags/translation_pipeline.py      229  0.02s             1           0  0.08s           2025-10-13T14:59:10
+/opt/airflow/dags/content_transformation.py    230  0.00s             1           0  0.08s           2025-10-13T14:59:10
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:59:10
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T14:59:19
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:59:10
+================================================================================
+[2025-10-13T15:00:11.497+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T14:59:41
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T15:00:11
+/opt/airflow/dags/content_transformation.py    243  0.01s             1           0  0.08s           2025-10-13T14:59:41
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T14:59:41
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T14:59:50
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T14:59:41
+================================================================================
+[2025-10-13T15:00:41.803+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:00:11
+/opt/airflow/dags/translation_pipeline.py      255  0.02s             1           0  0.12s           2025-10-13T15:00:11
+/opt/airflow/dags/content_transformation.py    256  0.00s             1           0  0.08s           2025-10-13T15:00:11
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:00:11
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T15:00:22
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:00:11
+================================================================================
+[2025-10-13T15:01:12.105+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:00:41
+/opt/airflow/dags/translation_pipeline.py      268  0.03s             1           0  0.08s           2025-10-13T15:00:41
+/opt/airflow/dags/content_transformation.py    269  0.00s             1           0  0.08s           2025-10-13T15:00:41
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:00:41
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T15:00:53
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:00:41
+================================================================================
+[2025-10-13T15:01:42.490+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T15:01:12
+/opt/airflow/dags/translation_pipeline.py      281  0.03s             1           0  0.08s           2025-10-13T15:01:12
+/opt/airflow/dags/content_transformation.py    282  0.00s             1           0  0.08s           2025-10-13T15:01:12
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:01:12
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T15:01:24
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.18s           2025-10-13T15:01:12
+================================================================================
+[2025-10-13T15:02:12.791+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:01:42
+/opt/airflow/dags/translation_pipeline.py      294  0.02s             1           0  0.08s           2025-10-13T15:01:42
+/opt/airflow/dags/content_transformation.py    295  0.00s             1           0  0.08s           2025-10-13T15:01:42
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:01:42
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T15:01:56
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T15:01:42
+================================================================================
+[2025-10-13T15:02:43.198+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:02:12
+/opt/airflow/dags/translation_pipeline.py      312  0.13s             1           0  0.08s           2025-10-13T15:02:12
+/opt/airflow/dags/content_transformation.py    313  0.01s             1           0  0.08s           2025-10-13T15:02:12
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:02:12
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T15:02:27
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:02:12
+================================================================================
+[2025-10-13T15:03:13.492+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:02:43
+/opt/airflow/dags/translation_pipeline.py      325  0.02s             1           0  0.21s           2025-10-13T15:02:43
+/opt/airflow/dags/content_transformation.py    326  0.00s             1           0  0.09s           2025-10-13T15:02:43
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:02:43
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T15:02:58
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:02:43
+================================================================================
+[2025-10-13T15:03:43.888+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T15:03:13
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T15:03:43
+/opt/airflow/dags/content_transformation.py    339  0.01s             1           0  0.08s           2025-10-13T15:03:13
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:03:13
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T15:03:30
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.08s           2025-10-13T15:03:13
+================================================================================
+[2025-10-13T15:04:14.194+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:03:44
+/opt/airflow/dags/translation_pipeline.py      351  0.02s             1           0  0.12s           2025-10-13T15:03:43
+/opt/airflow/dags/content_transformation.py    352  0.00s             1           0  0.08s           2025-10-13T15:03:43
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:03:44
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T15:04:01
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:03:44
+================================================================================
+[2025-10-13T15:04:38.449+0000] {manager.py:738} INFO - Searching for files in /opt/airflow/dags
+[2025-10-13T15:04:38.451+0000] {manager.py:741} INFO - There are 6 files in /opt/airflow/dags
+[2025-10-13T15:04:44.499+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:04:14
+/opt/airflow/dags/translation_pipeline.py      364  0.02s             1           0  0.08s           2025-10-13T15:04:14
+/opt/airflow/dags/content_transformation.py    365  0.00s             1           0  0.08s           2025-10-13T15:04:14
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:04:14
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T15:04:32
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:04:14
+================================================================================
+[2025-10-13T15:05:14.882+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:04:44
+/opt/airflow/dags/translation_pipeline.py      377  0.02s             1           0  0.08s           2025-10-13T15:04:44
+/opt/airflow/dags/content_transformation.py    378  0.00s             1           0  0.08s           2025-10-13T15:04:44
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:04:44
+/opt/airflow/dags/quality_assurance.py                                1           0  0.31s           2025-10-13T15:05:04
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.17s           2025-10-13T15:04:44
+================================================================================
+[2025-10-13T15:05:45.181+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:05:14
+/opt/airflow/dags/translation_pipeline.py      390  0.02s             1           0  0.08s           2025-10-13T15:05:14
+/opt/airflow/dags/content_transformation.py    391  0.00s             1           0  0.08s           2025-10-13T15:05:14
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:05:15
+/opt/airflow/dags/quality_assurance.py                                1           0  0.42s           2025-10-13T15:05:35
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:05:15
+================================================================================
+[2025-10-13T15:06:15.570+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:05:45
+/opt/airflow/dags/translation_pipeline.py      403  0.02s             1           0  0.08s           2025-10-13T15:05:45
+/opt/airflow/dags/content_transformation.py    404  0.00s             1           0  0.08s           2025-10-13T15:05:45
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:05:45
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T15:06:06
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:05:45
+================================================================================
+[2025-10-13T15:06:45.874+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.04s           2025-10-13T15:06:15
+/opt/airflow/dags/translation_pipeline.py      416  0.02s             1           0  0.08s           2025-10-13T15:06:15
+/opt/airflow/dags/content_transformation.py    417  0.00s             1           0  0.08s           2025-10-13T15:06:15
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:06:15
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T15:06:38
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:06:15
+================================================================================
+[2025-10-13T15:07:16.211+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:06:45
+/opt/airflow/dags/translation_pipeline.py                             1           0  0.12s           2025-10-13T15:07:16
+/opt/airflow/dags/content_transformation.py    430  0.01s             1           0  0.08s           2025-10-13T15:06:45
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:06:46
+/opt/airflow/dags/quality_assurance.py                                1           0  0.41s           2025-10-13T15:07:09
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:06:46
+================================================================================
+[2025-10-13T15:07:46.531+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:07:16
+/opt/airflow/dags/translation_pipeline.py      442  0.03s             1           0  0.12s           2025-10-13T15:07:16
+/opt/airflow/dags/content_transformation.py    443  0.00s             1           0  0.08s           2025-10-13T15:07:16
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:07:16
+/opt/airflow/dags/quality_assurance.py                                1           0  0.32s           2025-10-13T15:07:40
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:07:16
+================================================================================
+[2025-10-13T15:08:16.832+0000] {manager.py:879} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                      PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/shared_utils.py                                     0           0  0.03s           2025-10-13T15:07:46
+/opt/airflow/dags/translation_pipeline.py      455  0.02s             1           0  0.08s           2025-10-13T15:07:46
+/opt/airflow/dags/content_transformation.py    456  0.00s             1           0  0.08s           2025-10-13T15:07:46
+/opt/airflow/dags/orchestrator_dag.py                                 1           0  0.08s           2025-10-13T15:07:46
+/opt/airflow/dags/quality_assurance.py                                1           0  0.43s           2025-10-13T15:08:12
+/opt/airflow/dags/document_preprocessing.py                           1           0  0.07s           2025-10-13T15:07:46
+================================================================================
