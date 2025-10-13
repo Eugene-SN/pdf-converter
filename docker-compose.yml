@@ -175,6 +175,7 @@ services:
       context: ./vllm
       dockerfile: dockerfile.vllm
     container_name: vllm
+    entrypoint: ["/usr/bin/env", "python3", "-m", "vllm.entrypoints.openai.api_server"]
     command:
       [
         "--model", "${VLLM_MODEL_NAME}",
@@ -192,6 +193,7 @@ services:
       TRANSFORMERS_CACHE: ${TRANSFORMERS_CACHE}
       HF_HUB_CACHE: ${HF_HUB_CACHE}
       HF_MODULES_CACHE: ${HF_MODULES_CACHE}
+      HF_HUB_OFFLINE: "1"
       CUDA_VISIBLE_DEVICES: "0,1"
       NCCL_DEBUG: "WARN"
       NCCL_P2P_DISABLE: "1"
