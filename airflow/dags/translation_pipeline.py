@@ -62,6 +62,12 @@ TRANSLATION_CONFIG: Dict[str, Any] = {
     "model": os.getenv("VLLM_MODEL_NAME", "Qwen/Qwen3-30B-A3B-Instruct-2507"),
 }
 
+TRANSLATION_LIMITS: Dict[str, float] = {
+    "max_chinese_ratio": float(os.getenv("MAX_CHINESE_CHARS_RATIO", "0.2")),
+    "min_chinese_coverage": float(os.getenv("MIN_CHINESE_TRANSLATION_COVERAGE", "0.8")),
+    "min_technical_terms_coverage": float(os.getenv("MIN_TECH_TERMS_TRANSLATION_COVERAGE", "0.8")),
+}
+
 BATCH_CONFIG: Dict[str, int] = {
     "headers": max(1, int(os.getenv("BATCH_SIZE_HEADERS", "4"))),
     "tables": max(1, int(os.getenv("BATCH_SIZE_TABLES", "3"))),
@@ -210,6 +216,23 @@ def call_translator_with_retries(
                     latency,
                 )
                 return data.get("translated_content", text), attempt
+
+            if response.status_code == 401:
+                stats["unauthorized_requests"] += 1
+                stats.setdefault("errors", []).append(
+                    {
+                        "chunk_index": chunk_index,
+                        "status_code": 401,
+                        "error": "Unauthorized",
+                        "content_preview": text[:120],
+                    }
+                )
+                logger.error(
+                    "🚫 Translator вернул 401 Unauthorized для чанка %s/%s",
+                    chunk_index + 1,
+                    total_chunks,
+                )
+                raise AirflowException("Translator service returned 401 Unauthorized")
 
             stats["failed_requests"] += 1
             last_error = RuntimeError(
@@ -428,6 +451,7 @@ def perform_translation(**context) -> Dict[str, Any]:
         "retries": 0,
         "latencies": [],
         "errors": [],
+        "unauthorized_requests": 0,
     }
 
     try:
@@ -487,6 +511,34 @@ def perform_translation(**context) -> Dict[str, Any]:
 
         technical_term_stats = compute_technical_term_coverage(markdown_content, final_content)
 
+        if chinese_ratio > TRANSLATION_LIMITS["max_chinese_ratio"]:
+            raise AirflowException(
+                (
+                    "Доля китайских символов в итоговом документе превышает допустимый порог: "
+                    f"{chinese_ratio:.2%} > {TRANSLATION_LIMITS['max_chinese_ratio']:.0%}"
+                )
+            )
+
+        if chinese_coverage < TRANSLATION_LIMITS["min_chinese_coverage"]:
+            raise AirflowException(
+                (
+                    "Недостаточное покрытие перевода китайского текста: "
+                    f"{chinese_coverage:.2%} < {TRANSLATION_LIMITS['min_chinese_coverage']:.0%}"
+                )
+            )
+
+        if (
+            technical_term_stats["total"] > 0
+            and technical_term_stats["coverage"] < TRANSLATION_LIMITS["min_technical_terms_coverage"]
+        ):
+            raise AirflowException(
+                (
+                    "Недостаточное покрытие специализированных терминов: "
+                    f"{technical_term_stats['coverage']:.2%} < "
+                    f"{TRANSLATION_LIMITS['min_technical_terms_coverage']:.0%}"
+                )
+            )
+
         average_latency = mean(stats["latencies"]) if stats["latencies"] else 0.0
         max_latency = max(stats["latencies"]) if stats["latencies"] else 0.0
 
@@ -505,6 +557,7 @@ def perform_translation(**context) -> Dict[str, Any]:
                 "api_calls": stats["api_calls"],
                 "api_success": stats["successful_requests"],
                 "api_failures": stats["failed_requests"],
+                "unauthorized_requests": stats["unauthorized_requests"],
                 "avg_latency_seconds": round(average_latency, 3),
                 "max_latency_seconds": round(max_latency, 3),
                 "model": TRANSLATION_CONFIG["model"],
@@ -568,6 +621,21 @@ def save_translation_result(**context) -> Dict[str, Any]:
         translated_content = translation_results.get("translated_content", "")
         placeholder_used = False
 
+        chunks_total = translation_stats.get("chunks_total", 0)
+        chunks_failed = translation_stats.get("chunks_failed", 0)
+        chunks_successful = translation_stats.get("chunks_successful", max(chunks_total - chunks_failed, 0))
+        unauthorized_requests = translation_stats.get("unauthorized_requests", 0)
+
+        if unauthorized_requests:
+            raise AirflowException(
+                "Translator service вернул 401 Unauthorized в ходе перевода; повторите задание после проверки токена."
+            )
+
+        if chunks_failed:
+            raise AirflowException(
+                f"Перевод содержит {chunks_failed} неуспешных чанков и не может быть сохранен без повтора."
+            )
+
         if not translated_content:
             placeholder_used = True
             translated_content = (
@@ -577,10 +645,6 @@ def save_translation_result(**context) -> Dict[str, Any]:
 
         with open(output_path, "w", encoding="utf-8") as handle:
             handle.write(translated_content)
-
-        chunks_total = translation_stats.get("chunks_total", 0)
-        chunks_failed = translation_stats.get("chunks_failed", 0)
-        chunks_successful = translation_stats.get("chunks_successful", max(chunks_total - chunks_failed, 0))
 
         translation_metadata = {
             "target_language": target_language,
