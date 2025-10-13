@@ -15,6 +15,7 @@ import json
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from urllib.parse import urlsplit, urlunsplit
 
 # HTTP клиенты для взаимодействия с vLLM
 import httpx
@@ -32,6 +33,15 @@ from translator.vllm_client import (
     get_vllm_server_url,
 )
 
+try:  # Shared configuration is co-located with this module
+    from vllm_config import get_vllm_config  # type: ignore
+except ImportError:  # pragma: no cover - fallback for packaging edge-cases
+    try:
+        from quality_assurance.vllm_config import get_vllm_config  # type: ignore
+    except ImportError:  # pragma: no cover - final fallback
+        def get_vllm_config() -> Dict[str, Any]:
+            return {}
+
 # =======================================================================================
 # КОНФИГУРАЦИЯ И МЕТРИКИ
 # =======================================================================================
@@ -43,22 +53,96 @@ correction_requests = Counter('correction_requests_total', 'Auto correction requ
 correction_duration = Histogram('correction_duration_seconds', 'Auto correction duration', ['correction_type'])
 corrections_applied = Counter('corrections_applied_total', 'Total corrections applied', ['correction_type'])
 
+
+def _shared_vllm_config() -> Dict[str, Any]:
+    """Return the shared vLLM configuration or an empty mapping."""
+
+    try:
+        config = get_vllm_config()
+    except Exception:  # pragma: no cover - defensive fallback
+        return {}
+    return config or {}
+
+
+def _default_vllm_endpoint() -> str:
+    """Return the vLLM chat completions endpoint from shared configuration."""
+
+    config = _shared_vllm_config()
+    endpoint = config.get("endpoint")
+    if isinstance(endpoint, str) and endpoint.strip():
+        return endpoint.strip()
+    base_url = get_vllm_server_url()
+    return f"{base_url}/v1/chat/completions"
+
+
+def _derive_base_url(endpoint: str) -> str:
+    """Extract the service base URL from a chat completion endpoint."""
+
+    if not endpoint:
+        return get_vllm_server_url()
+
+    parsed = urlsplit(endpoint)
+    if not parsed.scheme or not parsed.netloc:
+        return endpoint.rstrip("/")
+
+    return urlunsplit((parsed.scheme, parsed.netloc, "", "", "")).rstrip("/")
+
+
+def _default_vllm_base_url() -> str:
+    return _derive_base_url(_default_vllm_endpoint())
+
+
+def _default_vllm_model() -> str:
+    config = _shared_vllm_config()
+    model = config.get("model")
+    if isinstance(model, str) and model.strip():
+        return model.strip()
+    return os.getenv("VLLM_MODEL_NAME", "Qwen/Qwen3-30B-A3B-Instruct-2507")
+
+
+def _default_vllm_api_key() -> Optional[str]:
+    config = _shared_vllm_config()
+    api_key = config.get("api_key")
+    if isinstance(api_key, str) and api_key.strip():
+        return api_key.strip()
+    return get_vllm_api_key()
+
+
+def _default_vllm_timeout() -> float:
+    config = _shared_vllm_config()
+    try:
+        return float(config.get("timeout", 300.0))
+    except (TypeError, ValueError):  # pragma: no cover - defensive fallback
+        return 300.0
+
+
+def _default_vllm_max_retries() -> int:
+    config = _shared_vllm_config()
+    try:
+        return int(config.get("max_retries", 1))
+    except (TypeError, ValueError):  # pragma: no cover - defensive fallback
+        return 1
+
+
+def _default_vllm_retry_delay() -> float:
+    config = _shared_vllm_config()
+    try:
+        return float(config.get("retry_delay", 2.0))
+    except (TypeError, ValueError):  # pragma: no cover
+        return 2.0
+
 @dataclass
 class AutoCorrectorConfig:
     """Конфигурация автокоррекции"""
     # vLLM сервер настройки
-    vllm_base_url: str = field(default_factory=get_vllm_server_url)
-    vllm_api_key: Optional[str] = field(default_factory=get_vllm_api_key)
-    # Централизованная модель vLLM (совпадает с TRANSLATION_MODEL в translator)
-    vllm_model: str = field(
-        default_factory=lambda: os.getenv(
-            "VLLM_MODEL_NAME", "Qwen/Qwen3-30B-A3B-Instruct-2507"
-        )
-    )
+    vllm_endpoint: str = field(default_factory=_default_vllm_endpoint)
+    vllm_base_url: str = field(default_factory=_default_vllm_base_url)
+    vllm_api_key: Optional[str] = field(default_factory=_default_vllm_api_key)
+    vllm_model: str = field(default_factory=_default_vllm_model)
     vllm_connect_timeout: float = 10.0
-    vllm_request_timeout: float = 300.0
-    vllm_max_retries: int = 1
-    vllm_retry_backoff_seconds: float = 2.0
+    vllm_request_timeout: float = field(default_factory=_default_vllm_timeout)
+    vllm_max_retries: int = field(default_factory=_default_vllm_max_retries)
+    vllm_retry_backoff_seconds: float = field(default_factory=_default_vllm_retry_delay)
     
     # Пороги для применения коррекций
     ocr_confidence_threshold: float = 0.8
@@ -78,6 +162,24 @@ class AutoCorrectorConfig:
     # Директории
     temp_dir: str = "/app/temp"
     cache_dir: str = "/app/cache"
+
+    def __post_init__(self) -> None:
+        endpoint = (self.vllm_endpoint or "").strip()
+        base_url = (self.vllm_base_url or "").strip()
+
+        if endpoint and not base_url:
+            base_url = _derive_base_url(endpoint)
+        if base_url and not endpoint:
+            endpoint = f"{base_url.rstrip('/')}/v1/chat/completions"
+        if not endpoint and not base_url:
+            endpoint = _default_vllm_endpoint()
+            base_url = _derive_base_url(endpoint)
+
+        if "/v1/" not in endpoint:
+            endpoint = f"{endpoint.rstrip('/')}/v1/chat/completions"
+
+        self.vllm_endpoint = endpoint.rstrip("/")
+        self.vllm_base_url = _derive_base_url(self.vllm_endpoint)
 
 @dataclass
 class CorrectionAction:
@@ -448,6 +550,8 @@ class AutoCorrector:
                 excerpt_truncated=excerpt_truncated,
             )
 
+            messages = self._build_chat_messages(system_prompt, prompt)
+
             attempts = max(1, int(self.config.vllm_max_retries) + 1)
             last_exception: Optional[Exception] = None
             failure_status = "failed"
@@ -458,21 +562,17 @@ class AutoCorrector:
                 attempt_started = loop.time()
                 try:
                     async with client.post(
-                        f"{self.config.vllm_base_url}/v1/chat/completions",
+                        self.config.vllm_endpoint,
                         headers=build_vllm_headers(
                             "application/json", api_key=self.config.vllm_api_key
                         ),
                         json={
                             "model": self.config.vllm_model,
-                            "prompt": prompt,
-                            "messages": [
-                                {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": prompt},
-                        ],
-                        "temperature": 0.1,
-                        "max_tokens": 4096
-                    },
-                    timeout=request_timeout,
+                            "messages": messages,
+                            "temperature": 0.1,
+                            "max_tokens": 4096
+                        },
+                        timeout=request_timeout,
                     ) as response:
                         duration = loop.time() - attempt_started
                         if response.status == 200:
@@ -629,6 +729,20 @@ TASK: Fix markdown formatting issues.
 
         prompt = "\n".join(prompt_lines)
         return prompt, excerpt_truncated
+
+    def _build_chat_messages(self, system_prompt: str, user_prompt: str) -> List[Dict[str, Any]]:
+        """Сборка сообщений для Qwen3 в формате OpenAI chat completions."""
+
+        return [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": system_prompt}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": user_prompt}],
+            },
+        ]
     
     async def _final_review_correction(
         self,
