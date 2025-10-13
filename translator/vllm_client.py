@@ -26,10 +26,28 @@ def get_vllm_server_url() -> str:
 
 
 def get_vllm_api_key() -> Optional[str]:
-    """Return the vLLM API key if it is configured."""
+    """Return the vLLM API key from the environment or translator config."""
 
-    api_key = os.getenv("VLLM_API_KEY", "").strip()
-    return api_key or None
+    api_key = os.getenv("VLLM_API_KEY")
+    if api_key is not None:
+        api_key = api_key.strip()
+        return api_key or None
+
+    # Fall back to the translator config if it is available. This allows
+    # programmatic overrides even when the environment variable is not set.
+    try:  # pragma: no cover - defensive import
+        from translator import config as translator_config  # type: ignore
+    except Exception:  # pragma: no cover - config might not be importable
+        translator_config = None  # type: ignore
+
+    if translator_config is not None:
+        config_key = getattr(translator_config, "VLLM_API_KEY", None)
+        if config_key:
+            config_key = str(config_key).strip()
+            if config_key:
+                return config_key
+
+    return None
 
 
 def build_vllm_headers(

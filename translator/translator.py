@@ -25,7 +25,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Any
 from dataclasses import dataclass, field
 
 # FastAPI и веб-сервер
@@ -47,6 +47,7 @@ from translator.vllm_client import (
     create_vllm_aiohttp_session,
     get_vllm_server_url,
 )
+from translator import config as translator_config
 
 
 DEFAULT_MAX_BYTES = 10 * 1024 * 1024
@@ -163,6 +164,7 @@ logger = configure_logging(
 VLLM_API_URL = get_vllm_server_url()
 VLLM_API_ENDPOINT = "/v1/chat/completions"
 TRANSLATION_MODEL = os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
+VLLM_API_KEY = translator_config.VLLM_API_KEY
 
 # API параметры
 API_TEMPERATURE = float(os.getenv('VLLM_TEMPERATURE', '0.1'))
@@ -484,12 +486,18 @@ class VLLMAPIClient:
 
     async def _ensure_http_client(self) -> aiohttp.ClientSession:
         if self._http_client is None or self._http_client.closed:
-            self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+            self._http_client = create_vllm_aiohttp_session(
+                timeout=self._client_timeout,
+                api_key=VLLM_API_KEY,
+            )
         return self._http_client
 
     async def _refresh_http_client(self) -> aiohttp.ClientSession:
         await self._close_http_client()
-        self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+        self._http_client = create_vllm_aiohttp_session(
+            timeout=self._client_timeout,
+            api_key=VLLM_API_KEY,
+        )
         return self._http_client
 
     async def enhanced_api_request(self, messages: List[Dict], timeout: int = REQUEST_TIMEOUT) -> Optional[str]:
@@ -933,14 +941,53 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
+    """Health check endpoint with upstream vLLM validation."""
+
+    health_details = {
         "service": "vLLM Translator v2.0",
         "timestamp": datetime.now().isoformat(),
         "cache_size": len(translation_cache),
-        "cache_limit": CACHE_SIZE_LIMIT
+        "cache_limit": CACHE_SIZE_LIMIT,
     }
+
+    session: Optional[aiohttp.ClientSession] = None
+    models_endpoint = f"{VLLM_API_URL}/v1/models"
+    vllm_status: Dict[str, Any] = {
+        "endpoint": models_endpoint,
+        "healthy": False,
+    }
+
+    try:
+        session = create_vllm_aiohttp_session(
+            timeout=aiohttp.ClientTimeout(total=15),
+            api_key=VLLM_API_KEY,
+        )
+        async with session.get(models_endpoint) as response:
+            vllm_status["status_code"] = response.status
+            if response.status == 200:
+                payload = await response.json()
+                vllm_status["healthy"] = True
+                vllm_status["models"] = [
+                    model.get("id")
+                    for model in payload.get("data", [])
+                    if isinstance(model, dict) and model.get("id")
+                ]
+            else:
+                vllm_status["error"] = (await response.text())[:200]
+    except Exception as exc:
+        vllm_status["exception"] = str(exc)
+    finally:
+        if session is not None and not session.closed:
+            await session.close()
+
+    health_details["vllm"] = vllm_status
+
+    if not vllm_status.get("healthy"):
+        health_details["status"] = "unhealthy"
+        raise HTTPException(status_code=503, detail=health_details)
+
+    health_details["status"] = "healthy"
+    return health_details
 
 @app.post("/api/v1/translate", response_model=TranslationResponse)
 async def translate_text(request: TranslationRequest) -> TranslationResponse:

@@ -15,6 +15,9 @@ from datetime import datetime
 from typing import Dict, Any, Optional, List, Union
 from pathlib import Path
 
+from translator import config as translator_config
+from translator.vllm_client import build_vllm_headers
+
 # Настройка логирования
 logger = logging.getLogger(__name__)
 
@@ -367,11 +370,17 @@ class VLLMUtils:
             base = endpoint
             # отбрасываем путь до /v1/...
             if '/v1/' in base:
-                base = base.split('/v1/')
+                base = base.split('/v1/')[0]
+
+            headers = build_vllm_headers(api_key=translator_config.VLLM_API_KEY)
 
             # Попытка /health
             try:
-                resp = requests.get(f"{base}/health", timeout=timeout)
+                resp = requests.get(
+                    f"{base}/health",
+                    timeout=timeout,
+                    headers=headers,
+                )
                 if resp.status_code == 200:
                     return True
             except Exception:
@@ -379,7 +388,11 @@ class VLLMUtils:
 
             # Попытка /v1/models
             try:
-                resp = requests.get(f"{base}/v1/models", timeout=timeout)
+                resp = requests.get(
+                    f"{base}/v1/models",
+                    timeout=timeout,
+                    headers=headers,
+                )
                 return resp.status_code == 200
             except Exception:
                 return False

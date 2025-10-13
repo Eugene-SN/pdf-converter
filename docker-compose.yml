@@ -41,6 +41,7 @@ x-airflow-common: &airflow-common
     # Параметры интеграции vLLM
     VLLM_SERVER_URL: ${VLLM_SERVER_URL}
     VLLM_MODEL_NAME: ${VLLM_MODEL_NAME}
+    VLLM_API_KEY: ${VLLM_API_KEY}
 
     # Микросервисы Stage 3
     TRANSLATOR_URL: ${TRANSLATOR_URL}
@@ -372,6 +373,7 @@ services:
       # vLLM интеграция
       VLLM_SERVER_URL: ${VLLM_SERVER_URL}
       VLLM_MODEL_NAME: ${VLLM_MODEL_NAME}
+      VLLM_API_KEY: ${VLLM_API_KEY}
       
       # Translation settings
       PRESERVE_TECHNICAL_TERMS: "true"
