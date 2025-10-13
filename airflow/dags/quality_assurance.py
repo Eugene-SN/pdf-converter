@@ -264,7 +264,7 @@ LEVEL_CONFIG = {
     },
     'level5_correction': {
         'vllm_endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-        'correction_model': 'Qwen/Qwen2.5-VL-32B-Instruct',
+        'correction_model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
         'max_retries': 3,
         'enable_auto_correction': True
     }
@@ -288,10 +288,10 @@ TECHNICAL_TERMS = [
 # ✅ ИСПРАВЛЕНА: vLLM конфигурация для авто-коррекции
 VLLM_CONFIG = {
     'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
-    'model': 'Qwen/Qwen2.5-VL-32B-Instruct',
+    'model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
     'timeout': 60,
-    'max_tokens': 8192,
-    'temperature': 0.1,
+    'max_tokens': 2048,
+    'temperature': 0.25,
     'top_p': 0.9,
     'max_retries': 2,
     'retry_delay': 2
