@@ -59,7 +59,7 @@ TRANSLATION_CONFIG: Dict[str, Any] = {
     "max_retries": int(os.getenv("TRANSLATION_MAX_RETRIES", "3")),
     "retry_delay": float(os.getenv("TRANSLATION_RETRY_DELAY", "5")),
     "max_chars_per_chunk": int(os.getenv("TRANSLATION_MAX_CHARS", "3500")),
-    "model": os.getenv("VLLM_TRANSLATION_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507"),
+    "model": os.getenv("VLLM_MODEL_NAME", "Qwen/Qwen3-30B-A3B-Instruct-2507"),
 }
 
 BATCH_CONFIG: Dict[str, int] = {
