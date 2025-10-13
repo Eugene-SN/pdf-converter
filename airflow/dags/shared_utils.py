@@ -109,6 +109,39 @@ class SharedUtils:
 class ConfigUtils:
     """Утилиты для работы с конфигурацией"""
 
+    _SECRET_CACHE: Dict[str, Optional[str]] = {}
+
+    @staticmethod
+    def get_secret(
+        name: str,
+        default: Optional[str] = None,
+        *,
+        refresh: bool = False,
+    ) -> Optional[str]:
+        """Получение чувствительных значений из окружения с кэшированием."""
+
+        if not refresh and name in ConfigUtils._SECRET_CACHE:
+            return ConfigUtils._SECRET_CACHE[name]
+
+        value = os.getenv(name)
+        if value is None:
+            ConfigUtils._SECRET_CACHE[name] = default
+            return default
+
+        stripped = value.strip()
+        if not stripped:
+            ConfigUtils._SECRET_CACHE[name] = default
+            return default
+
+        ConfigUtils._SECRET_CACHE[name] = stripped
+        return stripped
+
+    @staticmethod
+    def get_vllm_api_key(*, refresh: bool = False) -> Optional[str]:
+        """Возвращает API-ключ vLLM из окружения с возможностью обновления."""
+
+        return ConfigUtils.get_secret("VLLM_API_KEY", refresh=refresh)
+
     @staticmethod
     def get_processing_paths() -> Dict[str, str]:
         # По умолчанию используем контейнерные пути, переопределяемые через env
