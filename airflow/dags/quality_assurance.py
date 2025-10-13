@@ -271,7 +271,7 @@ LEVEL_CONFIG = {
     'level5_correction': {
         'vllm_endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
         'correction_model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
-        'max_retries': 3,
+        'max_retries': 5,
         'enable_auto_correction': True
     }
 }
@@ -295,25 +295,28 @@ TECHNICAL_TERMS = [
 VLLM_CONFIG = {
     'endpoint': f"{_VLLM_BASE_URL}/v1/chat/completions",
     'model': 'Qwen/Qwen3-30B-A3B-Instruct-2507',
-    'timeout': 150,
+    'timeout': 240,
     'max_tokens': 2048,
     'temperature': 0.25,
     'top_p': 0.9,
-    'max_retries': 2,
-    'retry_delay': 2,
+    'max_retries': 5,
+    'retry_delay': 5,
     'retry_jitter': 0.35,
+    'retry_backoff_factor': 2.0,
 }
 
 
-def _compute_retry_delay(multiplier: float = 1.0) -> float:
-    """Return a retry delay with jitter to prevent thundering herd effects."""
-    base_delay = max(0.0, VLLM_CONFIG['retry_delay'] * multiplier)
+def _compute_retry_delay(attempt: int, multiplier: float = 1.0) -> float:
+    """Return an exponential retry delay with jitter for resiliency."""
+    base_delay = max(0.0, VLLM_CONFIG['retry_delay'])
+    backoff_factor = max(1.0, VLLM_CONFIG.get('retry_backoff_factor', 1.0))
+    delay = base_delay * (backoff_factor ** max(0, attempt - 1)) * multiplier
     jitter_ratio = max(0.0, VLLM_CONFIG.get('retry_jitter', 0.0))
     if not jitter_ratio:
-        return base_delay
-    spread = base_delay * jitter_ratio
+        return delay
+    spread = delay * jitter_ratio
     # Guarantee a small positive delay to avoid immediate retries
-    return max(0.1, base_delay + random.uniform(-spread, spread))
+    return max(0.1, delay + random.uniform(-spread, spread))
 
 SENTENCE_MODEL_CACHE_DIR = os.getenv('QA_SENTENCE_MODEL_CACHE') or os.getenv('SENTENCE_TRANSFORMERS_CACHE')
 _SENTENCE_MODEL = None
@@ -1706,7 +1709,9 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
             'timed_out': False,
             'warmup_requested': False,
             'retry_scheduled': False,
-            'status': 'completed'
+            'status': 'completed',
+            'partial_success': False,
+            'requires_manual_followup': False
         }
 
         if issues_found and qa_session.get('auto_correction', True) and len(issues_found) <= QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
@@ -1724,19 +1729,48 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
                     'validation_score': correction_confidence
                 })
                 logger.info(f"✅ Применены исправления vLLM: {len(issues_found)} проблем, уверенность {correction_confidence:.3f}")
+                logger.info("Auto-correction status: completed")
             elif timed_out:
                 logger.warning("vLLM auto-correction timed out on all attempts; scheduling retry after warmup")
                 correction_result['issues_found'].append("vLLM correction timed out; retry scheduled after warmup")
-                correction_result['status'] = 'pending_retry'
+                correction_result['status'] = 'waiting_retry'
+                correction_result['requires_manual_followup'] = True
+                correction_result['validation_score'] = 0.0
                 correction_result['warmup_requested'] = _request_vllm_warmup()
                 correction_result['retry_scheduled'] = _schedule_auto_correction_retry(context, 'vllm_timeout')
+                logger.info("Intermediate status: auto-correction is waiting for a retry after timeout")
             else:
+                if corrected_content and corrected_content != document_content:
+                    correction_result.update({
+                        'partial_success': True,
+                        'corrections_applied': len(issues_found),
+                        'corrected_content': corrected_content,
+                        'correction_confidence': correction_confidence,
+                        'validation_score': correction_confidence
+                    })
                 correction_result['issues_found'].append(f"vLLM correction confidence too low: {correction_confidence:.3f}")
+                correction_result['correction_confidence'] = correction_confidence
+                correction_result['validation_score'] = correction_confidence
+                correction_result['status'] = 'partial_success' if correction_result['partial_success'] else 'needs_review'
+                correction_result['requires_manual_followup'] = True
+                logger.info(
+                    "Intermediate status: auto-correction requires manual follow-up (status %s)",
+                    correction_result['status']
+                )
         elif len(issues_found) > QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
             correction_result['issues_found'].append(f"Too many issues for auto-correction: {len(issues_found)}")
+            correction_result['status'] = 'skipped'
+            correction_result['requires_manual_followup'] = True
+            correction_result['validation_score'] = 0.0
+            logger.info("Auto-correction skipped due to excessive issues; manual intervention required")
 
         correction_result['processing_time'] = time.time() - start_time
-        logger.info(f"✅ Уровень 5 завершен: {correction_result['corrections_applied']} исправлений")
+        logger.info(
+            "Уровень 5 завершен со статусом %s: %d исправлений, частичный успех=%s",
+            correction_result['status'],
+            correction_result['corrections_applied'],
+            correction_result['partial_success']
+        )
         return correction_result
         
     except Exception as e:
@@ -1787,6 +1821,12 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     timed_out_attempts = 0
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
+            attempt_number = attempt + 1
+            logger.info(
+                "vLLM API request attempt %d/%d for auto-correction",
+                attempt_number,
+                VLLM_CONFIG['max_retries']
+            )
             try:
                 payload = {
                     "model": VLLM_CONFIG['model'],
@@ -1810,40 +1850,82 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
                     result = response.json()
                     return result['choices'][0]['message']['content'], False
 
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 if response.status_code >= 500:
                     logger.warning(
                         "vLLM API server error %s: %s",
                         response.status_code,
                         response.text[:200]
                     )
+                    if should_retry:
+                        delay = _compute_retry_delay(attempt_number)
+                        logger.info(
+                            "Intermediate status: retrying vLLM request after %.1fs due to server error",
+                            delay
+                        )
+                        time.sleep(delay)
+                    continue
                 else:
                     logger.error(
                         "vLLM API error %s: %s",
                         response.status_code,
                         response.text[:200]
                     )
+                    if should_retry:
+                        delay = _compute_retry_delay(attempt_number)
+                        logger.info(
+                            "Intermediate status: retrying vLLM request after %.1fs due to client error",
+                            delay
+                        )
+                        time.sleep(delay)
+                    continue
 
             except requests.exceptions.Timeout as exc:
                 timed_out_attempts += 1
-                logger.error(
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
+                logger.warning(
                     "vLLM API timeout after %ss on attempt %d/%d: %s",
                     VLLM_CONFIG['timeout'],
-                    attempt + 1,
+                    attempt_number,
                     VLLM_CONFIG['max_retries'],
                     exc
                 )
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: waiting %.1fs before retrying vLLM request after timeout",
+                        delay
+                    )
+                    time.sleep(delay)
+                else:
+                    logger.error("vLLM API timed out on final attempt; giving up")
+                continue
             except requests.exceptions.RequestException as exc:
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 logger.warning(
                     "vLLM API request error on attempt %d/%d: %s",
-                    attempt + 1,
+                    attempt_number,
                     VLLM_CONFIG['max_retries'],
                     exc
                 )
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: retrying vLLM request after %.1fs due to connectivity issue",
+                        delay
+                    )
+                    time.sleep(delay)
+                continue
             except Exception as e:
-                logger.warning(f"vLLM API call attempt {attempt + 1} failed: {e}")
-
-            if attempt < VLLM_CONFIG['max_retries'] - 1:
-                time.sleep(_compute_retry_delay())
+                should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
+                logger.warning(f"vLLM API call attempt {attempt_number} failed: {e}")
+                if should_retry:
+                    delay = _compute_retry_delay(attempt_number)
+                    logger.info(
+                        "Intermediate status: retrying vLLM request after %.1fs due to unexpected error",
+                        delay
+                    )
+                    time.sleep(delay)
                 continue
 
             logger.error("vLLM API failed after %d attempts", VLLM_CONFIG['max_retries'])
@@ -1893,7 +1975,7 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
         level3_results = context['task_instance'].xcom_pull(task_ids='perform_ast_structure_comparison')
         level4_results = context['task_instance'].xcom_pull(task_ids='perform_enhanced_content_validation')
         level5_results = context['task_instance'].xcom_pull(task_ids='perform_auto_correction')
-        
+
         level_scores = [
             level1_results.get('validation_score', 0),
             level2_results.get('validation_score', 0),
@@ -1901,10 +1983,21 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
             level4_results.get('validation_score', 0),
             level5_results.get('validation_score', 0)
         ]
-        
+
         overall_score = sum(level_scores) / len(level_scores) * 100
-        quality_passed = overall_score >= QA_RULES['OVERALL_QA_THRESHOLD'] * 100
-        
+        auto_correction_status = level5_results.get('status')
+        manual_followup_required = level5_results.get('requires_manual_followup', False)
+        quality_passed = (
+            overall_score >= QA_RULES['OVERALL_QA_THRESHOLD'] * 100
+            and auto_correction_status == 'completed'
+            and not manual_followup_required
+        )
+        if manual_followup_required:
+            logger.info(
+                "Comprehensive QA report flagged manual follow-up: auto-correction status %s",
+                auto_correction_status
+            )
+
         comprehensive_report = {
             'session_id': qa_session['session_id'],
             'document_file': qa_session['translated_file'],
@@ -1930,9 +2023,12 @@ def generate_comprehensive_qa_report(**context) -> Dict[str, Any]:
             'corrections_applied': level5_results.get('corrections_applied', 0),
             'corrected_content': level5_results.get('corrected_content'),
             'qa_rules_used': QA_RULES,
-            'level_configs_used': LEVEL_CONFIG
+            'level_configs_used': LEVEL_CONFIG,
+            'auto_correction_status': auto_correction_status,
+            'auto_correction_partial_success': level5_results.get('partial_success', False),
+            'auto_correction_requires_manual_followup': manual_followup_required
         }
-        
+
         airflow_temp = os.getenv('AIRFLOW_TEMP_DIR', '/opt/airflow/temp')
         SharedUtils.ensure_directory(airflow_temp)
         
@@ -1972,8 +2068,11 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
         final_document = (comprehensive_report.get('corrected_content') or 
                          qa_session['translated_content'])
         
+        auto_correction_summary = comprehensive_report['level_results']['level5_auto_correction']
+        auto_correction_status = auto_correction_summary.get('status')
+        auto_correction_followup = auto_correction_summary.get('requires_manual_followup', False)
         final_result = {
-            'qa_completed': True,
+            'qa_completed': auto_correction_status == 'completed' and not auto_correction_followup,
             'enterprise_validation': True,
             'quality_score': comprehensive_report['overall_score'],
             'quality_passed': comprehensive_report['quality_passed'],
@@ -1982,15 +2081,18 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
             'qa_report': comprehensive_report['report_file'],
             'issues_count': len(comprehensive_report['all_issues']),
             'corrections_applied': comprehensive_report.get('corrections_applied', 0),
-            'pipeline_ready': comprehensive_report['quality_passed'],
+            'pipeline_ready': comprehensive_report['quality_passed'] and final_result['qa_completed'],
             '5_level_validation_complete': True,
             'level_scores': comprehensive_report['level_scores'],
             'pdf_comparison_performed': True,
             'ocr_validation_performed': True,
             'semantic_analysis_performed': True,
-            'auto_correction_performed': comprehensive_report.get('corrections_applied', 0) > 0
+            'auto_correction_performed': comprehensive_report.get('corrections_applied', 0) > 0,
+            'auto_correction_status': auto_correction_status,
+            'auto_correction_partial_success': auto_correction_summary.get('partial_success', False),
+            'auto_correction_requires_manual_followup': auto_correction_followup
         }
-        
+
         status = "✅ КАЧЕСТВО ПРОШЛО 5-УРОВНЕВУЮ ВАЛИДАЦИЮ" if comprehensive_report['quality_passed'] else "❌ ЕСТЬ ПРОБЛЕМЫ"
         logger.info(f"🎯 Полный 5-уровневый QA завершен: {comprehensive_report['overall_score']:.1f}% - {status}")
         return final_result
@@ -2003,14 +2105,33 @@ def notify_qa_completion(**context) -> None:
     """✅ Уведомление о завершении полного контроля качества"""
     try:
         final_result = context['task_instance'].xcom_pull(task_ids='finalize_qa_process')
-        
+
         quality_score = final_result['quality_score']
         quality_passed = final_result['quality_passed']
         corrections_applied = final_result['corrections_applied']
-        
+        auto_correction_status = final_result.get('auto_correction_status', 'unknown')
+        auto_correction_followup = final_result.get('auto_correction_requires_manual_followup', False)
+        auto_correction_partial = final_result.get('auto_correction_partial_success', False)
+        auto_correction_status_str = str(auto_correction_status or 'unknown')
+
+        status_icon_map = {
+            'completed': '✅',
+            'waiting_retry': '⏳',
+            'partial_success': '⚠️',
+            'needs_review': '⚠️',
+            'skipped': '⚠️'
+        }
+        auto_correction_icon = status_icon_map.get(auto_correction_status, 'ℹ️')
+        auto_correction_details = [auto_correction_status_str.replace('_', ' ')]
+        if auto_correction_partial:
+            auto_correction_details.append('partial success')
+        if auto_correction_followup:
+            auto_correction_details.append('manual follow-up required')
+        auto_correction_summary = ' '.join(auto_correction_details)
+
         status_icon = "✅" if quality_passed else "❌"
         status_text = "ENTERPRISE QA PASSED" if quality_passed else "NEEDS REVIEW"
-        
+
         message = f"""
 {status_icon} 5-УРОВНЕВАЯ QUALITY ASSURANCE ЗАВЕРШЕНА
 
@@ -2025,7 +2146,7 @@ def notify_qa_completion(**context) -> None:
 - PDF визуальное сравнение: ✅ Выполнено
 - OCR кросс-валидация: ✅ Выполнено
 - Семантический анализ: ✅ Выполнено
-- vLLM автокоррекция: ✅ Выполнено
+- vLLM автокоррекция: {auto_correction_icon} {auto_correction_summary}
 
 📁 Документ: {final_result['final_document']}
 📋 Отчет: {final_result['qa_report']}
@@ -2089,7 +2210,10 @@ level4_content = PythonOperator(
 level5_correction = PythonOperator(
     task_id='perform_auto_correction',
     python_callable=perform_auto_correction,
-    execution_timeout=timedelta(minutes=20),
+    execution_timeout=timedelta(minutes=30),
+    retries=3,
+    retry_delay=timedelta(minutes=5),
+    retry_exponential_backoff=True,
     dag=dag
 )
 
