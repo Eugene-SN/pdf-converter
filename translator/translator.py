@@ -45,6 +45,7 @@ import structlog
 
 from translator.vllm_client import (
     create_vllm_aiohttp_session,
+    get_vllm_api_key,
     get_vllm_server_url,
 )
 
@@ -484,12 +485,18 @@ class VLLMAPIClient:
 
     async def _ensure_http_client(self) -> aiohttp.ClientSession:
         if self._http_client is None or self._http_client.closed:
-            self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+            self._http_client = create_vllm_aiohttp_session(
+                timeout=self._client_timeout,
+                api_key=get_vllm_api_key(),
+            )
         return self._http_client
 
     async def _refresh_http_client(self) -> aiohttp.ClientSession:
         await self._close_http_client()
-        self._http_client = create_vllm_aiohttp_session(timeout=self._client_timeout)
+        self._http_client = create_vllm_aiohttp_session(
+            timeout=self._client_timeout,
+            api_key=get_vllm_api_key(),
+        )
         return self._http_client
 
     async def enhanced_api_request(self, messages: List[Dict], timeout: int = REQUEST_TIMEOUT) -> Optional[str]:

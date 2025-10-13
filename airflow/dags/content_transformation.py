@@ -30,6 +30,7 @@ from requests.adapters import HTTPAdapter
 from translator.vllm_client import (
     build_vllm_headers,
     create_vllm_requests_session,
+    get_vllm_api_key as get_vllm_env_api_key,
 )
 
 # ✅ logger до любых try/except
@@ -38,7 +39,8 @@ logger = logging.getLogger(__name__)
 # Утилиты
 from shared_utils import (
     SharedUtils, NotificationUtils,
-    MetricsUtils, ErrorHandlingUtils
+    MetricsUtils, ErrorHandlingUtils,
+    ConfigUtils,
 )
 
 # Конфигурация DAG
@@ -123,10 +125,52 @@ _VLLM_SEMAPHORE = threading.Semaphore(VLLM_CONFIG.get('max_concurrent_requests',
 
 # Общая HTTP‑сессия с расширенным пулом соединений
 _VLLM_HTTP_POOL = max(4, VLLM_CONFIG['max_concurrent_requests'] * 4)
-_VLLM_SESSION = create_vllm_requests_session()
-_VLLM_ADAPTER = HTTPAdapter(pool_connections=_VLLM_HTTP_POOL, pool_maxsize=_VLLM_HTTP_POOL)
-_VLLM_SESSION.mount('http://', _VLLM_ADAPTER)
-_VLLM_SESSION.mount('https://', _VLLM_ADAPTER)
+_VLLM_API_KEY_LOCK = threading.Lock()
+_VLLM_SESSION_LOCK = threading.Lock()
+_VLLM_API_KEY: Optional[str] = None
+
+
+def _resolve_vllm_api_key(*, force_refresh: bool = False) -> Optional[str]:
+    """Получить текущий API-ключ vLLM с учётом кэша ConfigUtils."""
+
+    global _VLLM_API_KEY
+    with _VLLM_API_KEY_LOCK:
+        key = ConfigUtils.get_vllm_api_key(refresh=force_refresh)
+        if not key:
+            key = get_vllm_env_api_key()
+        _VLLM_API_KEY = key
+        return _VLLM_API_KEY
+
+
+def _create_vllm_session(api_key: Optional[str]) -> requests.Session:
+    session = create_vllm_requests_session(api_key=api_key)
+    adapter = HTTPAdapter(pool_connections=_VLLM_HTTP_POOL, pool_maxsize=_VLLM_HTTP_POOL)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
+
+def _reset_vllm_session(api_key: Optional[str]) -> None:
+    global _VLLM_SESSION
+    with _VLLM_SESSION_LOCK:
+        try:
+            if '_VLLM_SESSION' in globals() and _VLLM_SESSION:
+                _VLLM_SESSION.close()
+        except Exception:
+            pass
+        _VLLM_SESSION = _create_vllm_session(api_key)
+
+
+def _build_vllm_request_headers(
+    content_type: Optional[str] = None,
+    *,
+    force_refresh: bool = False,
+) -> Dict[str, str]:
+    api_key = _resolve_vllm_api_key(force_refresh=force_refresh)
+    return build_vllm_headers(content_type, api_key=api_key)
+
+
+_reset_vllm_session(_resolve_vllm_api_key())
 
 VLLM_CACHE_ENABLED = os.getenv('VLLM_ENABLE_CACHE', 'true').lower() == 'true'
 VLLM_CACHE_SIZE = max(0, int(os.getenv('VLLM_CACHE_SIZE', '128')))
@@ -1078,7 +1122,7 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
     """
     Делает до max_retries попыток вызвать vLLM chat/completions, выходит при первом успехе.
     """
-    headers = build_vllm_headers("application/json")
+    headers = _build_vllm_request_headers("application/json")
     headers.setdefault("Accept", "application/json")
     cache_key = hashlib.sha256(prompt.encode('utf-8')).hexdigest()
     cached_response = _cache_lookup(cache_key)
@@ -1103,7 +1147,9 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
     for attempt in range(VLLM_CONFIG['max_retries']):
         try:
             logger.info(f"vLLM API вызов (попытка {attempt + 1})")
-            response = _VLLM_SESSION.post(
+            with _VLLM_SESSION_LOCK:
+                session = _VLLM_SESSION
+            response = session.post(
                 VLLM_CONFIG['endpoint'],
                 json=payload,
                 timeout=VLLM_CONFIG['timeout'],
@@ -1141,6 +1187,18 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
                 logger.error("Все попытки vLLM неудачны (500 ошибка)")
                 return None
 
+            elif response.status_code == 401:
+                preview = ''
+                try:
+                    preview = response.text[:200]
+                except Exception:
+                    preview = ''
+                logger.error(f"vLLM API 401 Unauthorized: {preview}")
+                refreshed_key = _resolve_vllm_api_key(force_refresh=True)
+                _reset_vllm_session(refreshed_key)
+                _build_vllm_request_headers(force_refresh=True)
+                raise PermissionError("vLLM API unauthorized (401). Check API key configuration.")
+
             elif response.status_code in (429, 503):
                 logger.warning(f"vLLM перегружен ({response.status_code}), повтор через задержку")
                 if attempt < VLLM_CONFIG['max_retries'] - 1:
@@ -1151,6 +1209,9 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
             else:
                 logger.warning(f"vLLM API ошибка: {response.status_code} {response.text[:200]}")
 
+        except PermissionError as auth_error:
+            logger.error(f"Критическая ошибка авторизации vLLM: {auth_error}")
+            raise
         except Exception as e:
             logger.warning(f"vLLM попытка {attempt + 1} неудачна: {e}")
             if attempt < VLLM_CONFIG['max_retries'] - 1:
