@@ -91,7 +91,7 @@ HEADING_PATTERNS: List[str] = [
 VLLM_CONFIG: Dict[str, Any] = {
     # Используем имя сервиса Docker Compose для корректного DNS
     'endpoint': os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000') + '/v1/chat/completions',
-    'model': os.getenv('VLLM_CONTENT_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
+    'model': os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507'),
     'timeout': int(os.getenv('VLLM_STANDARD_TIMEOUT', '150')),
     'max_tokens': 2048,
     'temperature': 0.3,

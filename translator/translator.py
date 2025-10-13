@@ -158,7 +158,7 @@ logger = configure_logging(
 # vLLM API конфигурация (ИСПРАВЛЕНО)
 VLLM_API_URL = os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
 VLLM_API_ENDPOINT = "/v1/chat/completions"
-TRANSLATION_MODEL = os.getenv('VLLM_TRANSLATION_MODEL', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
+TRANSLATION_MODEL = os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-2507')
 
 # API параметры
 API_TEMPERATURE = float(os.getenv('VLLM_TEMPERATURE', '0.1'))

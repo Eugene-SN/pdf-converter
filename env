@@ -30,11 +30,7 @@ DOCLING_MODEL_PATH=/mnt/storage/models/docling
 # ================================================================================
 VLLM_SERVER_URL=http://vllm-server:8000
 
-VLLM_CONTENT_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507
-VLLM_TRANSLATION_MODEL=Qwen/Qwen3-30B-A3B-Instruct-2507
-
-# Для совместимости с docker-compose
-VLLM_MODEL_NAME=${VLLM_CONTENT_MODEL}
+VLLM_MODEL_NAME=Qwen/Qwen3-30B-A3B-Instruct-2507
 
 # Тайм-ауты (секунды)
 VLLM_STANDARD_TIMEOUT=1800
