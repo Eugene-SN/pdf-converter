@@ -342,12 +342,12 @@ class ErrorHandlingUtils:
 
 
 class VLLMUtils:
-    """Утилиты для работы с vLLM API и форматированием сообщений Qwen-VL"""
+    """Утилиты для работы с vLLM API и форматированием сообщений Qwen3"""
 
     @staticmethod
     def format_qwen_vl_message(prompt: str, role: str = "user") -> Dict[str, Any]:
         """
-        Формирует корректное мультимодальное сообщение для Qwen2.5-VL
+        Формирует корректное мультимодальное сообщение для Qwen/Qwen3-30B-A3B-Instruct-2507
         в OpenAI-совместимом формате vLLM: content как список частей.
         """
         return {

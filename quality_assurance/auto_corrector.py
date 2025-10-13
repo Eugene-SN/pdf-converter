@@ -49,6 +49,12 @@ class AutoCorrectorConfig:
     # vLLM сервер настройки
     vllm_base_url: str = field(default_factory=get_vllm_server_url)
     vllm_api_key: Optional[str] = field(default_factory=get_vllm_api_key)
+    # Централизованная модель vLLM (совпадает с TRANSLATION_MODEL в translator)
+    vllm_model: str = field(
+        default_factory=lambda: os.getenv(
+            "VLLM_MODEL_NAME", "Qwen/Qwen3-30B-A3B-Instruct-2507"
+        )
+    )
     vllm_connect_timeout: float = 10.0
     vllm_request_timeout: float = 300.0
     vllm_max_retries: int = 1
@@ -457,7 +463,7 @@ class AutoCorrector:
                             "application/json", api_key=self.config.vllm_api_key
                         ),
                         json={
-                            "model": "Qwen/Qwen2.5-32B-Instruct",
+                            "model": self.config.vllm_model,
                             "prompt": prompt,
                             "messages": [
                                 {"role": "system", "content": system_prompt},

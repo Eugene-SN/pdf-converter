@@ -43,10 +43,10 @@
        ▼                ▼                ▼                ▼
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
 │ Docling +    │ │ vLLM         │ │ vLLM         │ │ OCR Cross-   │
-│ PaddleOCR +  │ │ Qwen2.5-VL   │ │ Qwen3-30B-   │ │ Validation + │
-│ Tesseract +  │ │ Markdown     │ │ A3B-Instruct │ │ Visual Diff +│
-│ Tabula-Py    │ │ Generation   │ │ Translation  │ │ AST Compare +│
-│              │ │              │ │              │ │ Auto-Correct │
+│ PaddleOCR +  │ │ Qwen/Qwen3-  │ │ Qwen/Qwen3-  │ │ Validation + │
+│ Tesseract +  │ │ 30B-A3B-     │ │ 30B-A3B-     │ │ Visual Diff +│
+│ Tabula-Py    │ │ Instruct-2507│ │ Instruct-2507│ │ AST Compare +│
+│              │ │ Markdown     │ │ Translation  │ │ Auto-Correct │
 └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
 ```
 
@@ -61,12 +61,12 @@ Master Orchestrator через Airflow координирует прохожде
 
 ### DAG 2: Content Transformation
 - **Цель**: Генерация высококачественного Markdown.
-- **Компоненты**: vLLM с Qwen2.5-VL-32B-Instruct, нормализация Markdown, постобработка.
+- **Компоненты**: vLLM с моделью `Qwen/Qwen3-30B-A3B-Instruct-2507` (централизованно задаётся через `VLLM_MODEL_NAME`), нормализация Markdown, постобработка.
 - **Выходы**: Markdown с сохранением семантики и технических терминов.
 
 ### DAG 3: Translation Pipeline
 - **Цель**: Перевод с сохранением структуры и команд.
-- **Компоненты**: vLLM с Qwen3-30B-A3B-Instruct-2507, промпты для технической документации.
+- **Компоненты**: vLLM с моделью `Qwen/Qwen3-30B-A3B-Instruct-2507` (через ту же переменную `VLLM_MODEL_NAME`), промпты для технической документации.
 - **Выходы**: Переведённые Markdown-файлы (EN/RU) + сопутствующие метаданные.
 
 ### DAG 4: Quality Assurance (5 уровней)
