@@ -104,6 +104,7 @@ x-airflow-common: &airflow-common
     - ${PROJ_DIR}/logs:/opt/airflow/logs
     - ${PROJ_DIR}/airflow/config:/opt/airflow/config
     - ${PROJ_DIR}/airflow/plugins:/opt/airflow/plugins
+    - ${PROJ_DIR}/translator:/opt/airflow/translator:ro
     
 
 
@@ -301,8 +302,8 @@ services:
   # Quality Assurance Service
   quality-assurance:
     build:
-      context: ./quality_assurance
-      dockerfile: dockerfile.qa
+      context: .
+      dockerfile: quality_assurance/dockerfile.qa
     container_name: quality-assurance
     environment:
       # Service configuration
@@ -362,8 +363,8 @@ services:
   # Translator Service
   translator:
     build:
-      context: ./translator
-      dockerfile: dockerfile.translator
+      context: .
+      dockerfile: translator/dockerfile.translator
     container_name: translator
     environment:
       SERVICE_HOST: "0.0.0.0"

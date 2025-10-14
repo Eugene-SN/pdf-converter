@@ -59,7 +59,7 @@ RUN useradd --create-home --shell /bin/bash qa
 WORKDIR /app
 
 # Копируем requirements и устанавливаем Python зависимости
-COPY requirements-qa.txt /app/
+COPY quality_assurance/requirements-qa.txt /app/requirements-qa.txt
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements-qa.txt
 
@@ -74,13 +74,17 @@ RUN mkdir -p /app/temp \
     && chown -R qa:qa /mnt/storage/models
 
 # Копируем исходный код приложения
-COPY ocr_validator.py /app/
-COPY visual_diff_system.py /app/
-COPY ast_comparator.py /app/
-COPY ssim_calculator.py /app/
-COPY auto_corrector.py /app/
-COPY content_validator.py /app/
-COPY main.py /app/
+COPY quality_assurance/ocr_validator.py /app/
+COPY quality_assurance/visual_diff_system.py /app/
+COPY quality_assurance/ast_comparator.py /app/
+COPY quality_assurance/ssim_calculator.py /app/
+COPY quality_assurance/auto_corrector.py /app/
+COPY quality_assurance/content_validator.py /app/
+COPY quality_assurance/main.py /app/
+
+# Делаем модуль translator доступным для авто-корректора
+COPY translator /app/translator
+RUN chown -R qa:qa /app/translator
 
 # Устанавливаем права доступа
 RUN chmod +x /app/*.py
