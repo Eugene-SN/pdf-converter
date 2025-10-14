@@ -9,6 +9,14 @@ RUN apt-get update \
         libffi-dev \
         libssl-dev \
         build-essential \
+        poppler-utils \
+        libglib2.0-0 \
+        libgl1 \
+        libglx-mesa0 \
+        libsm6 \
+        libxext6 \
+        libxrender1 \
+        libgomp1 \
     && apt-get autoremove -yqq --purge \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
