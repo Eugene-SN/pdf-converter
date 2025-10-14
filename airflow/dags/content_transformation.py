@@ -27,16 +27,55 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Any, List, Optional, Tuple
 from requests.adapters import HTTPAdapter
 import sys
+import importlib.util
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
 
-from translator.vllm_client import (
+def _ensure_translator_importable() -> Path:
+    """Make sure the ``translator`` package can be imported.
+
+    Airflow mounts only the ``dags`` directory by default, therefore the
+    supporting ``translator`` package must either be baked into the image or
+    explicitly mounted and its parent directory placed on ``PYTHONPATH``.
+    """
+
+    existing_spec = importlib.util.find_spec("translator")
+    if existing_spec and existing_spec.submodule_search_locations:
+        return Path(existing_spec.submodule_search_locations[0]).parent
+
+    search_roots = []
+    env_path = os.getenv("TRANSLATOR_PACKAGE_PATH")
+    if env_path:
+        search_roots.append(Path(env_path).expanduser().resolve())
+
+    dag_file = Path(__file__).resolve()
+    search_roots.extend(parent for parent in dag_file.parents)
+    search_roots.append(Path.cwd().resolve())
+
+    for root in search_roots:
+        translator_dir = root / "translator"
+        if translator_dir.is_dir():
+            root_str = str(root)
+            if root_str not in sys.path:
+                sys.path.insert(0, root_str)
+            return root
+
+    raise ModuleNotFoundError(
+        "translator package could not be located. "
+        "Ensure the project directory containing the translator module is "
+        "mounted into the Airflow image or provide its location via "
+        "TRANSLATOR_PACKAGE_PATH."
+    )
+
+
+TRANSLATOR_PACKAGE_ROOT = _ensure_translator_importable()
+
+from translator.vllm_client import (  # noqa: E402 - imported after sys.path adjustment
     build_vllm_headers,
     create_vllm_requests_session,
     get_vllm_api_key as get_vllm_env_api_key,
 )
+
+TRANSLATOR_CLIENT_AVAILABLE = True
 
 # ✅ logger до любых try/except
 logger = logging.getLogger(__name__)
