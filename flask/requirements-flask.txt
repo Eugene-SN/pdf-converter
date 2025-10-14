@@ -22,6 +22,9 @@ gunicorn==22.0.0
 gevent>=24.10.3
 greenlet>=3.0.3
 
+# Docling для цифровых PDF (основной движок извлечения)
+docling==2.45.0
+
 # Сборка
 setuptools>=68.0.0
 wheel>=0.41.0
