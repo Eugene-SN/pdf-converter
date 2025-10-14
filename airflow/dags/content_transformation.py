@@ -27,10 +27,29 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Any, List, Optional, Tuple
 from requests.adapters import HTTPAdapter
 import sys
+import importlib.util
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
+
+def _ensure_project_root_on_path() -> Optional[Path]:
+    """Ensure the repository root (containing ``translator``) is importable."""
+
+    if importlib.util.find_spec("translator") is not None:
+        # Translator is already available (e.g. installed as a package).
+        return None
+
+    dag_file = Path(__file__).resolve()
+    for parent in dag_file.parents:
+        candidate = parent / "translator"
+        if candidate.exists():
+            parent_str = str(parent)
+            if parent_str not in sys.path:
+                sys.path.insert(0, parent_str)
+            return parent
+
+    return None
+
+
+PROJECT_ROOT = _ensure_project_root_on_path()
 
 from translator.vllm_client import (
     build_vllm_headers,
