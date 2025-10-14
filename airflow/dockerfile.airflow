@@ -47,8 +47,12 @@ COPY airflow/requirements-airflow.txt /requirements-airflow.txt
 RUN pip install --no-cache-dir --upgrade "pip<25" \
     && pip install --no-cache-dir -r /requirements-airflow.txt
 
-# Копирование DAG'ов и плагинов в стандартные каталоги Airflow
+# Копирование служебных модулей и DAG'ов в стандартные каталоги Airflow
+COPY --chown=airflow:airflow translator/ /opt/airflow/translator/
 COPY --chown=airflow:airflow airflow/dags/ /opt/airflow/dags/
+
+# Гарантируем доступность translator пакета по умолчанию
+ENV PYTHONPATH="/opt/airflow:${PYTHONPATH}"
 
 
 # Создание рабочих директорий

@@ -9,6 +9,8 @@ from pathlib import Path
 from types import ModuleType
 from typing import Dict, Optional
 
+import pytest
+
 
 class _FakeDAG:
     """Minimal stub for :mod:`airflow.DAG` used only for import validation."""
@@ -125,7 +127,25 @@ def _restore_modules(original_modules: Dict[str, Optional[ModuleType]]) -> None:
             sys.modules[name] = module
 
 
-def test_content_transformation_module_imports_without_translator_error():
+def _import_content_transformation() -> ModuleType:
+    """Import the DAG module using Airflow stubs."""
+
+    original_modules = _install_airflow_stubs()
+    try:
+        dag_module = importlib.import_module("airflow.dags.content_transformation")
+        assert hasattr(dag_module, "dag"), "DAG module should expose a dag instance"
+        return dag_module
+    finally:
+        _restore_modules(original_modules)
+
+
+def _reset_import_state() -> None:
+    sys.modules.pop("airflow.dags.content_transformation", None)
+    sys.modules.pop("translator", None)
+    sys.modules.pop("translator.vllm_client", None)
+
+
+def test_content_transformation_module_imports_with_translator_available():
     repo_root = Path(__file__).resolve().parents[1]
     repo_str = str(repo_root)
 
@@ -137,20 +157,37 @@ def test_content_transformation_module_imports_without_translator_error():
         sys.path.remove(repo_str)
         removed_path = True
 
-    # Ensure any cached translator modules are cleared so importlib performs
-    # a fresh resolution using the DAG's sys.path adjustments.
-    sys.modules.pop("translator", None)
-    sys.modules.pop("translator.vllm_client", None)
-
-    original_modules = _install_airflow_stubs()
-
     try:
-        dag_module = importlib.import_module("airflow.dags.content_transformation")
-        assert hasattr(dag_module, "dag"), "DAG module should expose a dag instance"
+        _reset_import_state()
+        dag_module = _import_content_transformation()
+        assert dag_module.TRANSLATOR_CLIENT_AVAILABLE is True
+        assert hasattr(dag_module, "TRANSLATOR_PACKAGE_ROOT")
+        assert Path(dag_module.TRANSLATOR_PACKAGE_ROOT).resolve() == repo_root
         assert "translator.vllm_client" in sys.modules, "translator package must be importable"
     finally:
-        _restore_modules(original_modules)
-        sys.modules.pop("translator", None)
-        sys.modules.pop("translator.vllm_client", None)
+        _reset_import_state()
         if removed_path:
             sys.path.insert(0, repo_str)
+
+
+def test_content_transformation_import_fails_when_translator_missing():
+    repo_root = Path(__file__).resolve().parents[1]
+    translator_dir = repo_root / "translator"
+    backup_dir = repo_root / "_translator_backup"
+
+    if backup_dir.exists():  # pragma: no cover - defensive cleanup
+        if backup_dir.is_dir():
+            for child in backup_dir.iterdir():
+                raise AssertionError("Unexpected leftover backup directory contents")
+        backup_dir.unlink()
+
+    translator_dir.rename(backup_dir)
+
+    try:
+        _reset_import_state()
+        with pytest.raises(ModuleNotFoundError) as excinfo:
+            _import_content_transformation()
+        assert "translator package could not be located" in str(excinfo.value)
+    finally:
+        _reset_import_state()
+        backup_dir.rename(translator_dir)
