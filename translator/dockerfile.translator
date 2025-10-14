@@ -21,15 +21,14 @@ RUN groupadd -r translator && useradd -r -g translator translator
 WORKDIR /app
 
 # Копирование requirements
-COPY requirements-translator.txt .
+COPY translator/requirements-translator.txt ./requirements-translator.txt
 
 # Установка Python зависимостей
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements-translator.txt
 
-# Копирование исходного кода
-COPY translator.py .
-COPY config.py .
+# Копирование исходного кода (как полноценного Python-пакета)
+COPY translator /app/translator
 
 # Создание необходимых директорий
 RUN mkdir -p /app/temp /app/logs /app/cache && \
@@ -50,5 +49,5 @@ EXPOSE 8003
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8003/health || exit 1
 
-# Запуск сервиса
-CMD ["python", "translator.py"]
+# Запуск сервиса как модуля, чтобы использовать пакет translator
+CMD ["python", "-m", "translator.translator"]

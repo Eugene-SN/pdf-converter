@@ -302,8 +302,8 @@ services:
   # Quality Assurance Service
   quality-assurance:
     build:
-      context: ./quality_assurance
-      dockerfile: dockerfile.qa
+      context: .
+      dockerfile: quality_assurance/dockerfile.qa
     container_name: quality-assurance
     environment:
       # Service configuration
@@ -363,8 +363,8 @@ services:
   # Translator Service
   translator:
     build:
-      context: ./translator
-      dockerfile: dockerfile.translator
+      context: .
+      dockerfile: translator/dockerfile.translator
     container_name: translator
     environment:
       SERVICE_HOST: "0.0.0.0"
