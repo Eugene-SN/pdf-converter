@@ -1,0 +1,54 @@
+[2025-10-15T09:34:14.921+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T09:32:11.706066+00:00 [queued]>
+[2025-10-15T09:34:14.927+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T09:32:11.706066+00:00 [queued]>
+[2025-10-15T09:34:14.927+0000] {taskinstance.py:2170} INFO - Starting attempt 2 of 2
+[2025-10-15T09:34:14.935+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_translated_document> on 2025-10-15 09:32:11.706066+00:00
+[2025-10-15T09:34:14.942+0000] {standard_task_runner.py:60} INFO - Started process 383 to run task
+[2025-10-15T09:34:14.944+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'quality_assurance', 'load_translated_document', 'manual__2025-10-15T09:32:11.706066+00:00', '--job-id', '1376', '--raw', '--subdir', 'DAGS_FOLDER/quality_assurance.py', '--cfg-path', '/tmp/tmpmgjpv1v6']
+[2025-10-15T09:34:14.947+0000] {standard_task_runner.py:88} INFO - Job 1376: Subtask load_translated_document
+[2025-10-15T09:34:14.990+0000] {task_command.py:423} INFO - Running <TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T09:32:11.706066+00:00 [running]> on host d83008b49fd2
+[2025-10-15T09:34:15.193+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='quality_assurance' AIRFLOW_CTX_TASK_ID='load_translated_document' AIRFLOW_CTX_EXECUTION_DATE='2025-10-15T09:32:11.706066+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-15T09:32:11.706066+00:00'
+[2025-10-15T09:34:15.193+0000] {quality_assurance.py:427} INFO - 🔍 Начало полной 5-уровневой QA валидации
+[2025-10-15T09:34:15.193+0000] {shared_utils.py:213} INFO - 📊 Метрики: {'dag_id': 'quality_assurance', 'task_id': 'load_translated_document', 'processing_time_seconds': 0.00014710426330566406, 'pages_processed': 0, 'file_size_mb': 0.0, 'success': False, 'timestamp': '2025-10-15T09:34:15.193931'}
+[2025-10-15T09:34:15.194+0000] {quality_assurance.py:478} ERROR - ❌ Ошибка загрузки документа для QA: Переведенный файл не найден: /app/output/en/1760520238_test_short.md
+[2025-10-15T09:34:15.194+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 428, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/quality_assurance.py", line 431, in load_translated_document
+    raise ValueError(f"Переведенный файл не найден: {translated_file}")
+ValueError: Переведенный файл не найден: /app/output/en/1760520238_test_short.md
+[2025-10-15T09:34:15.203+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=quality_assurance, task_id=load_translated_document, execution_date=20251015T093211, start_date=20251015T093414, end_date=20251015T093415
+[2025-10-15T09:34:15.203+0000] {quality_assurance.py:2288} ERROR - 
+🔥 ОШИБКА В 5-УРОВНЕВОЙ QUALITY ASSURANCE
+
+Задача: load_translated_document
+Ошибка: Переведенный файл не найден: /app/output/en/1760520238_test_short.md
+
+Возможные причины:
+1. Поврежденные данные документа
+2. Проблемы с Docker Pandoc сервисом
+3. Недоступность vLLM сервиса
+4. Отсутствие зависимостей (scikit-image, sentence-transformers)
+5. Проблемы с монтированными томами Docker
+6. Недостаток памяти для обработки
+7. Ошибки в правилах валидации
+
+Проверьте логи и состояние всех сервисов.
+
+[2025-10-15T09:34:15.203+0000] {shared_utils.py:284} ERROR - 
+❌ ОШИБКА ВЫПОЛНЕНИЯ
+DAG: quality_assurance
+Task: load_translated_document
+Время: 2025-10-15T09:34:15.203974
+Ошибка: Переведенный файл не найден: /app/output/en/1760520238_test_short.md
+
+[2025-10-15T09:34:15.211+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 1376 for task load_translated_document (Переведенный файл не найден: /app/output/en/1760520238_test_short.md; 383)
+[2025-10-15T09:34:15.236+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-15T09:34:15.258+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
