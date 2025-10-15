@@ -29,7 +29,7 @@ from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass, field
 
 # FastAPI и веб-сервер
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
@@ -998,7 +998,10 @@ async def get_translation_stats():
 @app.get("/metrics")
 async def metrics():
     """Prometheus метрики"""
-    return prometheus_client.generate_latest()
+    return Response(
+        prometheus_client.generate_latest(),
+        media_type=prometheus_client.CONTENT_TYPE_LATEST,
+    )
 
 # ==============================================
 # 💎 ЗАПУСК СЕРВЕРА
