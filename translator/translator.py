@@ -320,6 +320,10 @@ translation_requests = Counter('translation_requests_total', 'Total translation 
 translation_duration = Histogram('translation_duration_seconds', 'Translation duration')
 translation_quality = Gauge('translation_quality_score', 'Average translation quality score')
 cache_hit_ratio = Gauge('cache_hit_ratio', 'Cache hit ratio')
+translation_api_requests_current = Gauge(
+    'translation_api_requests_current',
+    'Number of translation API requests issued during current translation workflow'
+)
 vllm_request_latency = Histogram(
     'vllm_request_latency_seconds',
     'Latency of vLLM API chat completion requests',
@@ -603,6 +607,9 @@ class VLLMAPIClient:
         if response is None:
             return text
 
+        stats.api_requests += 1
+        translation_api_requests_current.set(stats.api_requests)
+
         # Постобработка
         cleaned = self._postprocess_translation(response, target_lang, stats)
 
@@ -758,6 +765,7 @@ async def vllm_translate(text: str, source_lang: str = "zh-CN", target_lang: str
     # Инициализация
     client = VLLMAPIClient()
     stats = TranslationStats()
+    translation_api_requests_current.set(0)
     
     lines = text.replace('\r\n', '\n').replace('\r', '\n').split('\n')
     stats.total_lines = len(lines)
