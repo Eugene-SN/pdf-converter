@@ -61,7 +61,7 @@ WORKDIR /app
 # Копируем requirements и устанавливаем Python зависимости
 COPY quality_assurance/requirements-qa.txt /app/requirements-qa.txt
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -r requirements-qa.txt
+RUN pip install -r requirements-qa.txt
 
 # Создаем необходимые директории
 RUN mkdir -p /app/temp \
