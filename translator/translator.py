@@ -48,6 +48,7 @@ from translator.vllm_client import (
     get_vllm_api_key,
     get_vllm_server_url,
 )
+from translator.vllm_limits import compute_safe_max_tokens_from_error
 
 
 DEFAULT_MAX_BYTES = 10 * 1024 * 1024
@@ -168,6 +169,18 @@ TRANSLATION_MODEL = os.getenv('VLLM_MODEL_NAME', 'Qwen/Qwen3-30B-A3B-Instruct-25
 # API параметры
 API_TEMPERATURE = float(os.getenv('VLLM_TEMPERATURE', '0.1'))
 API_MAX_TOKENS = int(os.getenv('VLLM_MAX_TOKENS', '4096'))
+MODEL_CONTEXT_LENGTH = int(os.getenv('VLLM_CONTEXT_LENGTH', '4096'))
+MAX_COMPLETION_RATIO = float(os.getenv('VLLM_MAX_COMPLETION_RATIO', '0.5'))
+CONTEXT_SAFETY_MARGIN = int(os.getenv('VLLM_CONTEXT_SAFETY_MARGIN', '64'))
+
+# Ограничение длины completion по умолчанию (оставляем запас под промпт)
+DEFAULT_COMPLETION_TOKENS = max(
+    1,
+    min(
+        API_MAX_TOKENS,
+        int(MODEL_CONTEXT_LENGTH * MAX_COMPLETION_RATIO) if MAX_COMPLETION_RATIO > 0 else API_MAX_TOKENS,
+    ),
+)
 API_TOP_P = float(os.getenv('VLLM_TOP_P', '0.9'))
 API_TOP_K = int(os.getenv('VLLM_TOP_K', '50'))
 
@@ -515,7 +528,7 @@ class VLLMAPIClient:
                 "model": TRANSLATION_MODEL,
                 "messages": messages,
                 "temperature": API_TEMPERATURE,
-                "max_tokens": API_MAX_TOKENS,
+                "max_tokens": DEFAULT_COMPLETION_TOKENS,
                 "top_p": API_TOP_P,
                 "stream": False,
                 "task_type": "translation"
@@ -553,11 +566,45 @@ class VLLMAPIClient:
                         latency_recorded = False
                         continue
                     else:
-                        if response.status in (425, 429, 503):
-                            vllm_model_loaded.labels(model=model_label).set(0)
-                        else:
-                            vllm_model_loaded.labels(model=model_label).set(0)
-                        logger.error(f"vLLM API error: {response.status}")
+                        error_message = None
+                        try:
+                            error_payload = await response.json()
+                            if isinstance(error_payload, dict):
+                                error_message = (
+                                    error_payload.get("error", {}).get("message")
+                                    if isinstance(error_payload.get("error"), dict)
+                                    else None
+                                ) or error_payload.get("message")
+                        except Exception:
+                            error_payload = None
+                            try:
+                                error_message = await response.text()
+                            except Exception:
+                                error_message = None
+
+                        if response.status == 400 and error_message:
+                            adjusted_max = compute_safe_max_tokens_from_error(
+                                error_message,
+                                requested_tokens=payload["max_tokens"],
+                                safety_margin=CONTEXT_SAFETY_MARGIN,
+                                api_max_tokens=API_MAX_TOKENS,
+                            )
+                            if adjusted_max:
+                                logger.warning(
+                                    "vLLM API reduced max_tokens due to context window",
+                                    requested=payload["max_tokens"],
+                                    adjusted=adjusted_max,
+                                )
+                                payload["max_tokens"] = adjusted_max
+                                latency_recorded = False
+                                continue
+
+                        vllm_model_loaded.labels(model=model_label).set(0)
+                        logger.error(
+                            "vLLM API error",
+                            status=response.status,
+                            error_message=error_message,
+                        )
                         break
 
         except asyncio.TimeoutError:
