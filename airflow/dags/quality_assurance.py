@@ -1830,6 +1830,15 @@ Please provide the corrected markdown document that addresses all the issues whi
 def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     """✅ ИСПРАВЛЕН: Вызов vLLM API с правильным форматом messages для строк"""
     timed_out_attempts = 0
+    headers: Dict[str, str] = {"Content-Type": "application/json"}
+    api_key = VLLM_CONFIG.get('api_key')
+    if isinstance(api_key, str) and api_key.strip():
+        headers["Authorization"] = f"Bearer {api_key.strip()}"
+    else:
+        logger.warning(
+            "No vLLM API key configured; proceeding without Authorization header for QA requests"
+        )
+
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
             attempt_number = attempt + 1
@@ -1853,7 +1862,8 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
                 response = requests.post(
                     VLLM_CONFIG['endpoint'],
                     json=payload,
-                    timeout=VLLM_CONFIG['timeout']
+                    timeout=VLLM_CONFIG['timeout'],
+                    headers=headers,
                 )
 
                 if response.status_code == 200:
