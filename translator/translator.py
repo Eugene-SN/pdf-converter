@@ -305,6 +305,7 @@ class TranslationStats:
     """Статистика перевода с Prometheus метриками"""
     total_lines: int = 0
     api_requests: int = 0
+    api_failures: int = 0
     cache_hits: int = 0
     cache_misses: int = 0
     chinese_remaining_start: int = 0
@@ -336,6 +337,10 @@ cache_hit_ratio = Gauge('cache_hit_ratio', 'Cache hit ratio')
 translation_api_requests_current = Gauge(
     'translation_api_requests_current',
     'Number of translation API requests issued during current translation workflow'
+)
+translation_api_request_failures = Counter(
+    'translation_api_request_failures_total',
+    'Number of failed translation API requests'
 )
 vllm_request_latency = Histogram(
     'vllm_request_latency_seconds',
@@ -650,11 +655,13 @@ class VLLMAPIClient:
         # Получаем ответ от vLLM API
         response = await self.enhanced_api_request(messages)
 
-        if response is None:
-            return text
-
         stats.api_requests += 1
         translation_api_requests_current.set(stats.api_requests)
+
+        if response is None:
+            stats.api_failures += 1
+            translation_api_request_failures.inc()
+            return text
 
         # Постобработка
         cleaned = self._postprocess_translation(response, target_lang, stats)
