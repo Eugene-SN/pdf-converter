@@ -1,11 +1,48 @@
+import asyncio
+import importlib
+
 import pytest
 from prometheus_client import REGISTRY
 
-from .. import translator as translator_module
+from translator.vllm_limits import compute_safe_max_tokens_from_error
 
 
-@pytest.mark.asyncio
-async def test_translate_single_increments_api_requests(monkeypatch):
+def test_compute_safe_max_tokens_from_error_parses_message():
+    message = (
+        "'max_tokens' or 'max_completion_tokens' is too large: 4096. "
+        "This model's maximum context length is 4096 tokens and your request has "
+        "462 input tokens (4096 > 4096 - 462)."
+    )
+
+    result = compute_safe_max_tokens_from_error(
+        message,
+        requested_tokens=4096,
+        safety_margin=64,
+        api_max_tokens=4096,
+    )
+
+    assert result == 3570
+
+
+def test_compute_safe_max_tokens_from_error_ignores_unmatched_message():
+    message = "Some other validation error"
+
+    result = compute_safe_max_tokens_from_error(
+        message,
+        requested_tokens=2048,
+        safety_margin=64,
+        api_max_tokens=4096,
+    )
+
+    assert result is None
+
+
+def test_translate_single_increments_api_requests(monkeypatch):
+    try:
+        translator_module = importlib.import_module("translator.translator")
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"translator module dependencies missing: {exc}")
+
     client = translator_module.VLLMAPIClient()
     stats = translator_module.TranslationStats()
 
@@ -21,7 +58,7 @@ async def test_translate_single_increments_api_requests(monkeypatch):
     monkeypatch.setattr(client, "enhanced_api_request", fake_enhanced_api_request)
     monkeypatch.setattr(translator_module.asyncio, "sleep", fast_sleep)
 
-    result = await client.translate_single("源文本", "zh-CN", "ru", stats)
+    result = asyncio.run(client.translate_single("源文本", "zh-CN", "ru", stats))
 
     assert result == "Переведенный текст"
     assert stats.api_requests == 1
