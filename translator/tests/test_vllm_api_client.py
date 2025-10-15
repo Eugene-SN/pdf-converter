@@ -2,6 +2,9 @@ import asyncio
 import importlib
 
 import pytest
+
+pytest.importorskip("prometheus_client")
+
 from prometheus_client import REGISTRY
 
 from translator.vllm_limits import compute_safe_max_tokens_from_error
@@ -63,3 +66,36 @@ def test_translate_single_increments_api_requests(monkeypatch):
     assert result == "Переведенный текст"
     assert stats.api_requests == 1
     assert REGISTRY.get_sample_value("translation_api_requests_current") == pytest.approx(1.0)
+
+
+def test_translate_single_counts_failed_requests(monkeypatch):
+    try:
+        translator_module = importlib.import_module("translator.translator")
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"translator module dependencies missing: {exc}")
+
+    client = translator_module.VLLMAPIClient()
+    stats = translator_module.TranslationStats()
+
+    translator_module.translation_cache.clear()
+    translator_module.translation_api_requests_current.set(0)
+
+    async def fake_enhanced_api_request(messages, timeout=translator_module.REQUEST_TIMEOUT):
+        return None
+
+    async def fast_sleep(_):
+        return None
+
+    monkeypatch.setattr(client, "enhanced_api_request", fake_enhanced_api_request)
+    monkeypatch.setattr(translator_module.asyncio, "sleep", fast_sleep)
+
+    failures_metric_name = "translation_api_request_failures_total"
+    failures_before = REGISTRY.get_sample_value(failures_metric_name) or 0.0
+
+    result = asyncio.run(client.translate_single("源文本", "zh-CN", "ru", stats))
+
+    assert result == "源文本"
+    assert stats.api_requests == 1
+    assert stats.api_failures == 1
+    assert REGISTRY.get_sample_value("translation_api_requests_current") == pytest.approx(1.0)
+    assert REGISTRY.get_sample_value(failures_metric_name) == pytest.approx(failures_before + 1.0)

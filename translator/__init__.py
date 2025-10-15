@@ -5,11 +5,24 @@ from __future__ import annotations
 from importlib import import_module
 from typing import TYPE_CHECKING, Any
 
-from .vllm_client import (
-    build_vllm_headers,
-    create_vllm_requests_session,
-    get_vllm_api_key,
-)
+try:
+    from .vllm_client import (
+        build_vllm_headers,
+        create_vllm_requests_session,
+        get_vllm_api_key,
+    )
+except ModuleNotFoundError as exc:  # pragma: no cover - optional dependency guard
+    if exc.name != "requests":
+        raise
+
+    def _missing_requests(*_args, **_kwargs):
+        raise ModuleNotFoundError(
+            "translator optional dependency 'requests' is required for HTTP helpers"
+        ) from exc
+
+    build_vllm_headers = _missing_requests
+    create_vllm_requests_session = _missing_requests
+    get_vllm_api_key = _missing_requests
 
 if TYPE_CHECKING:  # pragma: no cover - used only for type checkers
     from .translator import Translator  # noqa: F401
