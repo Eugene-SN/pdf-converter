@@ -472,10 +472,17 @@ class DoclingProcessor:
             logger.warning(f"Failed to initialize chunker: {e}")
             self.chunker = None
     
+    async def _convert_pdf(self, file_path: str):
+        """Run the Docling conversion in a background thread."""
+        logger.debug(
+            "Submitting Docling conversion to thread executor", file_path=file_path
+        )
+        return await asyncio.to_thread(self.converter.convert, file_path)
+
     async def process_document(
-        self, 
-        file_path: str, 
-        output_dir: str, 
+        self,
+        file_path: str,
+        output_dir: str,
         use_ocr: bool = False,
         ocr_languages: str = "eng"
     ) -> DocumentStructure:
@@ -520,7 +527,7 @@ class DoclingProcessor:
 
             # ✅ ИСПРАВЛЕНО: Обработка документа с современным API
             logger.info("🔄 Converting document with Docling...")
-            conversion_result = self.converter.convert(file_path)
+            conversion_result = await self._convert_pdf(file_path)
             docling_document = conversion_result.document
 
             # ✅ ИСПРАВЛЕНО: Правильное извлечение данных из Docling документа
@@ -542,7 +549,7 @@ class DoclingProcessor:
                 )
                 try:
                     self._initialize_ocr_converter(ocr_languages)
-                    conversion_result = self.converter.convert(file_path)
+                    conversion_result = await self._convert_pdf(file_path)
                     docling_document = conversion_result.document
                     document_structure = await self._extract_document_structure(
                         docling_document, file_path, output_dir
