@@ -1,0 +1,108 @@
+[2025-10-15T15:49:26.768+0000] {processor.py:161} INFO - Started process (PID=269) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:26.769+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:49:26.770+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:26.770+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:26.790+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:26.789+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:49:26.790+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:26.790+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:49:26.796+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:26.814+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:26.814+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:49:26.824+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:26.824+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:49:26.837+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.071 seconds
+[2025-10-15T15:49:57.067+0000] {processor.py:161} INFO - Started process (PID=282) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:57.068+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:49:57.069+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:57.069+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:57.088+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:57.088+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:49:57.088+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:57.088+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:49:57.094+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:49:57.112+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:57.112+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:49:57.122+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:49:57.121+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:49:57.134+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.069 seconds
+[2025-10-15T15:50:27.452+0000] {processor.py:161} INFO - Started process (PID=295) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:27.452+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:50:27.454+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:27.454+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:27.474+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:27.474+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:50:27.474+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:27.474+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:50:27.480+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:27.499+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:27.499+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:50:27.509+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:27.509+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:50:27.522+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.073 seconds
+[2025-10-15T15:50:57.750+0000] {processor.py:161} INFO - Started process (PID=308) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:57.750+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:50:57.752+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:57.751+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:57.771+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:57.771+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:50:57.771+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:57.771+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:50:57.777+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:50:57.795+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:57.794+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:50:57.804+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:50:57.804+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:50:57.817+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.069 seconds
+[2025-10-15T15:51:28.134+0000] {processor.py:161} INFO - Started process (PID=321) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:28.135+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:51:28.136+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:28.136+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:28.155+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:28.155+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:51:28.156+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:28.156+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:51:28.162+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:28.180+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:28.180+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:51:28.189+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:28.189+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:51:28.201+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
+[2025-10-15T15:51:58.427+0000] {processor.py:161} INFO - Started process (PID=334) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:58.428+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:51:58.429+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:58.429+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:58.449+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:58.449+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:51:58.449+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:58.449+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:51:58.455+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:51:58.473+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:58.473+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:51:58.482+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:51:58.482+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:51:58.494+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
+[2025-10-15T15:52:28.819+0000] {processor.py:161} INFO - Started process (PID=352) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:28.820+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:52:28.822+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:28.821+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:28.841+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:28.841+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:52:28.841+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:28.841+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:52:28.847+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:28.865+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:28.865+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:52:28.875+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:28.875+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:52:28.887+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
+[2025-10-15T15:52:59.124+0000] {processor.py:161} INFO - Started process (PID=366) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:59.124+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:52:59.126+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:59.126+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:59.145+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:59.145+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:52:59.145+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:59.145+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:52:59.151+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:52:59.170+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:59.170+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:52:59.179+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:52:59.179+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:52:59.191+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
+[2025-10-15T15:53:29.506+0000] {processor.py:161} INFO - Started process (PID=379) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:29.507+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:53:29.508+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:29.508+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:29.528+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:29.527+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:53:29.528+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:29.528+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:53:29.533+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:29.553+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:29.553+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:53:29.562+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:29.562+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:53:29.575+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.071 seconds
+[2025-10-15T15:53:59.859+0000] {processor.py:161} INFO - Started process (PID=392) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:59.859+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:53:59.861+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:59.861+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:59.880+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:59.880+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:53:59.881+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:59.881+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:53:59.886+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:53:59.905+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:59.905+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:53:59.915+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:53:59.915+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:53:59.927+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.071 seconds
+[2025-10-15T15:54:30.252+0000] {processor.py:161} INFO - Started process (PID=405) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:54:30.253+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:54:30.254+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:54:30.254+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:54:30.274+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:54:30.274+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:54:30.274+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:54:30.274+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:54:30.280+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:54:30.298+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:54:30.298+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:54:30.308+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:54:30.308+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:54:30.320+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
+[2025-10-15T15:55:00.600+0000] {processor.py:161} INFO - Started process (PID=418) to work on /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:55:00.601+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/content_transformation.py for tasks to queue
+[2025-10-15T15:55:00.603+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:55:00.602+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:55:00.622+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:55:00.622+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-15T15:55:00.622+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:55:00.622+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-15T15:55:00.628+0000] {processor.py:840} INFO - DAG(s) 'content_transformation' retrieved from /opt/airflow/dags/content_transformation.py
+[2025-10-15T15:55:00.646+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:55:00.646+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-15T15:55:00.656+0000] {logging_mixin.py:188} INFO - [2025-10-15T15:55:00.655+0000] {dag.py:3823} INFO - Setting next_dagrun for content_transformation to None, run_after=None
+[2025-10-15T15:55:00.668+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/content_transformation.py took 0.070 seconds
