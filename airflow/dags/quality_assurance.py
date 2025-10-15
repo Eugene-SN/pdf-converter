@@ -1648,7 +1648,6 @@ def _request_vllm_warmup() -> bool:
     warmup_url = f"{_VLLM_BASE_URL}/warmup"
     payload = {
         "model": VLLM_CONFIG['model'],
-        "task_type": "translation",
     }
     try:
         response = requests.post(warmup_url, json=payload, timeout=30)
@@ -1849,7 +1848,6 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
                     "max_tokens": VLLM_CONFIG['max_tokens'],
                     "temperature": VLLM_CONFIG['temperature'],
                     "top_p": VLLM_CONFIG['top_p'],
-                    "task_type": "translation",
                 }
 
                 response = requests.post(

@@ -1185,7 +1185,6 @@ def call_vllm_with_retry(prompt: str) -> Optional[str]:
         "top_p": VLLM_CONFIG['top_p'],
         "top_k": VLLM_CONFIG['top_k'],
         "stream": False,
-        "task_type": "translation",
     }
 
     for attempt in range(VLLM_CONFIG['max_retries']):

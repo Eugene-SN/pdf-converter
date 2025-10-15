@@ -531,7 +531,6 @@ class VLLMAPIClient:
                 "max_tokens": DEFAULT_COMPLETION_TOKENS,
                 "top_p": API_TOP_P,
                 "stream": False,
-                "task_type": "translation"
             }
 
             # Отключение thinking режима для Qwen3
