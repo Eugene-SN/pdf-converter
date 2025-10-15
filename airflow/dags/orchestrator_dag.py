@@ -154,6 +154,10 @@ def check_stage1_completion(**context) -> Dict[str, Any]:
                 with open(bridge_file, 'r', encoding='utf-8') as f:
                     bridge_data = json.load(f)
                 intermediate_file = bridge_data.get('intermediate_file') or bridge_data.get('docling_intermediate')
+                if isinstance(intermediate_file, list):
+                    intermediate_file = sorted(intermediate_file)[0]
+                if intermediate_file:
+                    logger.info("📄 Промежуточный файл Stage 1 получен из bridge-файла: %s", intermediate_file)
             except Exception:
                 intermediate_file = None
         if not intermediate_file:
@@ -164,7 +168,11 @@ def check_stage1_completion(**context) -> Dict[str, Any]:
             for pattern in patterns:
                 found = glob.glob(pattern)
                 if found:
-                    intermediate_file = found
+                    found = sorted(found)
+                    intermediate_file = found[0]
+                    logger.info(
+                        "📄 Найден промежуточный файл по шаблону %s: %s", pattern, intermediate_file
+                    )
                     break
         if not intermediate_file or not os.path.exists(intermediate_file):
             raise AirflowException(f"Промежуточный файл Stage 1 не найден (ts={timestamp}); проверьте том temp и пути")
