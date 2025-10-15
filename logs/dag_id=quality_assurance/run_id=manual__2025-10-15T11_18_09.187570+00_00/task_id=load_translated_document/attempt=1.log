@@ -1,0 +1,30 @@
+[2025-10-15T11:18:11.178+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T11:18:09.187570+00:00 [queued]>
+[2025-10-15T11:18:11.183+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T11:18:09.187570+00:00 [queued]>
+[2025-10-15T11:18:11.184+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-15T11:18:11.192+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_translated_document> on 2025-10-15 11:18:09.187570+00:00
+[2025-10-15T11:18:11.198+0000] {standard_task_runner.py:60} INFO - Started process 310 to run task
+[2025-10-15T11:18:11.201+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'quality_assurance', 'load_translated_document', 'manual__2025-10-15T11:18:09.187570+00:00', '--job-id', '1408', '--raw', '--subdir', 'DAGS_FOLDER/quality_assurance.py', '--cfg-path', '/tmp/tmpgqp7qnqg']
+[2025-10-15T11:18:11.203+0000] {standard_task_runner.py:88} INFO - Job 1408: Subtask load_translated_document
+[2025-10-15T11:18:11.248+0000] {task_command.py:423} INFO - Running <TaskInstance: quality_assurance.load_translated_document manual__2025-10-15T11:18:09.187570+00:00 [running]> on host 289cda1aef62
+[2025-10-15T11:18:11.314+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='quality_assurance' AIRFLOW_CTX_TASK_ID='load_translated_document' AIRFLOW_CTX_EXECUTION_DATE='2025-10-15T11:18:09.187570+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-15T11:18:09.187570+00:00'
+[2025-10-15T11:18:11.315+0000] {quality_assurance.py:427} INFO - 🔍 Начало полной 5-уровневой QA валидации
+[2025-10-15T11:18:11.315+0000] {shared_utils.py:213} INFO - 📊 Метрики: {'dag_id': 'quality_assurance', 'task_id': 'load_translated_document', 'processing_time_seconds': 0.0002262592315673828, 'pages_processed': 0, 'file_size_mb': 0.0, 'success': False, 'timestamp': '2025-10-15T11:18:11.315753'}
+[2025-10-15T11:18:11.315+0000] {quality_assurance.py:478} ERROR - ❌ Ошибка загрузки документа для QA: Переведенный файл не найден: /app/output/en/1760526595_test_short.md
+[2025-10-15T11:18:11.316+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 428, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/quality_assurance.py", line 431, in load_translated_document
+    raise ValueError(f"Переведенный файл не найден: {translated_file}")
+ValueError: Переведенный файл не найден: /app/output/en/1760526595_test_short.md
+[2025-10-15T11:18:11.326+0000] {taskinstance.py:1138} INFO - Marking task as UP_FOR_RETRY. dag_id=quality_assurance, task_id=load_translated_document, execution_date=20251015T111809, start_date=20251015T111811, end_date=20251015T111811
+[2025-10-15T11:18:11.335+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 1408 for task load_translated_document (Переведенный файл не найден: /app/output/en/1760526595_test_short.md; 310)
+[2025-10-15T11:18:11.372+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-15T11:18:11.394+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
