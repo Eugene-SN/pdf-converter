@@ -70,6 +70,14 @@ def validate_orchestrator_input(**context) -> Dict[str, Any]:
         if dag_run_conf.get('enable_ocr') is None:
             logger.info('OCR flag not provided; defaulting to disabled for digital PDFs')
 
+        qa_fail_action = str(dag_run_conf.get('qa_fail_action', 'halt')).strip().lower()
+        if qa_fail_action not in {'halt', 'degrade', 'force'}:
+            logger.warning(
+                "Получено неизвестное значение qa_fail_action=%s, применяется режим 'halt'",
+                qa_fail_action,
+            )
+            qa_fail_action = 'halt'
+
         master_config = {
             'input_file': input_file,
             'filename': dag_run_conf['filename'],
@@ -94,6 +102,7 @@ def validate_orchestrator_input(**context) -> Dict[str, Any]:
             'output_zh_dir': '/app/output/zh',
             'output_target_dir': f"/app/output/{target_language}" if target_language not in ['original', 'zh'] else '/app/output/zh',
             'container_temp_dir': '/opt/airflow/temp',
+            'qa_fail_action': qa_fail_action,
         }
         MetricsUtils.record_processing_metrics(
             dag_id='orchestrator_dag',
@@ -269,14 +278,68 @@ def check_stage2_completion(**context) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"❌ Ошибка проверки Stage 2: {e}")
         raise
+
+
+def _extract_qa_payload(raw_result: Any) -> Dict[str, Any]:
+    """Пытается извлечь итоговый словарь из результата запуска QA DAG."""
+
+    if isinstance(raw_result, dict):
+        for key in ('return_value', 'value', 'final_result', 'qa_result'):
+            candidate = raw_result.get(key)
+            if isinstance(candidate, dict):
+                return candidate
+        return raw_result
+    if isinstance(raw_result, list) and raw_result:
+        return _extract_qa_payload(raw_result[-1])
+    return {}
+
+
+def _build_qa_summary(qa_payload: Dict[str, Any], qa_fail_action: str) -> Dict[str, Any]:
+    """Формирует словарь с ключевыми полями QA для Stage 3 и шорт-схемы."""
+
+    qa_payload = qa_payload or {}
+    quality_passed = bool(qa_payload.get('quality_passed'))
+    qa_completed = bool(qa_payload.get('qa_completed', qa_payload.get('enterprise_validation')))
+    pipeline_ready = bool(qa_payload.get('pipeline_ready'))
+
+    gate_passed = quality_passed and qa_completed
+    override_applied: Optional[str] = None
+    if not gate_passed and pipeline_ready:
+        gate_passed = True
+        override_applied = 'pipeline_ready'
+    if not gate_passed and qa_fail_action in {'degrade', 'force'}:
+        gate_passed = True
+        override_applied = qa_fail_action
+
+    summary = {
+        'quality_passed': quality_passed,
+        'qa_completed': qa_completed,
+        'pipeline_ready': pipeline_ready,
+        'qa_report': qa_payload.get('qa_report'),
+        'issues_count': qa_payload.get('issues_count'),
+        'auto_correction_status': qa_payload.get('auto_correction_status'),
+        'auto_correction_requires_manual_followup': qa_payload.get('auto_correction_requires_manual_followup'),
+        'override_applied': override_applied,
+        'qa_gate_passed': gate_passed,
+        'final_document': qa_payload.get('final_document'),
+        'final_content_available': bool(qa_payload.get('final_content')),
+    }
+    return summary
+
+
 def prepare_stage3_config(**context) -> Dict[str, Any]:
     """✅ ИСПРАВЛЕНО: Подготовка конфигурации для Stage 3 (Translation)"""
     try:
         master_config = context['task_instance'].xcom_pull(task_ids='validate_orchestrator_input')
         stage2_result = context['task_instance'].xcom_pull(task_ids='check_stage2_completion')
+        qa_trigger_result = context['task_instance'].xcom_pull(task_ids='trigger_stage4_quality_assurance')
         if not master_config['translation_required']:
             logger.info("🔄 Перевод не требуется, пропускаем Stage 3")
-            return {'skip_stage3': True}
+            return {
+                'skip_stage3': True,
+                'qa_gate_passed': False,
+                'qa_summary': _build_qa_summary({}, master_config.get('qa_fail_action', 'halt')),
+            }
         markdown_file = stage2_result['markdown_file']
         if isinstance(markdown_file, list):
             markdown_file = sorted(markdown_file)[0]
@@ -286,8 +349,36 @@ def prepare_stage3_config(**context) -> Dict[str, Any]:
         if not os.path.exists(markdown_file):
             raise AirflowException(f"Markdown файл не найден перед Stage 3: {markdown_file}")
 
+        qa_payload = _extract_qa_payload(qa_trigger_result)
+        qa_summary = _build_qa_summary(qa_payload, master_config.get('qa_fail_action', 'halt'))
+
+        qa_gate_passed = qa_summary['qa_gate_passed']
+        if not qa_gate_passed:
+            logger.warning(
+                "❌ Перевод заблокирован: QA Stage 4 не готов (quality_passed=%s, qa_completed=%s, override=%s)",
+                qa_summary.get('quality_passed'),
+                qa_summary.get('qa_completed'),
+                qa_summary.get('override_applied'),
+            )
+
+        qa_ready_markdown = markdown_file
+        qa_final_content = qa_payload.get('final_content') if isinstance(qa_payload, dict) else None
+        if qa_final_content:
+            airflow_temp = os.getenv('AIRFLOW_TEMP_DIR', os.path.join(os.getenv('AIRFLOW_HOME', '/opt/airflow'), 'temp'))
+            SharedUtils.ensure_directory(airflow_temp)
+            sanitized_name = master_config['filename'].replace('.pdf', '.md')
+            qa_ready_markdown = os.path.join(
+                airflow_temp,
+                f"qa_stage2_ready_{master_config['timestamp']}_{sanitized_name}"
+            )
+            with open(qa_ready_markdown, 'w', encoding='utf-8') as corrected_handle:
+                corrected_handle.write(qa_final_content)
+            qa_summary['corrected_file'] = qa_ready_markdown
+        else:
+            qa_summary['corrected_file'] = None
+
         stage3_config = {
-            'markdown_file': markdown_file,
+            'markdown_file': qa_ready_markdown,
             'original_config': master_config,
             'stage2_completed': True,
             'target_language': master_config['target_language'],
@@ -296,6 +387,8 @@ def prepare_stage3_config(**context) -> Dict[str, Any]:
             'translation_method': 'builtin_dictionary_v4',
             'pipeline_version': '4.0_fixed',
             'output_mode': 'orchestrated',
+            'qa_summary': qa_summary,
+            'qa_gate_passed': qa_gate_passed,
         }
         logger.info(f"🚀 Подготовлен запуск Stage 3: Translation → {master_config['target_language']}")
         return stage3_config
@@ -306,11 +399,23 @@ def prepare_stage4_config(**context) -> Dict[str, Any]:
     """✅ ИСПРАВЛЕНО: Подготовка конфигурации для Stage 4 (QA)"""
     try:
         master_config = context['task_instance'].xcom_pull(task_ids='validate_orchestrator_input')
-        if master_config['translation_required']:
-            translated_file = f"{master_config['output_target_dir']}/{master_config['timestamp']}_{master_config['filename'].replace('.pdf', '.md')}"
-        else:
-            stage2_result = context['task_instance'].xcom_pull(task_ids='check_stage2_completion')
-            translated_file = stage2_result['markdown_file']
+        stage2_result = context['task_instance'].xcom_pull(task_ids='check_stage2_completion')
+        translated_file = stage2_result['markdown_file']
+        if isinstance(translated_file, list):
+            translated_candidates: List[str] = sorted(translated_file)
+            translated_file = translated_candidates[0]
+            logger.warning(
+                "⚠️ Stage2 вернул несколько Markdown файлов для QA, выбран первый: %s",
+                translated_file,
+            )
+        if not isinstance(translated_file, str):
+            raise AirflowException(
+                f"Stage4 QA не может работать с типом файла {type(translated_file)}"
+            )
+        if not os.path.exists(translated_file):
+            raise AirflowException(
+                f"Stage4 QA входной файл не найден: {translated_file}"
+            )
         document_id = master_config.get(
             'document_id',
             f"{master_config['timestamp']}_{master_config['filename'].replace('.pdf', '')}"
@@ -319,7 +424,7 @@ def prepare_stage4_config(**context) -> Dict[str, Any]:
         stage4_config = {
             'translated_file': translated_file,
             'original_config': master_config,
-            'stage3_completed': not master_config['translation_required'] or True,
+            'stage3_completed': False,
             'target_language': master_config['target_language'],
             'quality_target': master_config['quality_target'],
             'auto_correction': master_config.get('auto_correction', True),
@@ -328,6 +433,8 @@ def prepare_stage4_config(**context) -> Dict[str, Any]:
             'pipeline_version': '4.0_fixed',
             'original_pdf_path': master_config['input_file'],
             'document_id': document_id,
+            'qa_input_stage': 'stage2_markdown',
+            'qa_fail_action': master_config.get('qa_fail_action', 'halt'),
         }
         logger.info(f"🚀 Подготовлен запуск Stage 4: Quality Assurance")
         return stage4_config
@@ -520,7 +627,23 @@ notify_completion = PythonOperator(
 def _should_translate(**context) -> bool:
     """Возвращает True, если перевод требуется, иначе False (ShortCircuit)."""
     mc = context['task_instance'].xcom_pull(task_ids='validate_orchestrator_input')
-    return bool(mc.get('translation_required'))
+    if not mc or not mc.get('translation_required'):
+        return False
+
+    stage3_config = context['task_instance'].xcom_pull(task_ids='prepare_stage3_config') or {}
+    qa_gate_passed = stage3_config.get('qa_gate_passed', False)
+    if qa_gate_passed:
+        return True
+
+    qa_summary = stage3_config.get('qa_summary', {})
+    override = qa_summary.get('override_applied')
+    logger.warning(
+        "Перевод остановлен: QA Stage 4 не прошел проверку (override=%s, quality_passed=%s, qa_completed=%s)",
+        override,
+        qa_summary.get('quality_passed'),
+        qa_summary.get('qa_completed'),
+    )
+    return False
 should_translate = ShortCircuitOperator(
     task_id='should_translate',
     python_callable=_should_translate,
@@ -529,18 +652,21 @@ should_translate = ShortCircuitOperator(
 )
 # Ветвление: запуск Stage 3 только при необходимости перевода
 prepare_stage3 >> should_translate >> trigger_stage3
-# Разрешить Stage 4 идти от Stage 2 (и учитывать результат Stage 3, если он был)
+# Перенос Stage 4 перед переводом и явная зависимость итогов
 from airflow.utils.trigger_rule import TriggerRule
 prepare_stage4.trigger_rule = TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS
 prepare_stage4.set_upstream(check_stage2)
-prepare_stage4.set_upstream(trigger_stage3)
+trigger_stage4.set_upstream(prepare_stage4)
+prepare_stage3.set_upstream(trigger_stage4)
+finalize_orchestrator.trigger_rule = TriggerRule.NONE_FAILED
+finalize_orchestrator.set_upstream([trigger_stage4, trigger_stage3])
 # ===============================================================================
 # ОПРЕДЕЛЕНИЕ ЗАВИСИМОСТЕЙ
 # ===============================================================================
 (validate_input >> prepare_stage1 >> trigger_stage1 >> check_stage1 >>
  prepare_stage2 >> trigger_stage2 >> check_stage2 >>
- prepare_stage3 >>
- prepare_stage4 >> trigger_stage4 >>
+ prepare_stage4 >> trigger_stage4 >> prepare_stage3 >>
+ should_translate >> trigger_stage3 >>
  finalize_orchestrator >> notify_completion)
 # ===============================================================================
 # ОБРАБОТКА ОШИБОК...
