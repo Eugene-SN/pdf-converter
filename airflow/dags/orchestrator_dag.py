@@ -154,6 +154,10 @@ def check_stage1_completion(**context) -> Dict[str, Any]:
                 with open(bridge_file, 'r', encoding='utf-8') as f:
                     bridge_data = json.load(f)
                 intermediate_file = bridge_data.get('intermediate_file') or bridge_data.get('docling_intermediate')
+                if isinstance(intermediate_file, list):
+                    intermediate_file = sorted(intermediate_file)[0]
+                if intermediate_file:
+                    logger.info("📄 Промежуточный файл Stage 1 получен из bridge-файла: %s", intermediate_file)
             except Exception:
                 intermediate_file = None
         if not intermediate_file:
@@ -164,7 +168,11 @@ def check_stage1_completion(**context) -> Dict[str, Any]:
             for pattern in patterns:
                 found = glob.glob(pattern)
                 if found:
-                    intermediate_file = found
+                    found = sorted(found)
+                    intermediate_file = found[0]
+                    logger.info(
+                        "📄 Найден промежуточный файл по шаблону %s: %s", pattern, intermediate_file
+                    )
                     break
         if not intermediate_file or not os.path.exists(intermediate_file):
             raise AirflowException(f"Промежуточный файл Stage 1 не найден (ts={timestamp}); проверьте том temp и пути")
@@ -226,7 +234,7 @@ def check_stage2_completion(**context) -> Dict[str, Any]:
         for path in [expected_md_file, host_md_file, fallback_md_file]:
             if os.path.exists(path):
                 md_file_path = path
-                logger.info(f"✅ Найден MD файл: {path}")
+                logger.info(f"✅ Найден MD файл по точному пути: {path}")
                 break
         if not md_file_path:
             patterns = [
@@ -238,10 +246,15 @@ def check_stage2_completion(**context) -> Dict[str, Any]:
                 f"/opt/airflow/output/zh/{filename.replace('.pdf', '.md')}",
             ]
             for pattern in patterns:
-                files = glob.glob(pattern)
+                files = sorted(glob.glob(pattern))
                 if files:
-                    md_file_path = files
+                    md_file_path = files[0]
+                    logger.info(
+                        "✅ Найден MD файл по шаблону %s: %s", pattern, md_file_path
+                    )
                     break
+        if isinstance(md_file_path, list):
+            md_file_path = sorted(md_file_path)[0]
         if not md_file_path:
             raise AirflowException(f"❌ MD файл для {filename} не найден")
         stage2_completion = {
@@ -251,7 +264,7 @@ def check_stage2_completion(**context) -> Dict[str, Any]:
             'original_config': master_config,
             'completion_time': datetime.now().isoformat(),
         }
-        logger.info(f"✅ Stage 2 завершен успешно: {md_file_path}")
+        logger.info(f"✅ Stage 2 завершен успешно, выбран файл: {md_file_path}")
         return stage2_completion
     except Exception as e:
         logger.error(f"❌ Ошибка проверки Stage 2: {e}")
@@ -264,8 +277,17 @@ def prepare_stage3_config(**context) -> Dict[str, Any]:
         if not master_config['translation_required']:
             logger.info("🔄 Перевод не требуется, пропускаем Stage 3")
             return {'skip_stage3': True}
+        markdown_file = stage2_result['markdown_file']
+        if isinstance(markdown_file, list):
+            markdown_file = sorted(markdown_file)[0]
+            logger.warning("⚠️ Получен список путей MD, выбран первый: %s", markdown_file)
+        if not isinstance(markdown_file, str):
+            raise AirflowException(f"Некорректный тип пути MD файла: {type(markdown_file)}")
+        if not os.path.exists(markdown_file):
+            raise AirflowException(f"Markdown файл не найден перед Stage 3: {markdown_file}")
+
         stage3_config = {
-            'markdown_file': stage2_result['markdown_file'],
+            'markdown_file': markdown_file,
             'original_config': master_config,
             'stage2_completed': True,
             'target_language': master_config['target_language'],
