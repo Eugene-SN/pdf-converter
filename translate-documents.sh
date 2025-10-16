@@ -550,7 +550,7 @@ find_related_output_file() {
             ts=$(stat -f %m "$file" 2>/dev/null || echo 0)
         fi
 
-        if [[ "$(basename "$file")" == "$base"* ]] && [ "$ts" -ge "$latest_ts" ]; then
+        if [[ "$(basename "$file")" == *"${base}"* ]] && [ "$ts" -ge "$latest_ts" ]; then
             latest_match="$file"
             latest_ts=$ts
         fi
