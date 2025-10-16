@@ -806,18 +806,29 @@ class VLLMAPIClient:
             cache_translation(text, source_lang, target_lang, combined_translation)
             return combined_translation
 
-        if prompt_tokens >= self._safe_context_limit:
-            shrink_factor = 1
+        async def attempt_chunking(initial_shrink: int = 1) -> Optional[str]:
+            shrink_factor = max(1, initial_shrink)
             while True:
-                chunks = self._chunk_text_to_fit(stripped_text, base_prompt_tokens, shrink_factor=shrink_factor)
-                combined = await translate_chunks(chunks)
-                if combined is not None:
-                    return combined
+                chunks = self._chunk_text_to_fit(
+                    stripped_text,
+                    base_prompt_tokens,
+                    shrink_factor=shrink_factor,
+                )
 
-                budget = max(1, (self._safe_context_limit - base_prompt_tokens - 1) // max(1, shrink_factor))
+                if len(chunks) > 1:
+                    return await translate_chunks(chunks)
+
+                shrink_factor *= 2
+                budget = max(1, (self._safe_context_limit - base_prompt_tokens - 1) // shrink_factor)
                 if budget <= 1:
                     break
-                shrink_factor *= 2
+
+            return None
+
+        if prompt_tokens >= self._safe_context_limit:
+            combined = await attempt_chunking()
+            if combined is not None:
+                return combined
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -827,27 +838,32 @@ class VLLMAPIClient:
         available_completion = self._safe_context_limit - prompt_tokens
         max_completion_tokens = max(1, min(DEFAULT_COMPLETION_TOKENS, available_completion))
 
-        response = await self.enhanced_api_request(messages, max_tokens=max_completion_tokens)
+        response: Optional[str] = None
+        api_error: Optional[Exception] = None
 
         stats.api_requests += 1
         translation_api_requests_current.set(stats.api_requests)
+
+        try:
+            response = await self.enhanced_api_request(messages, max_tokens=max_completion_tokens)
+        except ValueError as err:
+            api_error = err
+            self._last_error_message = str(err)
+            response = None
 
         if response is None:
             stats.api_failures += 1
             translation_api_request_failures.inc()
 
-            if self.last_response_status == 400:
-                shrink_factor = 2
-                while True:
-                    chunks = self._chunk_text_to_fit(stripped_text, base_prompt_tokens, shrink_factor=shrink_factor)
-                    combined = await translate_chunks(chunks)
-                    if combined is not None:
-                        return combined
+            combined = await attempt_chunking(initial_shrink=2)
+            if combined is not None:
+                return combined
 
-                    budget = max(1, (self._safe_context_limit - base_prompt_tokens - 1) // shrink_factor)
-                    if budget <= 1:
-                        break
-                    shrink_factor *= 2
+            if api_error is not None:
+                logger.error("vLLM API raised ValueError", error_message=str(api_error))
+
+            if self.last_response_status == 400 and self._last_error_message:
+                logger.warning("Unable to recover from 400 response with chunking", error=self._last_error_message)
 
             return text
 

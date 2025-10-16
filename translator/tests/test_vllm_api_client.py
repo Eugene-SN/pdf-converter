@@ -40,6 +40,22 @@ def test_compute_safe_max_tokens_from_error_ignores_unmatched_message():
     assert result is None
 
 
+def test_compute_safe_max_tokens_from_error_handles_generic_message():
+    message = (
+        "However, your request has 3500 input tokens which exceeds the limit of 4096 tokens. "
+        "Please reduce the prompt or completion length."
+    )
+
+    result = compute_safe_max_tokens_from_error(
+        message,
+        requested_tokens=4096,
+        safety_margin=128,
+        api_max_tokens=4096,
+    )
+
+    assert result == 468
+
+
 def test_translate_single_increments_api_requests(monkeypatch):
     try:
         translator_module = importlib.import_module("translator.translator")
@@ -170,6 +186,67 @@ def test_translate_single_splits_when_prompt_too_long(monkeypatch):
         <= translator_module.SAFE_CONTEXT_LIMIT
         for _, max_tokens in calls
     )
+
+
+def test_translate_single_value_error_triggers_chunking(monkeypatch):
+    try:
+        translator_module = importlib.import_module("translator.translator")
+    except ModuleNotFoundError as exc:
+        pytest.skip(f"translator module dependencies missing: {exc}")
+
+    translator_module.MODEL_CONTEXT_LENGTH = 256
+    translator_module.CONTEXT_SAFETY_MARGIN = 32
+    translator_module.SAFE_CONTEXT_LIMIT = max(
+        1, translator_module.MODEL_CONTEXT_LENGTH - translator_module.CONTEXT_SAFETY_MARGIN
+    )
+    translator_module.DEFAULT_COMPLETION_TOKENS = max(
+        1,
+        min(
+            translator_module.API_MAX_TOKENS,
+            translator_module.SAFE_CONTEXT_LIMIT,
+            int(translator_module.MODEL_CONTEXT_LENGTH * translator_module.MAX_COMPLETION_RATIO)
+            if translator_module.MAX_COMPLETION_RATIO > 0
+            else translator_module.API_MAX_TOKENS,
+        ),
+    )
+
+    translator_module.translation_cache.clear()
+    translator_module.translation_api_requests_current.set(0)
+
+    client = translator_module.VLLMAPIClient()
+    stats = translator_module.TranslationStats()
+
+    attempts = []
+
+    async def fake_enhanced_api_request(
+        messages,
+        timeout=translator_module.REQUEST_TIMEOUT,
+        *,
+        max_tokens=None,
+    ):
+        user_content = messages[1]["content"]
+        chunk_text = user_content.split("\n\n", 1)[-1]
+        attempts.append(chunk_text)
+        if len(chunk_text) > 60:
+            raise ValueError(
+                "However, your request has 8192 input tokens which exceeds the limit of 4096 tokens."
+            )
+        return chunk_text.replace("字", "译")
+
+    async def fast_sleep(_):
+        return None
+
+    monkeypatch.setattr(client, "enhanced_api_request", fake_enhanced_api_request)
+    monkeypatch.setattr(translator_module.asyncio, "sleep", fast_sleep)
+
+    long_text = "字" * 240
+
+    result = asyncio.run(client.translate_single(long_text, "zh-CN", "ru", stats))
+
+    assert len(attempts) > 1
+    assert result == "译" * len(long_text)
+    assert stats.api_requests == len(attempts)
+    assert stats.api_failures >= 1
 
 
 def test_vllm_translate_batches_respect_context(monkeypatch):

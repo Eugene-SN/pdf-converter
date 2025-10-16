@@ -13,6 +13,21 @@ MAX_TOKENS_ERROR_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+GENERIC_INPUT_PATTERN = re.compile(
+    r"your request has (?P<input>\d+) input tokens",
+    re.IGNORECASE,
+)
+
+GENERIC_CONTEXT_PATTERN = re.compile(
+    r"(?:limit|maximum context length|supports(?: at most| up to)?|cap)[^\d]*(?P<context>\d+)\s+tokens",
+    re.IGNORECASE,
+)
+
+GENERIC_REQUESTED_PATTERN = re.compile(
+    r"(?:max_tokens|max_completion_tokens)[^\d]*(?P<requested>\d+)",
+    re.IGNORECASE,
+)
+
 
 def compute_safe_max_tokens_from_error(
     error_message: str,
@@ -42,16 +57,35 @@ def compute_safe_max_tokens_from_error(
         parsed or when no adjustment is required.
     """
 
-    match = MAX_TOKENS_ERROR_PATTERN.search(error_message or "")
-    if not match:
-        return None
+    message = error_message or ""
 
-    try:
-        requested_in_message = int(match.group("requested"))
-        context_limit = int(match.group("context"))
-        prompt_tokens = int(match.group("input"))
-    except (TypeError, ValueError):
-        return None
+    match = MAX_TOKENS_ERROR_PATTERN.search(message)
+    if match:
+        try:
+            requested_in_message = int(match.group("requested"))
+            context_limit = int(match.group("context"))
+            prompt_tokens = int(match.group("input"))
+        except (TypeError, ValueError):
+            return None
+    else:
+        generic_input = GENERIC_INPUT_PATTERN.search(message)
+        generic_context = GENERIC_CONTEXT_PATTERN.search(message)
+        if not (generic_input and generic_context):
+            return None
+
+        try:
+            prompt_tokens = int(generic_input.group("input"))
+            context_limit = int(generic_context.group("context"))
+        except (TypeError, ValueError):
+            return None
+
+        requested_match = GENERIC_REQUESTED_PATTERN.search(message)
+        try:
+            requested_in_message = (
+                int(requested_match.group("requested")) if requested_match else requested_tokens
+            )
+        except (TypeError, ValueError):
+            requested_in_message = requested_tokens
 
     available_tokens = context_limit - prompt_tokens - safety_margin
     if available_tokens < 1:
