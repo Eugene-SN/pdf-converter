@@ -376,7 +376,14 @@ process_pdf_with_translation() {
 
         # Ожидание завершения
         if wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"; then
-            show_translation_results "$filename" "$target_language" "$output_dir"
+            local failure_flag=0
+            show_translation_results "$filename" "$target_language" "$output_dir" || failure_flag=$?
+
+            if [ "$failure_flag" -ne 0 ]; then
+                log "ERROR" "❌ Перевод завершён, но итоговый файл не сформирован — проверьте блокировки QA (Stage 3)."
+                exit "$failure_flag"
+            fi
+
             return 0
         fi
         return 1
@@ -504,7 +511,14 @@ translate_single_md() {
 
         # Ожидание завершения
         if wait_for_translation_completion "$dag_run_id" "$filename" "$target_language"; then
-            show_translation_results "$filename" "$target_language" "$output_dir"
+            local failure_flag=0
+            show_translation_results "$filename" "$target_language" "$output_dir" || failure_flag=$?
+
+            if [ "$failure_flag" -ne 0 ]; then
+                log "ERROR" "❌ Перевод завершён, но итоговый файл не сформирован — проверьте блокировки QA (Stage 3)."
+                exit "$failure_flag"
+            fi
+
             return 0
         fi
         return 1
@@ -667,11 +681,12 @@ show_translation_results() {
 
     if [ -z "$result_file" ]; then
         log "WARN" "⚠️ Не удалось определить результат перевода для $filename"
-        return 1
+        return 2
     fi
 
     log "INFO" "📁 Результирующий файл ($target_language): $result_file"
     analyze_markdown_file "$result_file" "Перевод → $target_language"
+    return 0
 }
 
 # Сценарий 5: Только конвертация
@@ -1139,6 +1154,7 @@ show_processing_results() {
         echo " - Проверьте работу всех сервисов"
     else
         echo -e "${GREEN}🎉 Все файлы успешно обработаны!${NC}"
+        echo "   ✅ Успех подтверждён наличием итоговых файлов перевода в выходной директории."
     fi
 }
 
