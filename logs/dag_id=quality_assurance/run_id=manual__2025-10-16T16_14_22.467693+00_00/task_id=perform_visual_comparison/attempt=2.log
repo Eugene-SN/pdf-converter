@@ -1,0 +1,55 @@
+[2025-10-16T16:16:27.521+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-16T16:14:22.467693+00:00 [queued]>
+[2025-10-16T16:16:27.527+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-16T16:14:22.467693+00:00 [queued]>
+[2025-10-16T16:16:27.527+0000] {taskinstance.py:2170} INFO - Starting attempt 2 of 2
+[2025-10-16T16:16:27.535+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): perform_visual_comparison> on 2025-10-16 16:14:22.467693+00:00
+[2025-10-16T16:16:27.541+0000] {standard_task_runner.py:60} INFO - Started process 327 to run task
+[2025-10-16T16:16:27.544+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'quality_assurance', 'perform_visual_comparison', 'manual__2025-10-16T16:14:22.467693+00:00', '--job-id', '1706', '--raw', '--subdir', 'DAGS_FOLDER/quality_assurance.py', '--cfg-path', '/tmp/tmp6u2h49gn']
+[2025-10-16T16:16:27.546+0000] {standard_task_runner.py:88} INFO - Job 1706: Subtask perform_visual_comparison
+[2025-10-16T16:16:27.590+0000] {task_command.py:423} INFO - Running <TaskInstance: quality_assurance.perform_visual_comparison manual__2025-10-16T16:14:22.467693+00:00 [running]> on host 2cffc3941951
+[2025-10-16T16:16:27.797+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='quality_assurance' AIRFLOW_CTX_TASK_ID='perform_visual_comparison' AIRFLOW_CTX_EXECUTION_DATE='2025-10-16T16:14:22.467693+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-16T16:14:22.467693+00:00'
+[2025-10-16T16:16:27.809+0000] {quality_assurance.py:1065} WARNING - ❌ Docker Pandoc service is not responding
+[2025-10-16T16:16:27.810+0000] {quality_assurance.py:1049} ERROR - ❌ Ошибка уровня 2 визуального сравнения: Level 2 visual comparison requires available dependencies: PyMuPDF (fitz), scikit-image (structural_similarity), visual_diff_system module, pandoc-render Docker service
+[2025-10-16T16:16:27.819+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 428, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/quality_assurance.py", line 976, in perform_visual_comparison
+    _require_visual_dependencies()
+  File "/opt/airflow/dags/quality_assurance.py", line 277, in _require_visual_dependencies
+    raise AirflowException(
+airflow.exceptions.AirflowException: Level 2 visual comparison requires available dependencies: PyMuPDF (fitz), scikit-image (structural_similarity), visual_diff_system module, pandoc-render Docker service
+[2025-10-16T16:16:27.822+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=quality_assurance, task_id=perform_visual_comparison, execution_date=20251016T161422, start_date=20251016T161627, end_date=20251016T161627
+[2025-10-16T16:16:27.822+0000] {quality_assurance.py:2434} ERROR - 
+🔥 ОШИБКА В 5-УРОВНЕВОЙ QUALITY ASSURANCE
+
+Задача: perform_visual_comparison
+Ошибка: Level 2 visual comparison requires available dependencies: PyMuPDF (fitz), scikit-image (structural_similarity), visual_diff_system module, pandoc-render Docker service
+
+Возможные причины:
+1. Поврежденные данные документа
+2. Проблемы с Docker Pandoc сервисом
+3. Недоступность vLLM сервиса
+4. Отсутствие зависимостей (scikit-image, sentence-transformers)
+5. Проблемы с монтированными томами Docker
+6. Недостаток памяти для обработки
+7. Ошибки в правилах валидации
+
+Проверьте логи и состояние всех сервисов.
+
+[2025-10-16T16:16:27.822+0000] {shared_utils.py:284} ERROR - 
+❌ ОШИБКА ВЫПОЛНЕНИЯ
+DAG: quality_assurance
+Task: perform_visual_comparison
+Время: 2025-10-16T16:16:27.822666
+Ошибка: Level 2 visual comparison requires available dependencies: PyMuPDF (fitz), scikit-image (structural_similarity), visual_diff_system module, pandoc-render Docker service
+
+[2025-10-16T16:16:27.830+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 1706 for task perform_visual_comparison (Level 2 visual comparison requires available dependencies: PyMuPDF (fitz), scikit-image (structural_similarity), visual_diff_system module, pandoc-render Docker service; 327)
+[2025-10-16T16:16:27.875+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-16T16:16:27.899+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

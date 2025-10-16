@@ -1,0 +1,35 @@
+[2025-10-16T16:12:17.222+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: document_preprocessing.validate_input_file manual__2025-10-16T16:12:16.213014+00:00 [queued]>
+[2025-10-16T16:12:17.227+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: document_preprocessing.validate_input_file manual__2025-10-16T16:12:16.213014+00:00 [queued]>
+[2025-10-16T16:12:17.227+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 3
+[2025-10-16T16:12:17.235+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): validate_input_file> on 2025-10-16 16:12:16.213014+00:00
+[2025-10-16T16:12:17.241+0000] {standard_task_runner.py:60} INFO - Started process 210 to run task
+[2025-10-16T16:12:17.243+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'document_preprocessing', 'validate_input_file', 'manual__2025-10-16T16:12:16.213014+00:00', '--job-id', '1686', '--raw', '--subdir', 'DAGS_FOLDER/document_preprocessing.py', '--cfg-path', '/tmp/tmpa5xlml3i']
+[2025-10-16T16:12:17.244+0000] {standard_task_runner.py:88} INFO - Job 1686: Subtask validate_input_file
+[2025-10-16T16:12:17.288+0000] {task_command.py:423} INFO - Running <TaskInstance: document_preprocessing.validate_input_file manual__2025-10-16T16:12:16.213014+00:00 [running]> on host 2cffc3941951
+[2025-10-16T16:12:17.357+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='document_preprocessing' AIRFLOW_CTX_TASK_ID='validate_input_file' AIRFLOW_CTX_EXECUTION_DATE='2025-10-16T16:12:16.213014+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-16T16:12:16.213014+00:00'
+[2025-10-16T16:12:17.358+0000] {document_preprocessing.py:94} INFO - 📋 Получена конфигурация: {
+  "chinese_document": true,
+  "chinese_optimization": true,
+  "enable_ocr": true,
+  "extract_images": true,
+  "extract_tables": true,
+  "filename": "test_short.pdf",
+  "input_file": "/app/input/test_short.pdf",
+  "language": "zh-CN",
+  "master_run_id": "manual__2025-10-16T16:12:13.007496+00:00",
+  "output_mode": "orchestrated",
+  "pipeline_version": "4.0_fixed",
+  "preserve_structure": true,
+  "processing_mode": "chinese_optimized",
+  "processing_timeout": 1800,
+  "quality_level": "high",
+  "temp_base_dir": "/opt/***/temp",
+  "timestamp": 1760631132
+}
+[2025-10-16T16:12:17.358+0000] {shared_utils.py:78} INFO - Файл прошел валидацию: /app/input/test_short.pdf (0.46 MB)
+[2025-10-16T16:12:17.360+0000] {shared_utils.py:213} INFO - 📊 Метрики: {'dag_id': 'document_preprocessing', 'task_id': 'validate_input_file', 'processing_time_seconds': 0.0019345283508300781, 'pages_processed': 0, 'file_size_mb': 0.0, 'success': True, 'timestamp': '2025-10-16T16:12:17.360289'}
+[2025-10-16T16:12:17.360+0000] {document_preprocessing.py:139} INFO - ✅ Входной файл валидирован: test_short.pdf
+[2025-10-16T16:12:17.360+0000] {python.py:201} INFO - Done. Returned value was: {'chinese_document': True, 'chinese_optimization': True, 'enable_ocr': True, 'extract_images': True, 'extract_tables': True, 'filename': 'test_short.pdf', 'input_file': '/app/input/test_short.pdf', 'language': 'zh-CN', 'master_run_id': 'manual__2025-10-16T16:12:13.007496+00:00', 'output_mode': 'orchestrated', 'pipeline_version': '4.0_fixed', 'preserve_structure': True, 'processing_mode': 'chinese_optimized', 'processing_timeout': 1800, 'quality_level': 'high', 'temp_base_dir': '/opt/***/temp', 'timestamp': 1760631132, 'file_hash': '1325e2e9c02de90e5b98336a14e15da5', 'file_size_bytes': 481918, 'file_size_mb': 0.4595928192138672, 'estimated_pages': 4, 'has_chinese_text': False, 'recommended_ocr': True, 'processing_complexity': 'medium', 'chinese_doc_analysis': {'file_hash': '1325e2e9c02de90e5b98336a14e15da5', 'file_size_bytes': 481918, 'file_size_mb': 0.4595928192138672, 'estimated_pages': 4, 'has_chinese_text': False, 'recommended_ocr': True, 'processing_complexity': 'medium'}, 'validation_timestamp': '2025-10-16T16:12:17.360273'}
+[2025-10-16T16:12:17.382+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=document_preprocessing, task_id=validate_input_file, execution_date=20251016T161216, start_date=20251016T161217, end_date=20251016T161217
+[2025-10-16T16:12:17.414+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-16T16:12:17.439+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

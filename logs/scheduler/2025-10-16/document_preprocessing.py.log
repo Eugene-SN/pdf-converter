@@ -1,0 +1,252 @@
+[2025-10-16T16:02:02.179+0000] {processor.py:161} INFO - Started process (PID=4379) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:02.179+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:02:02.181+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:02.181+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:02.191+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:02.191+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:02:02.192+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:02.192+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:02:02.196+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:02.217+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:02.217+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:02:02.227+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:02.227+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:02:02.239+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:02:32.474+0000] {processor.py:161} INFO - Started process (PID=4392) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:32.474+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:02:32.475+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:32.475+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:32.486+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:32.485+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:02:32.486+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:32.486+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:02:32.490+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:32.511+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:32.511+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:02:32.521+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:32.521+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:02:32.533+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.061 seconds
+[2025-10-16T16:02:42.076+0000] {processor.py:161} INFO - Started process (PID=4400) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:42.077+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:02:42.078+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:42.078+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:42.089+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:42.089+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:02:42.089+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:42.089+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:02:42.094+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:02:42.114+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:42.113+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:02:42.123+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:02:42.123+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:02:42.135+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.061 seconds
+[2025-10-16T16:05:14.131+0000] {processor.py:161} INFO - Started process (PID=105) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:14.132+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:05:14.134+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:14.133+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:14.144+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:14.144+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:05:14.144+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:14.144+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:05:14.149+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:14.161+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:14.161+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:05:14.172+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:14.172+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:05:14.184+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.055 seconds
+[2025-10-16T16:05:44.651+0000] {processor.py:161} INFO - Started process (PID=116) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:44.652+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:05:44.654+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:44.653+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:44.664+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:44.664+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:05:44.664+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:44.664+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:05:44.670+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:05:44.743+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:44.743+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:05:44.752+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:05:44.752+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:05:44.765+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.116 seconds
+[2025-10-16T16:06:15.006+0000] {processor.py:161} INFO - Started process (PID=129) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:15.007+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:06:15.008+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:15.008+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:15.019+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:15.019+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:06:15.019+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:15.019+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:06:15.024+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:15.044+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:15.044+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:06:15.054+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:15.054+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:06:15.066+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:06:45.478+0000] {processor.py:161} INFO - Started process (PID=142) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:45.479+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:06:45.481+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:45.481+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:45.493+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:45.492+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:06:45.493+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:45.493+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:06:45.498+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:06:45.519+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:45.519+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:06:45.529+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:06:45.529+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:06:45.541+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.065 seconds
+[2025-10-16T16:07:15.798+0000] {processor.py:161} INFO - Started process (PID=155) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:15.799+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:07:15.800+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:15.800+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:15.811+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:15.810+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:07:15.811+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:15.811+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:07:15.816+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:15.837+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:15.837+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:07:15.847+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:15.847+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:07:15.859+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.063 seconds
+[2025-10-16T16:07:46.087+0000] {processor.py:161} INFO - Started process (PID=168) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:46.087+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:07:46.089+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:46.089+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:46.099+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:46.099+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:07:46.099+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:46.099+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:07:46.104+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:07:46.125+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:46.124+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:07:46.134+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:07:46.134+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:07:46.146+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:08:16.469+0000] {processor.py:161} INFO - Started process (PID=181) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:16.470+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:08:16.471+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:16.471+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:16.481+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:16.481+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:08:16.482+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:16.482+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:08:16.487+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:16.507+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:16.507+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:08:16.516+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:16.516+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:08:16.528+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:08:46.756+0000] {processor.py:161} INFO - Started process (PID=194) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:46.757+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:08:46.759+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:46.758+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:46.769+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:46.769+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:08:46.769+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:46.769+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:08:46.774+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:08:46.794+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:46.794+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:08:46.804+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:08:46.804+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:08:46.816+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:09:17.155+0000] {processor.py:161} INFO - Started process (PID=207) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:17.155+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:09:17.157+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:17.157+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:17.167+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:17.167+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:09:17.168+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:17.167+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:09:17.172+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:17.192+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:17.192+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:09:17.202+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:17.202+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:09:17.214+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:09:47.442+0000] {processor.py:161} INFO - Started process (PID=220) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:47.443+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:09:47.445+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:47.444+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:47.455+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:47.455+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:09:47.455+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:47.455+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:09:47.460+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:09:47.480+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:47.480+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:09:47.490+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:09:47.489+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:09:47.501+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.061 seconds
+[2025-10-16T16:10:17.857+0000] {processor.py:161} INFO - Started process (PID=233) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:17.858+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:10:17.859+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:17.859+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:17.869+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:17.869+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:10:17.869+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:17.869+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:10:17.874+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:17.894+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:17.894+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:10:17.904+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:17.904+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:10:17.916+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.061 seconds
+[2025-10-16T16:10:48.140+0000] {processor.py:161} INFO - Started process (PID=246) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:48.141+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:10:48.142+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:48.142+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:48.152+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:48.151+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:10:48.152+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:48.152+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:10:48.156+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:10:48.176+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:48.176+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:10:48.186+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:10:48.186+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:10:48.197+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.059 seconds
+[2025-10-16T16:11:18.660+0000] {processor.py:161} INFO - Started process (PID=259) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:18.661+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:11:18.662+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:18.662+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:18.672+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:18.672+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:11:18.673+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:18.673+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:11:18.677+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:18.699+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:18.698+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:11:18.708+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:18.708+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:11:18.720+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:11:48.953+0000] {processor.py:161} INFO - Started process (PID=272) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:48.953+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:11:48.955+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:48.955+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:48.965+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:48.965+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:11:48.965+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:48.965+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:11:48.970+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:11:48.990+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:48.990+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:11:49.000+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:11:49.000+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:11:49.012+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:12:19.355+0000] {processor.py:161} INFO - Started process (PID=285) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:19.356+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:12:19.357+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:19.357+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:19.367+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:19.367+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:12:19.367+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:19.367+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:12:19.372+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:19.393+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:19.393+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:12:19.403+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:19.403+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:12:19.415+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.063 seconds
+[2025-10-16T16:12:49.662+0000] {processor.py:161} INFO - Started process (PID=298) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:49.663+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:12:49.665+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:49.664+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:49.675+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:49.675+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:12:49.675+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:49.675+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:12:49.680+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:12:49.701+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:49.701+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:12:49.711+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:12:49.711+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:12:49.723+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.063 seconds
+[2025-10-16T16:13:20.092+0000] {processor.py:161} INFO - Started process (PID=311) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:20.093+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:13:20.094+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:20.094+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:20.105+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:20.105+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:13:20.105+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:20.105+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:13:20.110+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:20.130+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:20.130+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:13:20.140+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:20.140+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:13:20.151+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:13:50.381+0000] {processor.py:161} INFO - Started process (PID=324) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:50.382+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:13:50.383+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:50.383+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:50.393+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:50.393+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:13:50.393+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:50.393+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:13:50.398+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:13:50.418+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:50.418+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:13:50.428+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:13:50.427+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:13:50.439+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.060 seconds
+[2025-10-16T16:14:20.838+0000] {processor.py:161} INFO - Started process (PID=337) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:20.838+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:14:20.840+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:20.840+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:20.851+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:20.851+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:14:20.851+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:20.851+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:14:20.856+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:20.876+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:20.876+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:14:20.886+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:20.886+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:14:20.898+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.063 seconds
+[2025-10-16T16:14:51.145+0000] {processor.py:161} INFO - Started process (PID=355) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:51.146+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:14:51.147+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:51.147+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:51.158+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:51.157+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:14:51.158+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:51.158+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:14:51.163+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:14:51.182+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:51.182+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:14:51.192+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:14:51.192+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:14:51.205+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:15:21.447+0000] {processor.py:161} INFO - Started process (PID=368) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:21.447+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:15:21.449+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:21.449+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:21.459+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:21.459+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:15:21.459+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:21.459+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:15:21.464+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:21.485+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:21.485+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:15:21.495+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:21.495+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:15:21.507+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.063 seconds
+[2025-10-16T16:15:51.827+0000] {processor.py:161} INFO - Started process (PID=381) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:51.828+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:15:51.829+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:51.829+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:51.839+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:51.839+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:15:51.839+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:51.839+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:15:51.844+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:15:51.864+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:51.864+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:15:51.874+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:15:51.874+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:15:51.886+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.061 seconds
+[2025-10-16T16:16:22.125+0000] {processor.py:161} INFO - Started process (PID=394) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:22.126+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:16:22.127+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:22.127+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:22.137+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:22.137+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:16:22.137+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:22.137+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:16:22.142+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:22.162+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:22.162+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:16:22.172+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:22.172+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:16:22.184+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.060 seconds
+[2025-10-16T16:16:52.532+0000] {processor.py:161} INFO - Started process (PID=407) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:52.533+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:16:52.534+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:52.534+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:52.545+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:52.545+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:16:52.545+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:52.545+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:16:52.550+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:16:52.570+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:52.570+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:16:52.580+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:16:52.580+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:16:52.592+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.062 seconds
+[2025-10-16T16:17:22.816+0000] {processor.py:161} INFO - Started process (PID=420) to work on /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:17:22.817+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/document_preprocessing.py for tasks to queue
+[2025-10-16T16:17:22.818+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:17:22.818+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:17:22.828+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:17:22.828+0000] {shared_utils.py:452} INFO - Инициализированы пути обработки: ['input_pdf', 'temp_dir', 'output_md', 'logs', 'work_dir']
+[2025-10-16T16:17:22.829+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:17:22.828+0000] {shared_utils.py:456} INFO - Настроены URL сервисов: ['document_processor', 'translator', 'quality_assurance', 'airflow']
+[2025-10-16T16:17:22.833+0000] {processor.py:840} INFO - DAG(s) 'document_preprocessing' retrieved from /opt/airflow/dags/document_preprocessing.py
+[2025-10-16T16:17:22.853+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:17:22.853+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-10-16T16:17:22.863+0000] {logging_mixin.py:188} INFO - [2025-10-16T16:17:22.863+0000] {dag.py:3823} INFO - Setting next_dagrun for document_preprocessing to None, run_after=None
+[2025-10-16T16:17:22.986+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/document_preprocessing.py took 0.172 seconds
