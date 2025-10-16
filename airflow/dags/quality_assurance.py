@@ -2164,13 +2164,19 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
         qa_session = context['task_instance'].xcom_pull(task_ids='load_translated_document')
         comprehensive_report = context['task_instance'].xcom_pull(task_ids='generate_comprehensive_qa_report')
         
-        final_document = (comprehensive_report.get('corrected_content') or 
-                         qa_session['translated_content'])
-        
+        final_document = (
+            comprehensive_report.get('corrected_content')
+            or qa_session['translated_content']
+        )
+
         auto_correction_summary = comprehensive_report['level_results']['level5_auto_correction']
         auto_correction_status = auto_correction_summary.get('status')
         auto_correction_followup = auto_correction_summary.get('requires_manual_followup', False)
+        auto_correction_partial_success = auto_correction_summary.get('partial_success', False)
 
+        corrections_applied = comprehensive_report.get('corrections_applied', 0)
+        issues_count = len(comprehensive_report['all_issues'])
+        auto_correction_performed = corrections_applied > 0
         qa_completed = auto_correction_status == 'completed' and not auto_correction_followup
         pipeline_ready = comprehensive_report['quality_passed'] and qa_completed
 
@@ -2182,17 +2188,17 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
             'final_document': qa_session['translated_file'],
             'final_content': final_document,
             'qa_report': comprehensive_report['report_file'],
-            'issues_count': len(comprehensive_report['all_issues']),
-            'corrections_applied': comprehensive_report.get('corrections_applied', 0),
+            'issues_count': issues_count,
+            'corrections_applied': corrections_applied,
             'pipeline_ready': pipeline_ready,
             '5_level_validation_complete': True,
             'level_scores': comprehensive_report['level_scores'],
             'pdf_comparison_performed': True,
             'ocr_validation_performed': True,
             'semantic_analysis_performed': True,
-            'auto_correction_performed': comprehensive_report.get('corrections_applied', 0) > 0,
+            'auto_correction_performed': auto_correction_performed,
             'auto_correction_status': auto_correction_status,
-            'auto_correction_partial_success': auto_correction_summary.get('partial_success', False),
+            'auto_correction_partial_success': auto_correction_partial_success,
             'auto_correction_requires_manual_followup': auto_correction_followup
         }
 
