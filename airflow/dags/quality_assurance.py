@@ -94,6 +94,21 @@ from shared_utils import (
     MetricsUtils, ErrorHandlingUtils
 )
 
+try:  # pragma: no cover - translator package may be optional in some deployments
+    from translator.vllm_client import build_vllm_headers  # type: ignore
+except ImportError:  # pragma: no cover - lightweight fallback if translator package unavailable
+    def build_vllm_headers(  # type: ignore
+        content_type: Optional[str] = None,
+        *,
+        api_key: Optional[str] = None,
+    ) -> Dict[str, str]:
+        headers: Dict[str, str] = {}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+        if content_type:
+            headers["Content-Type"] = content_type
+        return headers
+
 # Avoid name clash between this DAG module and helper package; attempt to bootstrap
 _DAG_DIR = Path(__file__).resolve().parent
 
@@ -164,6 +179,22 @@ if isinstance(_configured_endpoint, str) and '/v1/' in _configured_endpoint:
 else:
     base_candidate = _configured_endpoint or os.getenv('VLLM_SERVER_URL', 'http://vllm-server:8000')
     _VLLM_BASE_URL = str(base_candidate).rstrip('/')
+
+
+def _build_required_vllm_headers(*, refresh_api_key: bool = False) -> Dict[str, str]:
+    """Construct vLLM request headers or raise if the API key is missing."""
+
+    api_key = ConfigUtils.get_vllm_api_key(refresh=refresh_api_key)
+    if not api_key:
+        raise AirflowException(
+            "VLLM API key is not configured for QA auto-correction"
+        )
+
+    VLLM_CONFIG['api_key'] = api_key
+    headers = build_vllm_headers("application/json", api_key=api_key)
+    if "Content-Type" not in headers:
+        headers["Content-Type"] = "application/json"
+    return headers
 
 
 def _import_visual_diff_module():
@@ -1649,8 +1680,9 @@ def _request_vllm_warmup() -> bool:
     payload = {
         "model": VLLM_CONFIG['model'],
     }
+    headers = _build_required_vllm_headers(refresh_api_key=True)
     try:
-        response = requests.post(warmup_url, json=payload, timeout=30)
+        response = requests.post(warmup_url, json=payload, timeout=30, headers=headers)
         if response.status_code < 400:
             logger.info("vLLM warmup request accepted: %s", response.status_code)
             return True
@@ -1830,14 +1862,7 @@ Please provide the corrected markdown document that addresses all the issues whi
 def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     """✅ ИСПРАВЛЕН: Вызов vLLM API с правильным форматом messages для строк"""
     timed_out_attempts = 0
-    headers: Dict[str, str] = {"Content-Type": "application/json"}
-    api_key = VLLM_CONFIG.get('api_key')
-    if isinstance(api_key, str) and api_key.strip():
-        headers["Authorization"] = f"Bearer {api_key.strip()}"
-    else:
-        logger.warning(
-            "No vLLM API key configured; proceeding without Authorization header for QA requests"
-        )
+    headers = _build_required_vllm_headers(refresh_api_key=True)
 
     try:
         for attempt in range(VLLM_CONFIG['max_retries']):
