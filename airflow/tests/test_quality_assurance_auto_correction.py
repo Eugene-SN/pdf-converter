@@ -221,15 +221,55 @@ class DummyTaskInstance:
         return self._mapping[task_ids]
 
 
-def test_call_vllm_api_requires_api_key(monkeypatch):
+def test_call_vllm_api_requires_api_key(monkeypatch, tmp_path, caplog):
     ConfigUtils._SECRET_CACHE.clear()
     monkeypatch.delenv("VLLM_API_KEY", raising=False)
 
     quality_assurance.VLLM_CONFIG['max_retries'] = 1
     quality_assurance.VLLM_CONFIG['api_key'] = None
 
-    with pytest.raises(quality_assurance.VLLMAuthError):
+    api_calls = []
+
+    def fail_if_called(*args, **kwargs):  # pragma: no cover - should not be invoked
+        api_calls.append((args, kwargs))
+        raise AssertionError("vLLM API should not be invoked when API key is missing")
+
+    monkeypatch.setattr(quality_assurance.requests, "post", fail_if_called)
+
+    with pytest.raises(quality_assurance.AirflowException):
         quality_assurance.call_vllm_api("Ensure key is required")
+
+    translated_md = tmp_path / "document.md"
+    translated_md.write_text("Content that needs correction", encoding="utf-8")
+
+    qa_context = {
+        'load_translated_document': {
+            'translated_content': translated_md.read_text(encoding="utf-8"),
+            'translated_file': str(translated_md),
+            'auto_correction': True,
+            'session_id': 'missing-key',
+        },
+        'perform_enhanced_content_validation': {
+            'issues_found': ['Formatting issue detected'],
+        },
+    }
+
+    caplog.set_level(logging.ERROR, logger=quality_assurance.logger.name)
+
+    result = quality_assurance.perform_auto_correction(
+        task_instance=DummyTaskInstance(qa_context)
+    )
+
+    assert result['status'] == 'failed'
+    assert result['validation_score'] == 0.0
+    assert result['timed_out'] is False
+    assert api_calls == []
+    assert any('VLLM_API_KEY secret is not configured' in issue for issue in result['issues_found'])
+    assert any(
+        'Auto-correction aborted: VLLM_API_KEY secret is not configured' in record.message
+        for record in caplog.records
+        if record.name == quality_assurance.logger.name
+    )
 
 
 def test_auto_correction_fails_fast_on_auth_error(monkeypatch, tmp_path, caplog):

@@ -190,7 +190,7 @@ def _build_required_vllm_headers(*, refresh_api_key: bool = False) -> Dict[str, 
 
     api_key = ConfigUtils.get_vllm_api_key(refresh=refresh_api_key)
     if not api_key or not str(api_key).strip():
-        raise VLLMAuthError(
+        raise AirflowException(
             "VLLM API key is not configured for QA auto-correction. Set VLLM_API_KEY."
         )
 
@@ -1763,6 +1763,24 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
         }
 
         if issues_found and qa_session.get('auto_correction', True) and len(issues_found) <= QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
+            api_key = ConfigUtils.get_vllm_api_key(refresh=True)
+            if not api_key or not str(api_key).strip():
+                error_message = (
+                    "Auto-correction aborted: VLLM_API_KEY secret is not configured or empty."
+                )
+                logger.error(
+                    "%s Configure the secret before re-running the DAG run.",
+                    error_message,
+                )
+                correction_result.update({
+                    'status': 'failed',
+                    'validation_score': 0.0,
+                    'requires_manual_followup': True,
+                    'issues_found': [error_message],
+                    'timed_out': False,
+                })
+                correction_result['processing_time'] = time.time() - start_time
+                return correction_result
             try:
                 corrected_content, correction_confidence, timed_out = apply_vllm_corrections(
                     document_content, issues_found
@@ -1880,6 +1898,14 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
 
     try:
         headers = _build_required_vllm_headers(refresh_api_key=True)
+    except AirflowException as exc:
+        logger.error(
+            "vLLM auto-correction aborted before request: %s",
+            exc,
+        )
+        raise
+
+    try:
         for attempt in range(VLLM_CONFIG['max_retries']):
             attempt_number = attempt + 1
             logger.info(
