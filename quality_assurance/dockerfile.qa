@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     unzip \
+    pandoc \
     # Библиотеки для обработки изображений и компьютерного зрения
     libopencv-dev \
     python3-opencv \
@@ -74,13 +75,13 @@ RUN mkdir -p /app/temp \
     && chown -R qa:qa /mnt/storage/models
 
 # Копируем исходный код приложения
-COPY quality_assurance/ocr_validator.py /app/
-COPY quality_assurance/visual_diff_system.py /app/
-COPY quality_assurance/ast_comparator.py /app/
-COPY quality_assurance/ssim_calculator.py /app/
-COPY quality_assurance/auto_corrector.py /app/
-COPY quality_assurance/content_validator.py /app/
-COPY quality_assurance/main.py /app/
+COPY quality_assurance /app/quality_assurance
+RUN set -eux; \
+    for module in /app/quality_assurance/*.py; do \
+        name="$(basename "$module")"; \
+        ln -s "quality_assurance/$name" "/app/$name"; \
+    done
+ENV PYTHONPATH="/app:${PYTHONPATH}"
 
 # Делаем модуль translator доступным для авто-корректора
 COPY translator /app/translator
