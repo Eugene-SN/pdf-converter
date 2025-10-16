@@ -254,6 +254,53 @@ if not SENTENCE_TRANSFORMERS_AVAILABLE:
 if not PYMUPDF_AVAILABLE:
     _warn_once("PyMuPDF не установлен, fallback генерация PDF недоступна")
 
+
+def _require_visual_dependencies() -> None:
+    """Fail fast if visual comparison dependencies are missing."""
+
+    missing: List[str] = []
+
+    if not PYMUPDF_AVAILABLE:
+        missing.append("PyMuPDF (fitz)")
+
+    if not SSIM_AVAILABLE:
+        missing.append("scikit-image (structural_similarity)")
+
+    if not VISUAL_DIFF_AVAILABLE or not VISUAL_DIFF_SYSTEM:
+        missing.append("visual_diff_system module")
+
+    pandoc_ok = check_docker_pandoc_availability()
+    if not pandoc_ok:
+        missing.append("pandoc-render Docker service")
+
+    if missing:
+        raise AirflowException(
+            "Level 2 visual comparison requires available dependencies: "
+            + ", ".join(missing)
+        )
+
+
+def _require_semantic_dependencies() -> None:
+    """Ensure sentence-transformer based checks can run."""
+
+    missing: List[str] = []
+
+    if not SENTENCE_TRANSFORMERS_AVAILABLE or not SentenceTransformer:
+        missing.append("sentence-transformers package")
+    else:
+        model = _get_sentence_transformer_model()
+        if model is None:
+            missing.append(
+                "sentence-transformers model "
+                + LEVEL_CONFIG['level3_ast']['model_name']
+            )
+
+    if missing:
+        raise AirflowException(
+            "Level 3 AST comparison requires available dependencies: "
+            + ", ".join(missing)
+        )
+
 # Конфигурация DAG
 DEFAULT_ARGS = {
     'owner': 'pdf-converter',
@@ -926,6 +973,7 @@ def perform_visual_comparison(**context) -> Dict[str, Any]:
     """✅ Уровень 2: Визуальное сравнение PDF через SSIM анализ с Docker Pandoc интеграцией"""
     start_time = time.time()
     try:
+        _require_visual_dependencies()
         qa_session = context['task_instance'].xcom_pull(task_ids='load_translated_document')
         logger.info("🔍 Уровень 2: Visual Comparison с Docker Pandoc интеграцией")
         
@@ -1253,6 +1301,7 @@ def perform_ast_structure_comparison(**context) -> Dict[str, Any]:
     """✅ Уровень 3: AST структурное и семантическое сравнение"""
     start_time = time.time()
     try:
+        _require_semantic_dependencies()
         qa_session = context['task_instance'].xcom_pull(task_ids='load_translated_document')
         logger.info("🔍 Уровень 3: AST Structure Comparison")
         
