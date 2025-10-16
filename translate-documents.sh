@@ -537,7 +537,12 @@ find_related_output_file() {
     local source_filename="$2"
 
     local base
-    base="${source_filename%.*}"
+    base="${source_filename##*/}"
+    base="${base%.*}"
+
+    local base_lower="${base,,}"
+    local base_underscore="${base_lower// /_}"
+    local base_dash="${base_lower// /-}"
 
     local latest_match=""
     local latest_ts=0
@@ -550,7 +555,12 @@ find_related_output_file() {
             ts=$(stat -f %m "$file" 2>/dev/null || echo 0)
         fi
 
-        if [[ "$(basename "$file")" == *"${base}"* ]] && [ "$ts" -ge "$latest_ts" ]; then
+        local name
+        name="$(basename "$file")"
+        local name_lower="${name,,}"
+
+        if { [[ "$name_lower" == *"$base_lower"* ]] || [[ "$name_lower" == *"$base_underscore"* ]] || [[ "$name_lower" == *"$base_dash"* ]]; } \
+            && [ "$ts" -ge "$latest_ts" ]; then
             latest_match="$file"
             latest_ts=$ts
         fi
@@ -578,7 +588,12 @@ find_related_output_file() {
         fi
     done < <(find "$output_dir" -maxdepth 1 -type f \( -name "*.md" -o -name "*.txt" \) -print0 2>/dev/null)
 
-    echo "$fallback_file"
+    if [ -n "$fallback_file" ]; then
+        echo "$fallback_file"
+        return 0
+    fi
+
+    return 1
 }
 
 analyze_markdown_file() {
