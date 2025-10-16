@@ -343,3 +343,52 @@ def test_auto_correction_success_allows_translation(monkeypatch, tmp_path, caplo
     assert stage3_config['qa_gate_passed'] is True
     assert stage3_config['qa_summary']['qa_gate_passed'] is True
     assert "Перевод заблокирован" not in caplog.text
+
+
+def test_finalize_qa_process_marks_pipeline_ready(tmp_path):
+    qa_report_path = tmp_path / "qa_report.json"
+    qa_report_path.write_text("{}", encoding="utf-8")
+
+    translated_file = tmp_path / "translated.md"
+    translated_text = "Corrected content"
+    translated_file.write_text(translated_text, encoding="utf-8")
+
+    qa_session = {
+        'translated_content': translated_text,
+        'translated_file': str(translated_file),
+    }
+
+    comprehensive_report = {
+        'overall_score': 98.5,
+        'quality_passed': True,
+        'report_file': str(qa_report_path),
+        'all_issues': [],
+        'corrections_applied': 2,
+        'corrected_content': "Final, production-ready content.",
+        'level_scores': {
+            'level1_integrity': 1.0,
+            'level2_formatting': 0.95,
+            'level3_semantics': 0.98,
+            'level4_visual': 1.0,
+            'level5_auto_correction': 1.0,
+        },
+        'level_results': {
+            'level5_auto_correction': {
+                'status': 'completed',
+                'requires_manual_followup': False,
+                'partial_success': False,
+            }
+        },
+    }
+
+    context = {'load_translated_document': qa_session,
+               'generate_comprehensive_qa_report': comprehensive_report}
+
+    result = quality_assurance.finalize_qa_process(
+        task_instance=DummyTaskInstance(context)
+    )
+
+    assert result['qa_completed'] is True
+    assert result['pipeline_ready'] is True
+    assert result['auto_correction_status'] == 'completed'
+    assert result['auto_correction_requires_manual_followup'] is False

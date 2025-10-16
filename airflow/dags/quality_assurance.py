@@ -2116,8 +2116,12 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
         auto_correction_summary = comprehensive_report['level_results']['level5_auto_correction']
         auto_correction_status = auto_correction_summary.get('status')
         auto_correction_followup = auto_correction_summary.get('requires_manual_followup', False)
+
+        qa_completed = auto_correction_status == 'completed' and not auto_correction_followup
+        pipeline_ready = comprehensive_report['quality_passed'] and qa_completed
+
         final_result = {
-            'qa_completed': auto_correction_status == 'completed' and not auto_correction_followup,
+            'qa_completed': qa_completed,
             'enterprise_validation': True,
             'quality_score': comprehensive_report['overall_score'],
             'quality_passed': comprehensive_report['quality_passed'],
@@ -2126,7 +2130,7 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
             'qa_report': comprehensive_report['report_file'],
             'issues_count': len(comprehensive_report['all_issues']),
             'corrections_applied': comprehensive_report.get('corrections_applied', 0),
-            'pipeline_ready': comprehensive_report['quality_passed'] and final_result['qa_completed'],
+            'pipeline_ready': pipeline_ready,
             '5_level_validation_complete': True,
             'level_scores': comprehensive_report['level_scores'],
             'pdf_comparison_performed': True,
