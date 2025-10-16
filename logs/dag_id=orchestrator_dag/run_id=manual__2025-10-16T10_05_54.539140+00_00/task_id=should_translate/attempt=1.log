@@ -1,0 +1,17 @@
+[2025-10-16T10:10:07.623+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: orchestrator_dag.should_translate manual__2025-10-16T10:05:54.539140+00:00 [queued]>
+[2025-10-16T10:10:07.629+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: orchestrator_dag.should_translate manual__2025-10-16T10:05:54.539140+00:00 [queued]>
+[2025-10-16T10:10:07.629+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2025-10-16T10:10:07.637+0000] {taskinstance.py:2191} INFO - Executing <Task(ShortCircuitOperator): should_translate> on 2025-10-16 10:05:54.539140+00:00
+[2025-10-16T10:10:07.642+0000] {standard_task_runner.py:60} INFO - Started process 808 to run task
+[2025-10-16T10:10:07.645+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'orchestrator_dag', 'should_translate', 'manual__2025-10-16T10:05:54.539140+00:00', '--job-id', '1646', '--raw', '--subdir', 'DAGS_FOLDER/orchestrator_dag.py', '--cfg-path', '/tmp/tmpedy5roz4']
+[2025-10-16T10:10:07.646+0000] {standard_task_runner.py:88} INFO - Job 1646: Subtask should_translate
+[2025-10-16T10:10:07.691+0000] {task_command.py:423} INFO - Running <TaskInstance: orchestrator_dag.should_translate manual__2025-10-16T10:05:54.539140+00:00 [running]> on host b43a95b9d13d
+[2025-10-16T10:10:07.758+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='pdf-converter' AIRFLOW_CTX_DAG_ID='orchestrator_dag' AIRFLOW_CTX_TASK_ID='should_translate' AIRFLOW_CTX_EXECUTION_DATE='2025-10-16T10:05:54.539140+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-16T10:05:54.539140+00:00'
+[2025-10-16T10:10:07.782+0000] {orchestrator_dag.py:640} WARNING - Перевод остановлен: QA Stage 4 не прошел проверку (override=None, quality_passed=False, qa_completed=False)
+[2025-10-16T10:10:07.782+0000] {python.py:201} INFO - Done. Returned value was: False
+[2025-10-16T10:10:07.782+0000] {python.py:268} INFO - Condition result is False
+[2025-10-16T10:10:07.782+0000] {python.py:295} INFO - Skipping downstream tasks
+[2025-10-16T10:10:07.803+0000] {python.py:303} INFO - Done.
+[2025-10-16T10:10:07.823+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=orchestrator_dag, task_id=should_translate, execution_date=20251016T100554, start_date=20251016T101007, end_date=20251016T101007
+[2025-10-16T10:10:07.856+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-16T10:10:07.877+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
