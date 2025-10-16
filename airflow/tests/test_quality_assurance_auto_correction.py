@@ -207,8 +207,6 @@ def _install_airflow_stubs() -> None:
 
 _install_airflow_stubs()
 
-from airflow.exceptions import AirflowException
-
 from airflow.dags.shared_utils import ConfigUtils
 
 quality_assurance = importlib.import_module("airflow.dags.quality_assurance")
@@ -230,8 +228,63 @@ def test_call_vllm_api_requires_api_key(monkeypatch):
     quality_assurance.VLLM_CONFIG['max_retries'] = 1
     quality_assurance.VLLM_CONFIG['api_key'] = None
 
-    with pytest.raises(AirflowException):
+    with pytest.raises(quality_assurance.VLLMAuthError):
         quality_assurance.call_vllm_api("Ensure key is required")
+
+
+def test_auto_correction_fails_fast_on_auth_error(monkeypatch, tmp_path, caplog):
+    ConfigUtils._SECRET_CACHE.clear()
+    monkeypatch.setenv("VLLM_API_KEY", "invalid-key")
+    monkeypatch.setenv("AIRFLOW_TEMP_DIR", str(tmp_path / "airflow_temp"))
+
+    quality_assurance.VLLM_CONFIG['max_retries'] = 2
+    quality_assurance.VLLM_CONFIG['endpoint'] = "http://test/v1/chat/completions"
+    quality_assurance.VLLM_CONFIG['timeout'] = 5
+
+    class UnauthorizedResponse:
+        status_code = 401
+        text = "Unauthorized"
+
+        @staticmethod
+        def json():
+            return {"error": {"message": "invalid token"}}
+
+    def fake_post(url, json=None, timeout=None, headers=None):
+        return UnauthorizedResponse()
+
+    monkeypatch.setattr(quality_assurance.requests, "post", fake_post)
+
+    translated_md = tmp_path / "document.md"
+    translated_text = "Original content that requires correction. " * 3
+    translated_md.write_text(translated_text, encoding="utf-8")
+
+    qa_context = {
+        'load_translated_document': {
+            'translated_content': translated_text,
+            'translated_file': str(translated_md),
+            'auto_correction': True,
+            'session_id': 'session-401',
+        },
+        'perform_enhanced_content_validation': {
+            'issues_found': ['Issue with formatting']
+        },
+    }
+
+    caplog.set_level(logging.INFO, logger=quality_assurance.logger.name)
+    result = quality_assurance.perform_auto_correction(
+        task_instance=DummyTaskInstance(qa_context)
+    )
+
+    assert result['status'] == 'failed'
+    assert result['validation_score'] == 0.0
+    assert result['timed_out'] is False
+    assert result['requires_manual_followup'] is True
+    assert any('VLLM API authentication failed' in issue for issue in result['issues_found'])
+    assert any(
+        'authentication failure' in record.message
+        for record in caplog.records
+        if record.name == quality_assurance.logger.name
+    )
 
 
 def test_auto_correction_success_allows_translation(monkeypatch, tmp_path, caplog):
@@ -343,3 +396,52 @@ def test_auto_correction_success_allows_translation(monkeypatch, tmp_path, caplo
     assert stage3_config['qa_gate_passed'] is True
     assert stage3_config['qa_summary']['qa_gate_passed'] is True
     assert "Перевод заблокирован" not in caplog.text
+
+
+def test_finalize_qa_process_marks_pipeline_ready(tmp_path):
+    qa_report_path = tmp_path / "qa_report.json"
+    qa_report_path.write_text("{}", encoding="utf-8")
+
+    translated_file = tmp_path / "translated.md"
+    translated_text = "Corrected content"
+    translated_file.write_text(translated_text, encoding="utf-8")
+
+    qa_session = {
+        'translated_content': translated_text,
+        'translated_file': str(translated_file),
+    }
+
+    comprehensive_report = {
+        'overall_score': 98.5,
+        'quality_passed': True,
+        'report_file': str(qa_report_path),
+        'all_issues': [],
+        'corrections_applied': 2,
+        'corrected_content': "Final, production-ready content.",
+        'level_scores': {
+            'level1_integrity': 1.0,
+            'level2_formatting': 0.95,
+            'level3_semantics': 0.98,
+            'level4_visual': 1.0,
+            'level5_auto_correction': 1.0,
+        },
+        'level_results': {
+            'level5_auto_correction': {
+                'status': 'completed',
+                'requires_manual_followup': False,
+                'partial_success': False,
+            }
+        },
+    }
+
+    context = {'load_translated_document': qa_session,
+               'generate_comprehensive_qa_report': comprehensive_report}
+
+    result = quality_assurance.finalize_qa_process(
+        task_instance=DummyTaskInstance(context)
+    )
+
+    assert result['qa_completed'] is True
+    assert result['pipeline_ready'] is True
+    assert result['auto_correction_status'] == 'completed'
+    assert result['auto_correction_requires_manual_followup'] is False

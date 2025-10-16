@@ -181,15 +181,20 @@ else:
     _VLLM_BASE_URL = str(base_candidate).rstrip('/')
 
 
+class VLLMAuthError(AirflowException):
+    """Raised when vLLM authentication fails or credentials are missing."""
+
+
 def _build_required_vllm_headers(*, refresh_api_key: bool = False) -> Dict[str, str]:
     """Construct vLLM request headers or raise if the API key is missing."""
 
     api_key = ConfigUtils.get_vllm_api_key(refresh=refresh_api_key)
-    if not api_key:
-        raise AirflowException(
-            "VLLM API key is not configured for QA auto-correction"
+    if not api_key or not str(api_key).strip():
+        raise VLLMAuthError(
+            "VLLM API key is not configured for QA auto-correction. Set VLLM_API_KEY."
         )
 
+    api_key = str(api_key).strip()
     VLLM_CONFIG['api_key'] = api_key
     headers = build_vllm_headers("application/json", api_key=api_key)
     if "Content-Type" not in headers:
@@ -1758,48 +1763,56 @@ def perform_auto_correction(**context) -> Dict[str, Any]:
         }
 
         if issues_found and qa_session.get('auto_correction', True) and len(issues_found) <= QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
-            corrected_content, correction_confidence, timed_out = apply_vllm_corrections(
-                document_content, issues_found
-            )
-
-            correction_result['timed_out'] = timed_out
-
-            if corrected_content and correction_confidence >= QA_RULES['AUTO_CORRECTION_CONFIDENCE']:
-                correction_result.update({
-                    'corrections_applied': len(issues_found),
-                    'correction_confidence': correction_confidence,
-                    'corrected_content': corrected_content,
-                    'validation_score': correction_confidence
-                })
-                logger.info(f"✅ Применены исправления vLLM: {len(issues_found)} проблем, уверенность {correction_confidence:.3f}")
-                logger.info("Auto-correction status: completed")
-            elif timed_out:
-                logger.warning("vLLM auto-correction timed out on all attempts; scheduling retry after warmup")
-                correction_result['issues_found'].append("vLLM correction timed out; retry scheduled after warmup")
-                correction_result['status'] = 'waiting_retry'
-                correction_result['requires_manual_followup'] = True
+            try:
+                corrected_content, correction_confidence, timed_out = apply_vllm_corrections(
+                    document_content, issues_found
+                )
+            except VLLMAuthError as auth_error:
+                logger.error("vLLM auto-correction aborted due to authentication failure: %s", auth_error)
+                correction_result['issues_found'].append(str(auth_error))
+                correction_result['status'] = 'failed'
                 correction_result['validation_score'] = 0.0
-                correction_result['warmup_requested'] = _request_vllm_warmup()
-                correction_result['retry_scheduled'] = _schedule_auto_correction_retry(context, 'vllm_timeout')
-                logger.info("Intermediate status: auto-correction is waiting for a retry after timeout")
+                correction_result['requires_manual_followup'] = True
+                correction_result['timed_out'] = False
             else:
-                if corrected_content and corrected_content != document_content:
+                correction_result['timed_out'] = timed_out
+
+                if corrected_content and correction_confidence >= QA_RULES['AUTO_CORRECTION_CONFIDENCE']:
                     correction_result.update({
-                        'partial_success': True,
                         'corrections_applied': len(issues_found),
-                        'corrected_content': corrected_content,
                         'correction_confidence': correction_confidence,
+                        'corrected_content': corrected_content,
                         'validation_score': correction_confidence
                     })
-                correction_result['issues_found'].append(f"vLLM correction confidence too low: {correction_confidence:.3f}")
-                correction_result['correction_confidence'] = correction_confidence
-                correction_result['validation_score'] = correction_confidence
-                correction_result['status'] = 'partial_success' if correction_result['partial_success'] else 'needs_review'
-                correction_result['requires_manual_followup'] = True
-                logger.info(
-                    "Intermediate status: auto-correction requires manual follow-up (status %s)",
-                    correction_result['status']
-                )
+                    logger.info(f"✅ Применены исправления vLLM: {len(issues_found)} проблем, уверенность {correction_confidence:.3f}")
+                    logger.info("Auto-correction status: completed")
+                elif timed_out:
+                    logger.warning("vLLM auto-correction timed out on all attempts; scheduling retry after warmup")
+                    correction_result['issues_found'].append("vLLM correction timed out; retry scheduled after warmup")
+                    correction_result['status'] = 'waiting_retry'
+                    correction_result['requires_manual_followup'] = True
+                    correction_result['validation_score'] = 0.0
+                    correction_result['warmup_requested'] = _request_vllm_warmup()
+                    correction_result['retry_scheduled'] = _schedule_auto_correction_retry(context, 'vllm_timeout')
+                    logger.info("Intermediate status: auto-correction is waiting for a retry after timeout")
+                else:
+                    if corrected_content and corrected_content != document_content:
+                        correction_result.update({
+                            'partial_success': True,
+                            'corrections_applied': len(issues_found),
+                            'corrected_content': corrected_content,
+                            'correction_confidence': correction_confidence,
+                            'validation_score': correction_confidence
+                        })
+                    correction_result['issues_found'].append(f"vLLM correction confidence too low: {correction_confidence:.3f}")
+                    correction_result['correction_confidence'] = correction_confidence
+                    correction_result['validation_score'] = correction_confidence
+                    correction_result['status'] = 'partial_success' if correction_result['partial_success'] else 'needs_review'
+                    correction_result['requires_manual_followup'] = True
+                    logger.info(
+                        "Intermediate status: auto-correction requires manual follow-up (status %s)",
+                        correction_result['status']
+                    )
         elif len(issues_found) > QA_RULES['MAX_CORRECTIONS_PER_DOCUMENT']:
             correction_result['issues_found'].append(f"Too many issues for auto-correction: {len(issues_found)}")
             correction_result['status'] = 'skipped'
@@ -1855,6 +1868,8 @@ Please provide the corrected markdown document that addresses all the issues whi
 
         return content, 0.0, timed_out
 
+    except VLLMAuthError:
+        raise
     except Exception as e:
         logger.error(f"vLLM correction error: {e}")
         return content, 0.0, False
@@ -1862,9 +1877,9 @@ Please provide the corrected markdown document that addresses all the issues whi
 def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
     """✅ ИСПРАВЛЕН: Вызов vLLM API с правильным форматом messages для строк"""
     timed_out_attempts = 0
-    headers = _build_required_vllm_headers(refresh_api_key=True)
 
     try:
+        headers = _build_required_vllm_headers(refresh_api_key=True)
         for attempt in range(VLLM_CONFIG['max_retries']):
             attempt_number = attempt + 1
             logger.info(
@@ -1894,6 +1909,15 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
                 if response.status_code == 200:
                     result = response.json()
                     return result['choices'][0]['message']['content'], False
+
+                if response.status_code == 401:
+                    logger.error(
+                        "vLLM API authentication failed (401): %s",
+                        response.text[:200]
+                    )
+                    raise VLLMAuthError(
+                        "VLLM API authentication failed (HTTP 401). Verify VLLM_API_KEY."
+                    )
 
                 should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 if response.status_code >= 500:
@@ -1961,6 +1985,8 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
                     )
                     time.sleep(delay)
                 continue
+            except VLLMAuthError:
+                raise
             except Exception as e:
                 should_retry = attempt < VLLM_CONFIG['max_retries'] - 1
                 logger.warning(f"vLLM API call attempt {attempt_number} failed: {e}")
@@ -1976,6 +2002,8 @@ def call_vllm_api(prompt: str) -> Tuple[Optional[str], bool]:
             logger.error("vLLM API failed after %d attempts", VLLM_CONFIG['max_retries'])
             return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
 
+    except VLLMAuthError:
+        raise
     except Exception as e:
         logger.error(f"vLLM API call failed (outer): {e}")
         return None, timed_out_attempts >= VLLM_CONFIG['max_retries']
@@ -2116,8 +2144,12 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
         auto_correction_summary = comprehensive_report['level_results']['level5_auto_correction']
         auto_correction_status = auto_correction_summary.get('status')
         auto_correction_followup = auto_correction_summary.get('requires_manual_followup', False)
+
+        qa_completed = auto_correction_status == 'completed' and not auto_correction_followup
+        pipeline_ready = comprehensive_report['quality_passed'] and qa_completed
+
         final_result = {
-            'qa_completed': auto_correction_status == 'completed' and not auto_correction_followup,
+            'qa_completed': qa_completed,
             'enterprise_validation': True,
             'quality_score': comprehensive_report['overall_score'],
             'quality_passed': comprehensive_report['quality_passed'],
@@ -2126,7 +2158,7 @@ def finalize_qa_process(**context) -> Dict[str, Any]:
             'qa_report': comprehensive_report['report_file'],
             'issues_count': len(comprehensive_report['all_issues']),
             'corrections_applied': comprehensive_report.get('corrections_applied', 0),
-            'pipeline_ready': comprehensive_report['quality_passed'] and final_result['qa_completed'],
+            'pipeline_ready': pipeline_ready,
             '5_level_validation_complete': True,
             'level_scores': comprehensive_report['level_scores'],
             'pdf_comparison_performed': True,

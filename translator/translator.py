@@ -22,6 +22,7 @@ import json
 import hashlib
 import asyncio
 import logging
+import math
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from datetime import datetime
@@ -57,6 +58,103 @@ DEFAULT_BACKUP_COUNT = 5
 
 TABLE_ROW_PATTERN = re.compile(r'^\s*\|.*\|\s*$')
 TABLE_SEPARATOR_PATTERN = re.compile(r'^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$')
+
+TOKEN_ESTIMATION_ASCII_DIVISOR = 3
+CHINESE_CHAR_PATTERN = re.compile(r"[\u4e00-\u9fff]")
+
+
+def estimate_token_count(text: str) -> int:
+    """Conservatively estimate the token count for a text fragment."""
+
+    if not text:
+        return 0
+
+    chinese_chars = len(CHINESE_CHAR_PATTERN.findall(text))
+    ascii_chars = len(text) - chinese_chars
+    ascii_tokens = math.ceil(ascii_chars / TOKEN_ESTIMATION_ASCII_DIVISOR) if ascii_chars > 0 else 0
+    total = chinese_chars + ascii_tokens
+    return total if total > 0 else 1
+
+
+def estimate_prompt_tokens(system_prompt: str, user_prompt: str) -> int:
+    """Estimate the combined token count for system and user prompts."""
+
+    return estimate_token_count(system_prompt) + estimate_token_count(user_prompt)
+
+
+def split_long_line_by_budget(line: str, allowed_tokens: int) -> List[str]:
+    """Split an oversized line into smaller fragments that fit within the budget."""
+
+    if allowed_tokens <= 0 or not line:
+        return [line]
+
+    trailing_newline = ""
+    if line.endswith("\n"):
+        trailing_newline = "\n"
+        line = line[:-1]
+
+    segments: List[str] = []
+    start = 0
+    max_chars = max(1, allowed_tokens)
+    length = len(line)
+
+    while start < length:
+        end = min(length, start + max_chars)
+        segment = line[start:end]
+        if end < length:
+            whitespace_index = segment.rfind(" ")
+            if whitespace_index >= max_chars // 2:
+                end = start + whitespace_index + 1
+                segment = line[start:end]
+        if not segment:
+            break
+        segments.append(segment)
+        start = end
+
+    if not segments:
+        segments.append(line)
+
+    if trailing_newline:
+        segments[-1] = segments[-1] + trailing_newline
+
+    return segments
+
+
+def chunk_text_by_token_budget(text: str, allowed_tokens: int) -> List[str]:
+    """Split text into chunks that stay within the provided token budget."""
+
+    if allowed_tokens <= 0:
+        return [text]
+
+    parts = text.splitlines(keepends=True)
+    if not parts:
+        parts = [text]
+
+    chunks: List[str] = []
+    current_parts: List[str] = []
+
+    for part in parts:
+        candidate_parts = current_parts + [part]
+        candidate_text = "".join(candidate_parts)
+        candidate_tokens = estimate_token_count(candidate_text)
+
+        if candidate_tokens <= allowed_tokens or not current_parts:
+            current_parts.append(part)
+            continue
+
+        if current_parts:
+            chunks.append("".join(current_parts))
+            current_parts = []
+
+        if estimate_token_count(part) <= allowed_tokens:
+            current_parts = [part]
+        else:
+            chunks.extend(split_long_line_by_budget(part, allowed_tokens))
+
+    if current_parts:
+        chunks.append("".join(current_parts))
+
+    return chunks if chunks else [text]
 
 
 def count_markdown_table_rows(text: str) -> int:
@@ -172,12 +270,14 @@ API_MAX_TOKENS = int(os.getenv('VLLM_MAX_TOKENS', '4096'))
 MODEL_CONTEXT_LENGTH = int(os.getenv('VLLM_CONTEXT_LENGTH', '4096'))
 MAX_COMPLETION_RATIO = float(os.getenv('VLLM_MAX_COMPLETION_RATIO', '0.5'))
 CONTEXT_SAFETY_MARGIN = int(os.getenv('VLLM_CONTEXT_SAFETY_MARGIN', '64'))
+SAFE_CONTEXT_LIMIT = max(1, MODEL_CONTEXT_LENGTH - CONTEXT_SAFETY_MARGIN)
 
 # Ограничение длины completion по умолчанию (оставляем запас под промпт)
 DEFAULT_COMPLETION_TOKENS = max(
     1,
     min(
         API_MAX_TOKENS,
+        SAFE_CONTEXT_LIMIT,
         int(MODEL_CONTEXT_LENGTH * MAX_COMPLETION_RATIO) if MAX_COMPLETION_RATIO > 0 else API_MAX_TOKENS,
     ),
 )
@@ -500,6 +600,9 @@ class VLLMAPIClient:
         self._http_client: Optional[aiohttp.ClientSession] = None
         self._client_timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
         self._endpoint_url = f"{VLLM_API_URL}{VLLM_API_ENDPOINT}"
+        self._safe_context_limit = SAFE_CONTEXT_LIMIT
+        self._last_response_status: Optional[int] = None
+        self._last_error_message: Optional[str] = None
 
     async def _close_http_client(self):
         if self._http_client and not self._http_client.closed:
@@ -521,11 +624,45 @@ class VLLMAPIClient:
         )
         return self._http_client
 
-    async def enhanced_api_request(self, messages: List[Dict], timeout: int = REQUEST_TIMEOUT) -> Optional[str]:
+    @property
+    def safe_context_limit(self) -> int:
+        return self._safe_context_limit
+
+    @property
+    def last_response_status(self) -> Optional[int]:
+        return self._last_response_status
+
+    @property
+    def last_error_message(self) -> Optional[str]:
+        return self._last_error_message
+
+    def estimate_prompt_tokens(self, text: str, source_lang: str, target_lang: str) -> int:
+        source_name = get_language_name(source_lang)
+        target_name = get_language_name(target_lang)
+        system_prompt = get_system_prompt(source_name, target_name)
+        user_prompt = get_user_prompt(text.strip(), source_name, target_name)
+        return estimate_prompt_tokens(system_prompt, user_prompt)
+
+    def _chunk_text_to_fit(self, text: str, base_prompt_tokens: int, *, shrink_factor: int = 1) -> List[str]:
+        budget = self._safe_context_limit - base_prompt_tokens - 1
+        if shrink_factor > 1:
+            budget = budget // shrink_factor
+        budget = max(1, budget)
+        return chunk_text_by_token_budget(text, budget)
+
+    async def enhanced_api_request(
+        self,
+        messages: List[Dict],
+        timeout: int = REQUEST_TIMEOUT,
+        *,
+        max_tokens: Optional[int] = None,
+    ) -> Optional[str]:
         """Асинхронный запрос к vLLM API"""
         request_start = time.perf_counter()
         latency_recorded = False
         model_label = TRANSLATION_MODEL
+        self._last_response_status = None
+        self._last_error_message = None
 
         try:
             # Подготовка payload для vLLM OpenAI-совместимого API
@@ -533,7 +670,7 @@ class VLLMAPIClient:
                 "model": TRANSLATION_MODEL,
                 "messages": messages,
                 "temperature": API_TEMPERATURE,
-                "max_tokens": DEFAULT_COMPLETION_TOKENS,
+                "max_tokens": max_tokens or DEFAULT_COMPLETION_TOKENS,
                 "top_p": API_TOP_P,
                 "stream": False,
             }
@@ -558,6 +695,7 @@ class VLLMAPIClient:
                     elapsed = time.perf_counter() - request_start
                     vllm_request_latency.labels(model=model_label).observe(elapsed)
                     latency_recorded = True
+                    self._last_response_status = response.status
                     if response.status == 200:
                         vllm_model_loaded.labels(model=model_label).set(1)
                         result = await response.json()
@@ -585,6 +723,8 @@ class VLLMAPIClient:
                                 error_message = await response.text()
                             except Exception:
                                 error_message = None
+
+                        self._last_error_message = error_message
 
                         if response.status == 400 and error_message:
                             adjusted_max = compute_safe_max_tokens_from_error(
@@ -627,8 +767,8 @@ class VLLMAPIClient:
         return None
 
     async def translate_single(self, text: str, source_lang: str, target_lang: str, stats: TranslationStats) -> str:
-        """Перевод одного фрагмента с кэшированием"""
-        # Проверяем кэш
+        """Перевод одного фрагмента с кэшированием и учетом длины контекста."""
+
         cached_result = get_cached_translation(text, source_lang, target_lang)
         if cached_result:
             stats.cache_hits += 1
@@ -637,23 +777,57 @@ class VLLMAPIClient:
 
         stats.cache_misses += 1
 
-        if not text.strip():
+        stripped_text = text.strip()
+        if not stripped_text:
             return text
 
         source_name = get_language_name(source_lang)
         target_name = get_language_name(target_lang)
 
-        # Создаем сообщения
         system_prompt = get_system_prompt(source_name, target_name)
-        user_prompt = get_user_prompt(text.strip(), source_name, target_name)
+        user_prompt_prefix = get_user_prompt("", source_name, target_name)
+        user_prompt = get_user_prompt(stripped_text, source_name, target_name)
+
+        base_prompt_tokens = estimate_prompt_tokens(system_prompt, user_prompt_prefix)
+        prompt_tokens = estimate_prompt_tokens(system_prompt, user_prompt)
+
+        async def translate_chunks(chunks: List[str]) -> Optional[str]:
+            if len(chunks) <= 1:
+                return None
+
+            translated_parts: List[str] = []
+            for chunk in chunks:
+                translated_chunk = await self.translate_single(chunk, source_lang, target_lang, stats)
+                if chunk.endswith("\n") and not translated_chunk.endswith("\n"):
+                    translated_chunk += "\n"
+                translated_parts.append(translated_chunk)
+
+            combined_translation = "".join(translated_parts)
+            cache_translation(text, source_lang, target_lang, combined_translation)
+            return combined_translation
+
+        if prompt_tokens >= self._safe_context_limit:
+            shrink_factor = 1
+            while True:
+                chunks = self._chunk_text_to_fit(stripped_text, base_prompt_tokens, shrink_factor=shrink_factor)
+                combined = await translate_chunks(chunks)
+                if combined is not None:
+                    return combined
+
+                budget = max(1, (self._safe_context_limit - base_prompt_tokens - 1) // max(1, shrink_factor))
+                if budget <= 1:
+                    break
+                shrink_factor *= 2
 
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ]
 
-        # Получаем ответ от vLLM API
-        response = await self.enhanced_api_request(messages)
+        available_completion = self._safe_context_limit - prompt_tokens
+        max_completion_tokens = max(1, min(DEFAULT_COMPLETION_TOKENS, available_completion))
+
+        response = await self.enhanced_api_request(messages, max_tokens=max_completion_tokens)
 
         stats.api_requests += 1
         translation_api_requests_current.set(stats.api_requests)
@@ -661,19 +835,29 @@ class VLLMAPIClient:
         if response is None:
             stats.api_failures += 1
             translation_api_request_failures.inc()
+
+            if self.last_response_status == 400:
+                shrink_factor = 2
+                while True:
+                    chunks = self._chunk_text_to_fit(stripped_text, base_prompt_tokens, shrink_factor=shrink_factor)
+                    combined = await translate_chunks(chunks)
+                    if combined is not None:
+                        return combined
+
+                    budget = max(1, (self._safe_context_limit - base_prompt_tokens - 1) // shrink_factor)
+                    if budget <= 1:
+                        break
+                    shrink_factor *= 2
+
             return text
 
-        # Постобработка
         cleaned = self._postprocess_translation(response, target_lang, stats)
 
-        # Валидация качества
         validation = stats.add_quality_check(text, cleaned, target_lang)
         translation_quality.set(stats.get_average_quality())
 
-        # Сохраняем в кэш
         cache_translation(text, source_lang, target_lang, cleaned)
 
-        # Задержка между запросами
         await asyncio.sleep(INTER_REQUEST_DELAY)
 
         return cleaned
@@ -852,6 +1036,13 @@ async def vllm_translate(text: str, source_lang: str = "zh-CN", target_lang: str
             batch_lines = []
             for j in range(i, min(i + batch_size, len(lines))):
                 if j < len(lines) and lines[j].strip():
+                    candidate_lines = batch_lines + [lines[j]]
+                    candidate_text = "\n".join(candidate_lines)
+                    estimated_tokens = client.estimate_prompt_tokens(candidate_text, source_lang, target_lang)
+                    if estimated_tokens >= client.safe_context_limit:
+                        if not batch_lines:
+                            batch_lines.append(lines[j])
+                        break
                     batch_lines.append(lines[j])
 
             if batch_lines:
